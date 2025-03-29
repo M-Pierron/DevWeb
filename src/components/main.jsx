@@ -1,6 +1,6 @@
 import Nav from "./nav"
 
-const main = () => {
+function Main() {
   return (
     <div className="bg-blue-600">
         <Nav/>
@@ -9,4 +9,4 @@ const main = () => {
   )
 }
 
-export default main
+export default Main
