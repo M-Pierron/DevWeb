@@ -1,6 +1,5 @@
 import "../App.css"
 import Nav from "../components/nav.jsx"
-import "boxicons"
 import React, { useState } from 'react';
 import { User, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router'
