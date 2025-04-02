@@ -16,7 +16,7 @@ const userRoutes = require("./routes/user");
 const authMiddleware = require("./middleware/authMiddleware"); // 🔍 Ajoute bien ton middleware
 
 app.use(express.json());
-
+app.use("/api/auth", require("./routes/auth"));
 // ➤ Routes d'authentification
 app.use("/auth", authRoutes);
 // ➤ Applique le middleware AVANT les routes

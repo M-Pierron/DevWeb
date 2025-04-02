@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware"); // Middleware d'authentification
 const { v4: uuidv4 } = require("uuid"); // Pour générer un userId unique
 
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
@@ -41,7 +42,7 @@ router.post("/register", async (req, res) => {
             email,
             password: hashedPassword,
             level,
-            userId: uuidv4(), // Générer un userId unique
+            userId: uuidv4(), 
         });
 
         // Enregistrer l'utilisateur dans la base de données
@@ -85,5 +86,20 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ error: "Erreur serveur lors de la connexion" });
     }
 });
+
+// Récupération des informations du profil
+router.get("/profile", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select("-password");
+        if (!user) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error("Erreur lors de la récupération du profil:", err);
+        res.status(500).json({ error: "Erreur serveur lors de la récupération du profil" });
+    }
+});
+
 
 module.exports = router;
