@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import ToolsFilter from './toolsFilter';
+import ToolsSearchBar from './toolsSearchBar';
 import DeviceItem from "./deviceItem";
 
 const toolsList = () => {
@@ -61,28 +62,21 @@ const toolsList = () => {
     ]
   ];
   
-  const [isVisible, setIsVisible] = useState(false);
+  const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
 
-  const handleClick = () => {
-    setIsVisible(!isVisible);
+  const onToolFilterClick = () => {
+    setToolsFilterVisibility(!isToolsFilterVisible);
   };
 
   return (
     <>
           <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
-            <ToolsFilter tools={iotDevices} isVisible={isVisible} toggleVisibility={handleClick}/>
+            <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick}/>
             <div className='flex flex-col h-full'>
-              <div className="flex flex-row h-[5%]">
-                <input type='search' className='w-[90%] bg-white text-black rounded-xl'></input>
-                <input 
-                  type="image" 
-                  src="/src/assets/filter.svg" 
-                  className="w-[10%] h-full"
-                  onClick={handleClick}
-                />
-              </div>
+              <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
+              {/* Tools list */}
               <div className='h-full mt-4 bg-white text-black'>
-                <DeviceItem />
+                <DeviceItem deviceName={"Thermostat Salon"}/>
               </div>
             </div>
           </div>
