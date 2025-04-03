@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import avatar1 from '../assets/avatar1.png'; // Importer l'image
 
-const UserProfile = () => {
+const handleDateInput = (e) => {
+  let value = e.target.value;
+  if (value.length <= 10) {
+      setUserData({
+          ...userData,
+          public: {
+              ...userData.public,
+              dateNaissance: value
+          }
+      });
+  }
+};
+
+const UserProfile = ({ setIsAuthenticated }) => {
+  const [user, setUser] = useState(null);
+  const [isChecking, setIsChecking] = useState(true);
   const [editing, setEditing] = useState(false);
   const [userData, setUserData] = useState({
     public: {
@@ -10,13 +26,55 @@ const UserProfile = () => {
       sexe: '',
       dateNaissance: '',
       typeMembre: '',
-      photo: avatar1 // Ajout de la photo de profil par défaut
+      photo: avatar1 // Photo par défaut
     },
     private: {
       nom: '',
       prenom: ''
     }
   });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        fetch("http://localhost:5000/api/auth/profile", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.error) {
+                alert("Erreur: " + data.error);
+                setIsAuthenticated(false);
+                navigate("/");
+            } else {
+                setUser(data); // Affiche les données du profil
+                setUserData({
+                    public: data.public,
+                    private: data.private,
+                });
+                setIsChecking(false); // La vérification est terminée
+            }
+        })
+        .catch((err) => {
+            console.error("Erreur Fetch profil:", err);
+            setIsAuthenticated(false);
+            navigate("/");
+        });
+    } else {
+        setIsAuthenticated(false);
+        navigate("/");
+    }
+  }, [navigate, setIsAuthenticated]);
+
+  // Si la vérification est encore en cours, afficher un message d'attente
+  if (isChecking) {
+    return <div>Vérification en cours...</div>;
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,32 +98,6 @@ const UserProfile = () => {
       public: {
         ...userData.public,
         age: value
-      }
-    });
-  };
-
-  // Fonction pour formater la date en DD/MM/YYYY
-  const handleDateInput = (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // Supprime tout sauf les chiffres
-
-    // Ajout automatique des "/"
-    if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
-    if (value.length > 5) value = value.slice(0, 5) + "/" + value.slice(5);
-
-    // Validation du jour et du mois
-    const day = parseInt(value.slice(0, 2), 10);
-    const month = parseInt(value.slice(3, 5), 10);
-
-    // Limite le jour à 31 et le mois à 12
-    if (day > 31) value = value.slice(0, 2) + "/" + value.slice(2, 5); // Limite le jour à 31
-    if (month > 12) value = value.slice(0, 3) + "/" + value.slice(3, 5); // Limite le mois à 12
-
-    // MàJ de la date de naissance
-    setUserData({
-      ...userData,
-      public: {
-        ...userData.public,
-        dateNaissance: value
       }
     });
   };
@@ -234,6 +266,15 @@ const UserProfile = () => {
             Modifier
           </button>
         )}
+
+        <button onClick={() => {
+          console.log("Déconnexion, suppression du token");
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+          navigate("/");
+        }} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
+          Déconnexion
+        </button>
       </div>
     </div>
   );
