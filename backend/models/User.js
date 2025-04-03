@@ -1,13 +1,19 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-    userId: { type: String, unique: true, required: true }, // Ajout de userId
-    prenom: { type: String, required: true },
-    nom: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+    prenom: String,
+    nom: String,
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    level: { type: String, enum: ['user', 'admin'], default: 'user' }
-}, { timestamps: true });
+    userId: { type: String, required: true, unique: true },
+    level: String,
+    age: Number,
+    sexe: String,
+    dateNaissance: String,
+    photo: String,
+    pseudonyme: String
+});
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', userSchema);
+
 module.exports = User;

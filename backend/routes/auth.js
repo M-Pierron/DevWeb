@@ -42,7 +42,7 @@ router.post("/register", async (req, res) => {
             email,
             password: hashedPassword,
             level,
-            userId: uuidv4(), 
+            userId: uuidv4(),
         });
 
         // Enregistrer l'utilisateur dans la base de données
@@ -87,19 +87,35 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// Récupération des informations du profil
 router.get("/profile", authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select("-password");
+        const user = await User.findById(req.user._id).select('-password'); // Exclure le mot de passe
         if (!user) {
             return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
-        res.json(user);
-    } catch (err) {
-        console.error("Erreur lors de la récupération du profil:", err);
+
+        // Formater les données du profil comme attendu par le frontend
+        const profileData = {
+            public: {
+                pseudonyme: user.prenom, // Vous pouvez ajuster selon votre modèle
+                age: '', // À ajouter dans le modèle si nécessaire
+                sexe: '', // À ajouter dans le modèle si nécessaire
+                dateNaissance: '', // À ajouter dans le modèle si nécessaire
+                typeMembre: user.level || 'Membre',
+                photo: '' // À ajouter dans le modèle si nécessaire
+            },
+            private: {
+                nom: user.nom,
+                prenom: user.prenom
+            }
+        };
+
+        res.json(profileData);
+    } catch (error) {
+        console.error("Erreur lors de la récupération du profil:", error);
         res.status(500).json({ error: "Erreur serveur lors de la récupération du profil" });
     }
 });
-
+  
 
 module.exports = router;
