@@ -63,10 +63,28 @@ const toolsList = () => {
   ];
   
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
+  const [selectedDeviceItem, setSelectedDeviceItem] = useState(false);
 
   const onToolFilterClick = () => {
     setToolsFilterVisibility(!isToolsFilterVisible);
   };
+
+  // Select device and update backend
+  const onDeviceItemClick = async (deviceName) => {
+    setSelectedDeviceItem(deviceName);
+
+    await fetch("http://localhost:5000/api/devices/select", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceName })
+    });
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/devices/selected")
+      .then(res => res.json())
+      .then(data => setSelectedDeviceItem(data.selectedDevice));
+  }, []);
 
   return (
     <>
@@ -76,7 +94,11 @@ const toolsList = () => {
               <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
               {/* Tools list */}
               <div className='h-full mt-4 bg-white text-black'>
-                <DeviceItem deviceName={"Thermostat Salon"}/>
+                <DeviceItem 
+                  deviceName={"Thermostat Salon"} 
+                  onClick={() => onDeviceItemClick("Thermostat Salon")}
+                  isSelected={selectedDeviceItem === "Thermostat Salon"}
+                />
               </div>
             </div>
           </div>
