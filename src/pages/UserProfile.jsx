@@ -10,9 +10,9 @@ const UserProfile = ({ setIsAuthenticated }) => {
     public: {
       pseudonyme: '',
       age: '',
-      sexe: '',
       dateNaissance: '',
-      typeMembre: '',
+      sexe: '',
+      email: '',
       photo: avatar1 // Photo par défaut
     },
     private: {
@@ -119,123 +119,118 @@ const UserProfile = ({ setIsAuthenticated }) => {
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Profil Utilisateur</h2>
 
-        {/* Partie Publique */}
+        {/* Photo de profil */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">Informations Publiques</h3>
-
-          {/* Pseudonyme */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
-            <input
-              type="text"
-              name="public.pseudonyme"
-              value={userData.public.pseudonyme}
-              onChange={handleInputChange}
-              readOnly={!editing}
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-transparent"
-            />
-          </div>
-
-          {/* Age */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
-            <input
-              type="number"
-              name="public.age"
-              value={userData.public.age}
-              onChange={handleAgeChange}
-              readOnly={!editing}
-              min="0"
-              max="100"
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            />
-          </div>
-
-          {/* Genre/Sexe */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
-            {editing ? (
-              <select
-                name="public.sexe"
-                value={userData.public.sexe}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              >
-                <option value="">Sélectionnez</option>
-                <option value="Homme">Homme</option>
-                <option value="Femme">Femme</option>
-                <option value="Autre">Autre</option>
-              </select>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
+          <div className="flex items-center space-x-4">
+            {userData.public.photo ? (
+              <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
             ) : (
-              <div className="p-2 border border-gray-300 rounded shadow-sm text-black">{userData.public.sexe}</div>
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-500">No Photo</span>
+              </div>
+            )}
+            {editing && (
+              <input
+                type="file"
+                accept="image/*"
+                name="public.photo"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setUserData({
+                        ...userData,
+                        public: {
+                          ...userData.public,
+                          photo: reader.result
+                        }
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              />
             )}
           </div>
+        </div>
 
-          {/* Date de Naissance */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
-            <input
-              type="text"
-              name="public.dateNaissance"
-              value={userData.public.dateNaissance}
-              onChange={handleDateInput}
-              readOnly={!editing}
-              placeholder="JJ/MM/AAAA"
-              maxLength="10"
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            />
-          </div>
+        {/* Pseudonyme */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
+          <input
+            type="text"
+            name="public.pseudonyme"
+            value={userData.public.pseudonyme}
+            onChange={handleInputChange}
+            readOnly={!editing}
+            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-transparent"
+          />
+        </div>
 
-          {/* Type de Membre */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Type de Membre</label>
-            <input
-              type="text"
-              name="public.typeMembre"
-              value={userData.public.typeMembre}
+        {/* Âge */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
+          <input
+            type="number"
+            name="public.age"
+            value={userData.public.age}
+            onChange={handleAgeChange}
+            readOnly={!editing}
+            min="0"
+            max="100"
+            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+          />
+        </div>
+
+        {/* Date de naissance */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
+          <input
+            type="text"
+            name="public.dateNaissance"
+            value={userData.public.dateNaissance}
+            onChange={handleDateInput}
+            readOnly={!editing}
+            placeholder="JJ/MM/AAAA"
+            maxLength="10"
+            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+          />
+        </div>
+
+        {/* Sexe */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
+          {editing ? (
+            <select
+              name="public.sexe"
+              value={userData.public.sexe}
               onChange={handleInputChange}
-              readOnly={!editing}
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-transparent"
-            />
-          </div>
+              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            >
+              <option value="">Sélectionnez</option>
+              <option value="Homme">Homme</option>
+              <option value="Femme">Femme</option>
+              <option value="Autre">Autre</option>
+            </select>
+          ) : (
+            <div className="p-2 border border-gray-300 rounded shadow-sm text-black">{userData.public.sexe}</div>
+          )}
+        </div>
 
-          {/* Photo de profil */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
-            <div className="flex items-center space-x-4">
-              {userData.public.photo ? (
-                <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">No Photo</span>
-                </div>
-              )}
-              {editing && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  name="public.photo"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setUserData({
-                          ...userData,
-                          public: {
-                            ...userData.public,
-                            photo: reader.result
-                          }
-                        });
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                />
-              )}
-            </div>
-          </div>
+        {/* Email */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+          <input
+            type="email"
+            name="public.email"
+            value={userData.public.email}
+            onChange={handleInputChange}
+            readOnly={!editing}
+            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-transparent"
+          />
         </div>
 
         {/* Partie Privée */}
@@ -288,6 +283,11 @@ const UserProfile = ({ setIsAuthenticated }) => {
           navigate("/");
         }} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">
           Déconnexion
+        </button>
+
+        {/* Bouton Retour à l'Accueil */}
+        <button onClick={() => navigate("/Accueil")} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mt-4">
+          Retour à l'Accueil
         </button>
       </div>
     </div>
