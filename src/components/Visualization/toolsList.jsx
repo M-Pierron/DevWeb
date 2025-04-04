@@ -93,10 +93,9 @@ const toolsList = () => {
             <div className='flex flex-col h-full'>
               <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
               {/* Tools list */}
-              <div className='h-full mt-4 bg-white text-black'>
+              <div className='h-full mt-4 bg-white text-black' onClick={() => onDeviceItemClick("Thermostat Salon")}>
                 <DeviceItem 
                   deviceName={"Thermostat Salon"} 
-                  onClick={() => onDeviceItemClick("Thermostat Salon")}
                   isSelected={selectedDeviceItem === "Thermostat Salon"}
                 />
               </div>
