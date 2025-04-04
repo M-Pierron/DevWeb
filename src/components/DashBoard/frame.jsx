@@ -14,13 +14,13 @@ const frame = () => {
             <div id="mainFrame" className='p-4 w-full h-full'>
             <Temperature/>
             </div>
-            <div id="sideFrame" className='flex flex-col w-full'>
-            <div className='mt-4 mr-4 flex items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg w-full h-[30%]'>
-                <Battery percentage={65}/>  
-            </div>
-            <div className='mt-4 mr-4 flex items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg w-full h-[30%]'>
-                <Wifi/>  
-            </div>
+            <div id="sideFrame" className='flex flex-row w-full'>
+              <div className='mt-4 mr-4 flex items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg w-full h-[20%]'>
+                  <Battery percentage={65}/>  
+              </div>
+              <div className='mt-4 mr-4 flex items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg w-full h-[20%]'>
+                  <Wifi/>  
+              </div>
             </div>
 
         </div>
