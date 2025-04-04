@@ -1,111 +1,82 @@
-import "../App.css";
-import Nav from "../components/nav.jsx";
 import React, { useState } from 'react';
 import { User, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from '../context/AuthContext';
+import Nav from "../components/nav"; 
+import "../App.css";
 
-function SignIn() {
+const SignIn = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const { login, register } = useAuth();
-  
-  // États pour les champs du formulaire
   const [formData, setFormData] = useState({
+    prenom: '',
+    nom: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: ''
   });
-  
-  // État pour les erreurs de validation
-  const [errors, setErrors] = useState({});
 
-  // Gérer les changements dans les champs du formulaire
+  const navigate = useNavigate();
+  const { login, register } = useAuth(); // 💡 du contexte
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-    
-    // Effacer l'erreur pour ce champ lors de la modification
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null
-      });
-    }
+    console.log(`[handleChange] ${name}:`, value); // 📝 LOG
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Valider le formulaire
-  const validateForm = () => {
-    const newErrors = {};
-    
-    // Validation de l'email
-    if (!formData.email) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Format d'email invalide";
-    }
-    
-    // Validation du mot de passe
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Le mot de passe doit contenir au moins 6 caractères";
-    }
-    
-    // Validation spécifique à l'inscription
-    if (!isLogin) {
-      if (!formData.firstName) {
-        newErrors.firstName = "Le prénom est requis";
-      }
-      
-      if (!formData.lastName) {
-        newErrors.lastName = "Le nom est requis";
-      }
-      
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
-      }
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Gérer la soumission du formulaire
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (validateForm()) {
-      if (isLogin) {
-        // Tentative de connexion
-        login({
+    console.log("[handleSubmit] Formulaire soumis !");
+    console.log("isLogin ?", isLogin);
+    console.log("formData:", formData);
+  
+    const url = isLogin
+      ? "http://localhost:5000/api/auth/login"
+      : "http://localhost:5000/api/auth/register";
+  
+    try {
+      console.log(`[handleSubmit] Envoi requête vers: ${url}`);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           email: formData.email,
-          // Dans un vrai système, vous n'enverriez pas le mot de passe directement
-          // mais plutôt un token d'authentification
-        });
-        
-        // Rediriger vers la page d'accueil après connexion
-        navigate('/Accueil');
+          password: formData.password,
+          ...(isLogin ? {} : { prenom: formData.prenom, nom: formData.nom }),
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("[handleSubmit] Réponse reçue:", data);
+      console.log("[handleSubmit] Statut HTTP:", response.status);
+  
+      if (response.ok && data) {
+        console.log("[handleSubmit] Succès côté serveur");
+        if (isLogin) {
+          console.log("[handleSubmit] Login via contexte avec:", data);
+          login(data);
+  
+          // Enregistrer le token dans localStorage
+          localStorage.setItem("token", data.token);
+          console.log("🔑 Token enregistré localement:", localStorage.getItem("token"));
+        } else {
+          console.log("[handleSubmit] Register via contexte avec:", data);
+          register(data);
+        }
+  
+        // Navigation vers le profil après connexion/réussite
+        console.log("[handleSubmit] Navigation vers /Profil");
+        navigate("/Accueil/Profil");
       } else {
-        // Tentative d'inscription
-        register({
-          email: formData.email,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          // Dans un vrai système, vous crypteriez le mot de passe avant de l'envoyer
-        });
-        
-        // Rediriger vers la page d'accueil après inscription
-        navigate('/Accueil');
+        console.warn("[handleSubmit] Échec côté serveur :", data.error || "Erreur inconnue");
+        alert(data.error || "Une erreur est survenue");
       }
+    } catch (error) {
+      console.error("[handleSubmit] Erreur catché:", error);
+      alert("Une erreur est survenue lors de la connexion ou de l'inscription.");
     }
   };
+  
 
   return (
     <div>
@@ -115,40 +86,38 @@ function SignIn() {
           <div className="icon-container">
             <User className="icon" />
           </div>
-          
+
           <h2 className="title">{isLogin ? 'Connexion' : 'Inscription'}</h2>
 
-          <form className="formElt" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="formElt">
             {!isLogin && (
               <>
                 <div className="input-container">
                   <User className="input-icon" />
                   <input
                     type="text"
-                    name="firstName"
+                    name="prenom"
                     placeholder="Prénom"
                     className="input-field"
-                    value={formData.firstName}
+                    value={formData.prenom}
                     onChange={handleChange}
+                    required
                   />
                 </div>
-                {errors.firstName && <p className="error-message">{errors.firstName}</p>}
-
                 <div className="input-container">
                   <User className="input-icon" />
                   <input
                     type="text"
-                    name="lastName"
+                    name="nom"
                     placeholder="Nom"
                     className="input-field"
-                    value={formData.lastName}
+                    value={formData.nom}
                     onChange={handleChange}
+                    required
                   />
                 </div>
-                {errors.lastName && <p className="error-message">{errors.lastName}</p>}
               </>
             )}
-
             <div className="input-container">
               <Mail className="input-icon" />
               <input
@@ -158,10 +127,9 @@ function SignIn() {
                 className="input-field"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             </div>
-            {errors.email && <p className="error-message">{errors.email}</p>}
-
             <div className="input-container">
               <Lock className="input-icon" />
               <input
@@ -171,31 +139,30 @@ function SignIn() {
                 className="input-field password-field"
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => {
+                  console.log("[togglePassword] Affichage mdp :", !showPassword);
+                  setShowPassword(!showPassword);
+                }}
                 className="toggle-password"
               >
-                {showPassword ? <EyeOff/> : <Eye/>}
+                {showPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
-            {errors.password && <p className="error-message">{errors.password}</p>}
-
             {!isLogin && (
               <div className="input-container">
                 <Lock className="input-icon" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="confirmPassword"
                   placeholder="Confirmer le mot de passe"
                   className="input-field"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
+                  required
                 />
               </div>
             )}
-            {errors.confirmPassword && <p className="error-message">{errors.confirmPassword}</p>}
 
             <button type="submit" className="submit-button">
               {isLogin ? 'Se connecter' : "S'inscrire"}
@@ -204,7 +171,13 @@ function SignIn() {
 
           <p className="switch-text">
             {isLogin ? "Vous n'avez pas encore de compte ?" : "Vous avez déjà un compte ?"}
-            <button type="button" onClick={() => setIsLogin(!isLogin)} className="switch-button">
+            <button
+              onClick={() => {
+                console.log("[switchForm] Passage à :", !isLogin ? "Connexion" : "Inscription");
+                setIsLogin(!isLogin);
+              }}
+              className="switch-button"
+            >
               {isLogin ? "S'INSCRIRE" : "SE CONNECTER"}
             </button>
           </p>
@@ -212,6 +185,6 @@ function SignIn() {
       </div>
     </div>
   );
-}
-  
+};
+
 export default SignIn;

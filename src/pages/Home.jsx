@@ -4,7 +4,7 @@ import "../App.css"
 function Home() {
   return (
     <div>
-      <Nav name={"ACCUEIL"} value={true}/>
+      <Nav name={"ACCUEIL"}/>
       <div className = "home">
         
       </div>

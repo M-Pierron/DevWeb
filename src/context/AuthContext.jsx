@@ -16,7 +16,9 @@ export const AuthProvider = ({ children }) => {
   // Au chargement initial, vérifier si l'utilisateur est déjà connecté (localStorage)
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const token = localStorage.getItem('token');
+    
+    if (storedUser && token) {
       setUser(JSON.parse(storedUser));
       setIsConnected(true);
     }
@@ -24,7 +26,6 @@ export const AuthProvider = ({ children }) => {
 
   // Fonction pour connecter un utilisateur
   const login = (userData) => {
-    // Pour un vrai système d'authentification, vous devriez appeler une API ici
     // Stocker les données de l'utilisateur connecté
     setUser(userData);
     setIsConnected(true);
@@ -34,7 +35,6 @@ export const AuthProvider = ({ children }) => {
 
   // Fonction pour inscrire un nouvel utilisateur
   const register = (userData) => {
-    // Dans une application réelle, vous appelleriez une API pour créer un utilisateur
     // Simulation d'inscription réussie - on connecte directement l'utilisateur
     setUser(userData);
     setIsConnected(true);
@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsConnected(false);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');  // Supprime aussi le token lors de la déconnexion
   };
 
   // Valeurs et fonctions exposées par le contexte
