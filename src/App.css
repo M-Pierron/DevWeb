@@ -1,3 +1,5 @@
+/* CSS pour la page "à propos" */
+
 .about {
   position: fixed;
   top: 20%;
@@ -15,6 +17,8 @@
   font-size : 2em;
   margin-left : 5%;
 }
+
+/* CSS pour les formulaires d'inscription et de connexion */
 
 .form {
   background-color: #ffffff;
@@ -137,6 +141,8 @@
   color: #3c5497;
 }
 
+/* CSS pour la barre de navigation */
+
 .nav {
     display: flex;                
     align-items: center;          
@@ -158,7 +164,7 @@
     position : relative;
     color : white;
     font-weight: bolder;
-    right : 35%;
+    right : 30%;
     margin-top : 1%;
 }
 
@@ -171,6 +177,8 @@
 .navElement:hover {
   transform : scale(1.2);
 }
+
+/* CSS pour les logos présent sur le site */
 
 .logo_start:hover {
     animation: spin 1s linear infinite;
@@ -207,6 +215,8 @@
     }
   }
   
+/* CSS pour la page de démarrage*/
+
   .start_menu {
     animation : smoothSpawn 0.7s;
     position: fixed;
@@ -286,6 +296,8 @@
     100% { opacity:0; }
   }
   
+/* CSS pour l'accueil */
+
   .home {
     position: fixed;
     top: 20%;
@@ -305,4 +317,29 @@
     to{
       opacity : 1;
     }
+  }
+
+/* CSS pour les erreurs */
+
+  .error-message {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: -0.5rem;
+    margin-bottom: 0.75rem;
+    text-align: left;
+    padding-left: 2.5rem;
+  }
+  
+  input.invalid {
+    border-color: #e53e3e;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+  }
+  
+  .error-message {
+    animation: shake 0.5s;
   }
