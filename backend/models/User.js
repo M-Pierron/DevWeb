@@ -6,12 +6,12 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     userId: { type: String, required: true, unique: true },
-    level: String,
+    level: { type: String, default: 'user' },
     age: Number,
     sexe: String,
     dateNaissance: String,
     photo: String,
-    pseudonyme: String
+    pseudonyme: { type: String, required: true }
 });
 
 const User = mongoose.model('User', userSchema);

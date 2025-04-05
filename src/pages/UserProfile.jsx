@@ -25,42 +25,55 @@ const UserProfile = ({ setIsAuthenticated }) => {
 
   // Vérification du token au chargement du composant
   useEffect(() => {
+    console.log("🔥 useEffect de UserProfile appelé");
+    let isMounted = true;
+  
     const token = localStorage.getItem("token");
     console.log("🧾 Token dispo dans UserProfile:", token);
-    
-    if (token) {
-      fetch("http://localhost:5000/api/auth/profile", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+  
+    if (!token) {
+      setIsAuthenticated(false);
+      navigate("/");
+      return;
+    }
+  
+    fetch("http://localhost:5000/api/auth/profile", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
+        if (!isMounted) return;
         if (data.error) {
-          alert("Erreur: " + data.error);
+          console.warn("Erreur côté API:", data.error);
           setIsAuthenticated(false);
           navigate("/");
         } else {
-          setUser(data); // Affiche les données du profil
+          setUser(data);
           setUserData({
             public: data.public,
             private: data.private,
           });
-          setIsChecking(false); // La vérification est terminée
+          setIsChecking(false);
+          console.log("Profile data fetched:", data);
         }
       })
       .catch((err) => {
-        console.error("Erreur Fetch profil:", err);
-        setIsAuthenticated(false);
-        navigate("/");
+        if (isMounted) {
+          console.error("Erreur Fetch profil:", err);
+          setIsAuthenticated(false);
+          navigate("/");
+        }
       });
-    } else {
-      setIsAuthenticated(false);
-      navigate("/");
-    }
-  }, [navigate, setIsAuthenticated]);
+  
+    return () => {
+      isMounted = false;
+    };
+  }, []); // 🚨 exécuter une seule fois au montage
+  
 
   // Si la vérification est encore en cours, afficher un message d'attente
   if (isChecking) {

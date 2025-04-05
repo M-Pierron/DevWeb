@@ -26,33 +26,35 @@ router.post("/verifyToken", (req, res) => {
 
 // Inscription utilisateur
 router.post("/register", async (req, res) => {
-    const { email, password, prenom, nom, level } = req.body;
+    const { email, password, prenom, nom, pseudonyme } = req.body;
     console.log("Registering user with email:", email);
-
+  
     try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "Email déjà utilisé" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({
-            prenom,
-            nom,
-            email,
-            password: hashedPassword,
-            level,
-            userId: uuidv4(),
-        });
-
-        await newUser.save();
-        console.log("User registered successfully:", newUser);
-        res.status(201).json({ message: "Utilisateur enregistré avec succès" });
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ error: "Email déjà utilisé" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        prenom,
+        nom,
+        pseudonyme, 
+        email,
+        password: hashedPassword,
+        level: "user", 
+        userId: uuidv4(),
+      });
+  
+      await newUser.save();
+      console.log("User registered successfully:", newUser);
+      res.status(201).json({ message: "Utilisateur enregistré avec succès" });
     } catch (error) {
-        console.error("Erreur lors de l'inscription :", error);
-        res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
+      console.error("Erreur lors de l'inscription :", error);
+      res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
     }
-});
+  });
+  
 
 // Connexion utilisateur
 router.post("/login", async (req, res) => {

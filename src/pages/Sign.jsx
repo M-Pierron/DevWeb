@@ -11,6 +11,7 @@ const SignIn = () => {
   const [formData, setFormData] = useState({
     prenom: '',
     nom: '',
+    pseudonyme: '',
     email: '',
     password: '',
   });
@@ -42,7 +43,11 @@ const SignIn = () => {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          ...(isLogin ? {} : { prenom: formData.prenom, nom: formData.nom }),
+          ...(isLogin ? {} : { 
+            prenom: formData.prenom,
+            nom: formData.nom,
+            pseudonyme: formData.pseudonyme
+          }),
         }),
       });
   
@@ -55,22 +60,32 @@ const SignIn = () => {
         if (isLogin) {
           console.log("[handleSubmit] Login via contexte avec:", data);
           login(data);
-  
+      
           // Enregistrer le token dans localStorage
           localStorage.setItem("token", data.token);
           console.log("🔑 Token enregistré localement:", localStorage.getItem("token"));
+      
+          // Navigation vers le profil après connexion
+          console.log("[handleSubmit] Navigation vers /Profil");
+          navigate("/Accueil/Profil");
         } else {
-          console.log("[handleSubmit] Register via contexte avec:", data);
-          register(data);
+          // ✅ ALERTE INSCRIPTION RÉUSSIE
+          alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+      
+          
+          setIsLogin(true);
+          
+          // Optionnel : reset le formulaire
+          setFormData({
+            prenom: '',
+            nom: '',
+            pseudonyme: '',
+            email: '',
+            password: '',
+          });
         }
-  
-        // Navigation vers le profil après connexion/réussite
-        console.log("[handleSubmit] Navigation vers /Profil");
-        navigate("/Accueil/Profil");
-      } else {
-        console.warn("[handleSubmit] Échec côté serveur :", data.error || "Erreur inconnue");
-        alert(data.error || "Une erreur est survenue");
       }
+      
     } catch (error) {
       console.error("[handleSubmit] Erreur catché:", error);
       alert("Une erreur est survenue lors de la connexion ou de l'inscription.");
@@ -112,6 +127,18 @@ const SignIn = () => {
                     placeholder="Nom"
                     className="input-field"
                     value={formData.nom}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="input-container">
+                  <User className="input-icon" />
+                  <input
+                    type="text"
+                    name="pseudonyme"
+                    placeholder="Pseudonyme"
+                    className="input-field"
+                    value={formData.pseudonyme}
                     onChange={handleChange}
                     required
                   />

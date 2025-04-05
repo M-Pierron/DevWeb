@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { createBrowserRouter, createRoutesFromElements, Route, Navigate, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  Navigate,
+  RouterProvider
+} from 'react-router-dom';
+
 import './App.css';
 import Start from './pages/Start';
 import Sign from './pages/Sign';
@@ -9,54 +16,62 @@ import Visualization from './pages/Visualization';
 import UserProfile from './pages/UserProfile';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
-// 🔒 Composant pour les routes protégées
+// 🔒 Route protégée
 const ProtectedRoute = ({ element }) => {
   const { isConnected } = useAuth();
   console.log("🔐 [ProtectedRoute] isConnected =", isConnected);
   return isConnected ? element : <Navigate to="/Accueil/Connexion&Inscription" replace />;
 };
 
-// 🔐 Vérifie le token et connecte l’utilisateur dans le contexte
+// ✅ Hook pour vérifier le token et connecter l’utilisateur
 const useCheckAuth = () => {
-  const { login, logout } = useAuth();
+  const { login, logout, isConnected } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     const verifyToken = async () => {
-      if (token) {
-        try {
-          const res = await fetch("http://localhost:5000/api/auth/verifyToken", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            }
-          });
-          const data = await res.json();
-          console.log("Réponse verifyToken :", data);
-
-          if (data.valid && data.user) {
-            login(data.user); // ⬅ login du contexte
-          } else {
-            logout();
-            localStorage.removeItem("token");
-          }
-        } catch (err) {
-          console.error("Erreur vérif token :", err);
-          logout();
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
+      if (!token) {
         logout();
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/verifyToken", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          }
+        });
+
+        const data = await res.json();
+        console.log("✅ Réponse verifyToken :", data);
+
+        if (data.valid && data.user) {
+          if (!isConnected) {
+            console.log("🧠 Login triggered");
+            login(data.user); // 🔁 NE déclenche que si pas déjà connecté
+          }
+        } else {
+          console.log("❌ Token invalide, logout");
+          logout();
+          localStorage.removeItem("token");
+        }
+      } catch (err) {
+        console.error("💥 Erreur vérif token :", err);
+        logout();
+        localStorage.removeItem("token");
+      } finally {
+        console.log("✅ Auth check terminé");
         setIsLoading(false);
       }
     };
 
     verifyToken();
-  }, [login, logout]);
+  }, [login, logout, isConnected]);
 
   return isLoading;
 };
