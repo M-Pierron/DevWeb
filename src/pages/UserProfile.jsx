@@ -4,8 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import avatar1 from '../assets/avatar1.png';
 
 const UserProfile = () => {
-  const { logout } = useAuth();
-  const [user, setUser] = useState(null);
+  const { logout, user } = useAuth();
   const [isChecking, setIsChecking] = useState(true);
   const [userData, setUserData] = useState({
     public: {
@@ -52,7 +51,6 @@ const UserProfile = () => {
           logout();
           navigate("/");
         } else {
-          setUser(data);
           setUserData({
             public: data.public,
             private: data.private,
@@ -154,6 +152,15 @@ const UserProfile = () => {
           >
             Déconnexion
           </button>
+
+          {user && user.level === 'admin' && (
+            <button
+              onClick={() => navigate("/Accueil/Verification")}
+              className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Vérification Admin
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Verif = require("../models/Verif");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const { v4: uuidv4 } = require("uuid");
@@ -11,12 +12,10 @@ const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
 // Vérification du token
 router.post("/verifyToken", (req, res) => {
     const token = req.header("Authorization")?.split(" ")[1];
-    console.log("Verifying token:", token);
     if (!token) return res.status(401).json({ valid: false, error: "Token manquant" });
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        console.log("Decoded token:", decoded);
         res.status(200).json({ valid: true, user: decoded });
     } catch (error) {
         console.error("Token verification error:", error);
@@ -24,19 +23,21 @@ router.post("/verifyToken", (req, res) => {
     }
 });
 
-// Inscription utilisateur
+// Inscription utilisateur (sauvegarde dans Verif)
 router.post("/register", async (req, res) => {
     const { email, password, prenom, nom, pseudonyme } = req.body;
     console.log("Registering user with email:", email);
   
     try {
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        const existingVerif = await Verif.findOne({ email });
+        
+        if (existingUser || existingVerif) {
             return res.status(400).json({ error: "Email déjà utilisé" });
         }
   
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({
+        const newVerif = new Verif({
             prenom,
             nom,
             pseudonyme, 
@@ -46,9 +47,9 @@ router.post("/register", async (req, res) => {
             userId: uuidv4(),
         });
   
-        await newUser.save();
-        console.log("User registered successfully:", newUser);
-        res.status(201).json({ message: "Utilisateur enregistré avec succès" });
+        await newVerif.save();
+        console.log("User registered for verification:", newVerif);
+        res.status(201).json({ message: "Inscription en attente de vérification" });
     } catch (error) {
         console.error("Erreur lors de l'inscription :", error);
         res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
@@ -66,6 +67,11 @@ router.post("/login", async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
+            // Vérifier si l'utilisateur est en attente de vérification
+            const pendingUser = await Verif.findOne({ email });
+            if (pendingUser) {
+                return res.status(401).json({ error: "Votre compte est en attente de vérification par un administrateur" });
+            }
             return res.status(401).json({ error: "Utilisateur non trouvé" });
         }
 
@@ -75,13 +81,21 @@ router.post("/login", async (req, res) => {
         }
 
         const token = jwt.sign(
-            { email: user.email, _id: user._id, userId: user.userId },
+            { email: user.email, _id: user._id, userId: user.userId, level: user.level },
             JWT_SECRET,
             { expiresIn: "1h" }
         );
         console.log("Generated token:", token);
 
-        res.json({ message: "Connexion réussie", token });
+        res.json({ 
+            message: "Connexion réussie", 
+            token,
+            user: {
+                email: user.email,
+                level: user.level,
+                userId: user.userId
+            }
+        });
     } catch (err) {
         console.error("Erreur lors de la connexion :", err);
         res.status(500).json({ error: "Erreur serveur lors de la connexion" });
@@ -115,6 +129,53 @@ router.get("/profile", authMiddleware, async (req, res) => {
     } catch (error) {
         console.error("Erreur lors de la récupération du profil:", error);
         res.status(500).json({ error: "Erreur serveur lors de la récupération du profil" });
+    }
+});
+
+// Récupérer les utilisateurs en attente de vérification
+router.get("/pending-users", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user || user.level !== 'admin') {
+            return res.status(403).json({ error: "Accès non autorisé" });
+        }
+
+        const pendingUsers = await Verif.find().select('-password');
+        res.json(pendingUsers);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs en attente:", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+// Vérifier un utilisateur
+router.post("/verify-user", authMiddleware, async (req, res) => {
+    try {
+        const { userId, action } = req.body;
+        const admin = await User.findById(req.user._id);
+        
+        if (!admin || admin.level !== 'admin') {
+            return res.status(403).json({ error: "Accès non autorisé" });
+        }
+
+        const pendingUser = await Verif.findOne({ userId });
+        if (!pendingUser) {
+            return res.status(404).json({ error: "Utilisateur en attente non trouvé" });
+        }
+
+        if (action === 'accept') {
+            const newUser = new User({
+                ...pendingUser.toObject(),
+                _id: undefined
+            });
+            await newUser.save();
+        }
+
+        await Verif.deleteOne({ userId });
+        res.json({ message: action === 'accept' ? "Utilisateur accepté" : "Utilisateur refusé" });
+    } catch (error) {
+        console.error("Erreur lors de la vérification:", error);
+        res.status(500).json({ error: "Erreur serveur" });
     }
 });
 
