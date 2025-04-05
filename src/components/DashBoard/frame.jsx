@@ -23,9 +23,11 @@ const frame = () => {
         <Header/>
         <div className='bg-gray-500 border-2 border-black h-full rounded-xl shadow-lg'>
         <div className='flex flex-row size-full'>
+            
             <div id="mainFrame" className='p-4 size-full'>
-            <Temperature/>
+              <Temperature/>
             </div>
+
             <div id="sideFrame" className='flex flex-col pr-4 h-full w-full'>
               <div className='flex flex-row m-4 ml-0 h-[20%] w-full'>
                 <div className='flex mr-2 items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg size-full'>
@@ -43,9 +45,9 @@ const frame = () => {
                   </div>
                   
                   {/* Cadre pour le selecteur de mode */}
-                  <div className='flex flex-row size-full border-2 border-t-0 border-black size-full rounded-b-xl shadow-lg'>
+                  <div className='flex flex-row size-full p-4 border-2 border-t-0 border-black size-full rounded-b-xl shadow-lg'>
                     {/* Selecteur de mode */}
-                    <div className='w-[50%] h-full p-4'>
+                    <div className='w-[50%] mr-4 h-full'>
                       {/* Utilisé pour les dropdown items */}
                       <div className="relative h-full">
                         <div className="h-full bg-white flex border border-gray-200 rounded items-center">
@@ -71,6 +73,17 @@ const frame = () => {
                         </div>
                         }         
                       </div>
+                    </div>
+
+                    <div className='flex flex-col w-[50%]'>
+                        <span>Allumer après</span>
+                        <span>13:00</span>
+                        <span>Eteindre après</span>
+                        <div className='flex flex-row size-full  text-black'>
+                          <input type="number" max="23" className='w-[20%] bg-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'></input>
+                          <span className='ml-2 mr-2'>:</span>
+                          <input type="number" max="59" className='w-[20%] bg-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'></input>
+                        </div>
                     </div>
                   </div>
 

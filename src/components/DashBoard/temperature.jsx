@@ -20,7 +20,7 @@ const temperature = () => {
                   <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-green-200 dark:text-neutral-700" strokeWidth="1" strokeDasharray="75 100" strokeLinecap="round"></circle>
 
                   {/* <!-- Gauge Progress --> */}
-                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-green-500 dark:text-green-500" strokeWidth="2" strokeDasharray="56.25 100" strokeLinecap="round"></circle>
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-green-500 dark:text-green-500" strokeWidth="2" strokeDasharray="19 100" strokeLinecap="round"></circle>
               </svg>
 
               {/* <!-- Value Text --> */}
