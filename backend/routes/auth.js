@@ -3,8 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware"); // Middleware d'authentification
-const { v4: uuidv4 } = require("uuid"); // Pour générer un userId unique
+const authMiddleware = require("../middleware/authMiddleware");
+const { v4: uuidv4 } = require("uuid");
 
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
 
@@ -30,31 +30,30 @@ router.post("/register", async (req, res) => {
     console.log("Registering user with email:", email);
   
     try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ error: "Email déjà utilisé" });
-      }
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: "Email déjà utilisé" });
+        }
   
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({
-        prenom,
-        nom,
-        pseudonyme, 
-        email,
-        password: hashedPassword,
-        level: "user", 
-        userId: uuidv4(),
-      });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            prenom,
+            nom,
+            pseudonyme, 
+            email,
+            password: hashedPassword,
+            level: "user", 
+            userId: uuidv4(),
+        });
   
-      await newUser.save();
-      console.log("User registered successfully:", newUser);
-      res.status(201).json({ message: "Utilisateur enregistré avec succès" });
+        await newUser.save();
+        console.log("User registered successfully:", newUser);
+        res.status(201).json({ message: "Utilisateur enregistré avec succès" });
     } catch (error) {
-      console.error("Erreur lors de l'inscription :", error);
-      res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
+        console.error("Erreur lors de l'inscription :", error);
+        res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
     }
-  });
-  
+});
 
 // Connexion utilisateur
 router.post("/login", async (req, res) => {
@@ -89,6 +88,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// Récupération du profil
 router.get("/profile", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
@@ -98,12 +98,12 @@ router.get("/profile", authMiddleware, async (req, res) => {
 
         const profileData = {
             public: {
-                pseudonyme: user.prenom,
-                age: '',
-                sexe: '',
-                dateNaissance: '',
-                typeMembre: user.level || 'Membre',
-                photo: ''
+                pseudonyme: user.pseudonyme,
+                age: user.age || '',
+                sexe: user.sexe || '',
+                dateNaissance: user.dateNaissance || '',
+                email: user.email,
+                photo: user.photo || ''
             },
             private: {
                 nom: user.nom,
@@ -118,7 +118,37 @@ router.get("/profile", authMiddleware, async (req, res) => {
     }
 });
 
+// Mise à jour du profil
+router.put("/profile/update", authMiddleware, async (req, res) => {
+    try {
+        const { public: publicData, private: privateData } = req.body;
+        
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: {
+                    pseudonyme: publicData.pseudonyme,
+                    age: publicData.age,
+                    sexe: publicData.sexe,
+                    dateNaissance: publicData.dateNaissance,
+                    email: publicData.email,
+                    photo: publicData.photo,
+                    nom: privateData.nom,
+                    prenom: privateData.prenom
+                }
+            },
+            { new: true }
+        );
 
+        if (!updatedUser) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
 
+        res.json({ success: true, message: "Profil mis à jour avec succès" });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du profil:", error);
+        res.status(500).json({ error: "Erreur serveur lors de la mise à jour du profil" });
+    }
+});
 
 module.exports = router;

@@ -14,16 +14,15 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Visualization from './pages/Visualization';
 import UserProfile from './pages/UserProfile';
+import EditProfile from './pages/EditProfile';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
-// 🔒 Route protégée
 const ProtectedRoute = ({ element }) => {
   const { isConnected } = useAuth();
   console.log("🔐 [ProtectedRoute] isConnected =", isConnected);
   return isConnected ? element : <Navigate to="/Accueil/Connexion&Inscription" replace />;
 };
 
-// ✅ Hook pour vérifier le token et connecter l’utilisateur
 const useCheckAuth = () => {
   const { login, logout, isConnected } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +52,7 @@ const useCheckAuth = () => {
         if (data.valid && data.user) {
           if (!isConnected) {
             console.log("🧠 Login triggered");
-            login(data.user); // 🔁 NE déclenche que si pas déjà connecté
+            login(data.user);
           }
         } else {
           console.log("❌ Token invalide, logout");
@@ -92,6 +91,7 @@ function AppRoutes() {
         <Route path="/Accueil/À Propos" element={<About />} />
         <Route path="/Accueil/Visualisation" element={<Visualization />} />
         <Route path="/Accueil/Profil" element={<ProtectedRoute element={<UserProfile />} />} />
+        <Route path="/Accueil/Profil/Edit" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </>
     )
