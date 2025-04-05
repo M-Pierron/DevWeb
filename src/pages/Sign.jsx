@@ -70,7 +70,7 @@ const SignIn = () => {
           navigate("/Accueil/Profil");
         } else {
           // ✅ ALERTE INSCRIPTION RÉUSSIE
-          alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+          alert("Inscription réussie ! Attendez la vérifiquation d'un admin.");
       
           
           setIsLogin(true);

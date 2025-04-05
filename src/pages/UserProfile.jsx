@@ -153,7 +153,7 @@ const UserProfile = () => {
             Déconnexion
           </button>
 
-          {user && user.level === 'admin' && (
+          {user?.level?.toLowerCase() === 'admin' && (
             <button
               onClick={() => navigate("/Accueil/Verification")}
               className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
