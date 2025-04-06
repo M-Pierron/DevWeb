@@ -17,7 +17,9 @@ const GestionDashboard = () => {
       zone: "Salon",
       batterie: 67,
       temperature: 21,
-      wifi: "fort"
+      wifi: "fort",
+      heureDebut: "8:00",
+      heureFin: "22:00"
     },
     {
       id: 2,
@@ -27,7 +29,9 @@ const GestionDashboard = () => {
       zone: "Entrée",
       batterie: 42,
       temperature: null,
-      wifi: "moyen"
+      wifi: "moyen",
+      heureDebut: "00:00",
+      heureFin: "00:00"
     }
   ]);
 
@@ -38,7 +42,9 @@ const GestionDashboard = () => {
     zone: "",
     temperature: "",
     batterie: "",
-    wifi: "fort"
+    wifi: "fort",
+    heureDebut: "",
+    heureFin: ""
   });
 
   const handleAjouterObjet = () => {
@@ -58,7 +64,7 @@ const GestionDashboard = () => {
       zone: objet.zone,
       temperature: objet.temperature || "",
       batterie: objet.batterie,
-      wifi: objet.wifi
+      wifi: objet.wifi,
     });
     setShowModal(true);
   };
@@ -75,6 +81,7 @@ const GestionDashboard = () => {
       temperature: objet.temperature || "",
       batterie: objet.batterie,
       wifi: objet.wifi
+      
     });
     setShowModal(true);
   };
@@ -107,7 +114,9 @@ const GestionDashboard = () => {
             zone: newObjet.zone,
             temperature: newObjet.temperature ? parseFloat(newObjet.temperature) : null,
             batterie: parseInt(newObjet.batterie),
-            wifi: newObjet.wifi
+            wifi: newObjet.wifi,
+            heureDebut: newObjet.heureDebut,
+            heureFin: newObjet.heureFin
           })
           
         } : obj
@@ -127,8 +136,11 @@ const GestionDashboard = () => {
   };
 
   const handleSupprimer = (id) => {
-    const filtered = objets.filter(obj => obj.id !== id);
-    setObjets(filtered);
+    const confirmer = window.confirm("Voulez-vous envoyer une demande de suppression à l'administrateur ?");
+    if (confirmer) {
+      // Simuler la demande envoyée à l'administrateur
+      alert("✔️ Demande de suppression envoyée à l’administrateur.");
+    }
   };
 
   return (
@@ -146,7 +158,7 @@ const GestionDashboard = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black">
+          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">
               {editMode ? "Modifier les informations" : configMode ? "Configurer l'objet" : "Ajouter un nouvel objet"}
             </h2>
@@ -194,48 +206,65 @@ const GestionDashboard = () => {
                       <option value="faible">Wi-Fi Faible</option>
                     </select>
                   </div>
+                  <div>
+                    <label htmlFor="heureDebut" className="block text-sm font-medium mb-1">Heure de début</label>
+                    <input id="heureDebut" name="heureDebut" type="time" value={newObjet.heureDebut} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+                </div>
+                <div>
+                    <label htmlFor="heureFin" className="block text-sm font-medium mb-1">Heure de fin</label>
+                    <input id="heureFin" name="heureFin" type="time" value={newObjet.heureFin} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+                </div>
+
                 </>
               )}
 
-                {!editMode && !configMode && (
-                  <>
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l’objet</label>
-                      <input id="name" name="name" value={newObjet.name} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
-                    </div>
-                    <div>
-                      <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
-                      <input id="description" name="description" value={newObjet.description} onChange={handleChange} className="border p-2 rounded w-full text-black" />
-                    </div>
-                    <div>
-                      <label htmlFor="status" className="block text-sm font-medium mb-1">Statut</label>
-                      <select id="status" name="status" value={newObjet.status} onChange={handleChange} className="border p-2 rounded w-full text-black">
-                        <option value="actif">Actif</option>
-                        <option value="inactif">Inactif</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="zone" className="block text-sm font-medium mb-1">Zone / Pièce</label>
-                      <input id="zone" name="zone" value={newObjet.zone} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
-                    </div>
-                    <div>
-                      <label htmlFor="temperature" className="block text-sm font-medium mb-1">Température (°C)</label>
-                      <input id="temperature" name="temperature" type="number" value={newObjet.temperature} onChange={handleChange} className="border p-2 rounded w-full text-black" />
-                    </div>
-                    <div>
-                      <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
-                      <input id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
-                    </div>
-                    <div>
-                      <label htmlFor="wifi" className="block text-sm font-medium mb-1">Connexion Wi-Fi</label>
-                      <select id="wifi" name="wifi" value={newObjet.wifi} onChange={handleChange} className="border p-2 rounded w-full text-black">
-                        <option value="fort">Wi-Fi Fort</option>
-                        <option value="moyen">Wi-Fi Moyen</option>
-                        <option value="faible">Wi-Fi Faible</option>
-                      </select>
-                    </div>
-                  </>
-                )}
+          {!editMode && !configMode && (
+            <>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l’objet</label>
+                <input id="name" name="name" value={newObjet.name} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              </div>
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
+                <input id="description" name="description" value={newObjet.description} onChange={handleChange} className="border p-2 rounded w-full text-black" />
+              </div>
+              <div>
+                <label htmlFor="status" className="block text-sm font-medium mb-1">Statut</label>
+                <select id="status" name="status" value={newObjet.status} onChange={handleChange} className="border p-2 rounded w-full text-black">
+                  <option value="actif">Actif</option>
+                  <option value="inactif">Inactif</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="zone" className="block text-sm font-medium mb-1">Zone / Pièce</label>
+                <input id="zone" name="zone" value={newObjet.zone} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              </div>
+              <div>
+                <label htmlFor="temperature" className="block text-sm font-medium mb-1">Température (°C)</label>
+                <input id="temperature" name="temperature" type="number" value={newObjet.temperature} onChange={handleChange} className="border p-2 rounded w-full text-black" />
+              </div>
+              <div>
+                <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
+                <input id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              </div>
+              <div>
+                <label htmlFor="wifi" className="block text-sm font-medium mb-1">Connexion Wi-Fi</label>
+                <select id="wifi" name="wifi" value={newObjet.wifi} onChange={handleChange} className="border p-2 rounded w-full text-black">
+                  <option value="fort">Wi-Fi Fort</option>
+                  <option value="moyen">Wi-Fi Moyen</option>
+                  <option value="faible">Wi-Fi Faible</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="heureDebut" className="block text-sm font-medium mb-1">Heure de début</label>
+                <input id="heureDebut" name="heureDebut" type="time" value={newObjet.heureDebut} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              </div>
+              <div>
+                <label htmlFor="heureFin" className="block text-sm font-medium mb-1">Heure de fin</label>
+                <input id="heureFin" name="heureFin" type="time" value={newObjet.heureFin} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              </div>
+            </>
+          )}
 
 
               <div className="flex justify-end gap-2 mt-4">
@@ -258,6 +287,7 @@ const GestionDashboard = () => {
             <p className="text-sm text-gray-700"><strong>Description:</strong> {objet.description}</p>
             <p className="text-sm text-gray-700"><strong>Statut:</strong> {objet.status}</p>
             <p className="text-sm text-gray-700"><strong>Zone:</strong> {objet.zone}</p>
+            <p className="text-sm text-gray-700"><strong>Horaires:</strong> {objet.heureDebut} - {objet.heureFin}</p>
             <div className="flex gap-4 my-2">
               {objet.temperature !== null && <Temperature value={objet.temperature} />}
               <Battery level={objet.batterie} />
