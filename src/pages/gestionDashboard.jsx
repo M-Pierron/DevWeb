@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Battery from "../components/DashBoard/battery";
 import Wifi from "../components/DashBoard/wifi";
 import Temperature from "../components/DashBoard/temperature";
+import Conso from "../components/DashBoard/conso.jsx"
 
 const GestionDashboard = () => {
   const [showModal, setShowModal] = useState(false);
@@ -17,9 +18,15 @@ const GestionDashboard = () => {
       zone: "Salon",
       batterie: 67,
       temperature: 21,
-      wifi: "fort",
+      wifi: "faible",
       heureDebut: "08:00",
-      heureFin: "22:00"
+      heureFin: "22:00",
+      historiqueUtilisation: [
+        { date: "2025-04-01", consommation: 2.3 },
+        { date: "2025-04-02", consommation: 1.9 },
+        { date: "2025-04-03", consommation: 3.0 },
+        { date: "2025-04-04", consommation: 2.5 }
+      ]
     },
     {
       id: 2,
@@ -31,7 +38,12 @@ const GestionDashboard = () => {
       temperature: null,
       wifi: "moyen",
       heureDebut: "00:00",
-      heureFin: "00:00"
+      heureFin: "00:00",
+      historiqueUtilisation: [
+        { date: "2025-04-01", consommation: 1.2 },
+        { date: "2025-04-02", consommation: 1.3 },
+        { date: "2025-04-03", consommation: 0.9 }
+      ]
     }
   ]);
 
@@ -46,6 +58,61 @@ const GestionDashboard = () => {
     heureDebut: "",
     heureFin: ""
   });
+
+  const calculateConsommation = () => {
+    //la consommation est influencée par la température et la batterie
+    let consommation = 0;
+    if (newObjet.temperature > 20) {
+      consommation += 2; // Plus chaud, plus de consommation
+    }
+    if (newObjet.batterie < 30) {
+      consommation += 1.5; // Batterie faible => Consommation plus élevée
+    }
+    return consommation;
+  };
+
+  const addToHistorique = (objetId) => {
+    const newConsommation = calculateConsommation();
+    const date = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+    const updatedObjets = objets.map(obj =>
+      obj.id === objetId ? {
+        ...obj,
+        historiqueUtilisation: [
+          ...obj.historiqueUtilisation,
+          { date, consommation: newConsommation }
+        ]
+      } : obj
+    );
+    setObjets(updatedObjets); // Mettre à jour l'état avec les données mises à jour
+  };
+
+  const verifEfficacite = (objet) => {
+    const seuilBatterie = 20;
+    const seuilConsommation = 2.5;
+    const seuilTemp = 30;
+  
+    let messages = [];
+  
+    if (objet.batterie < seuilBatterie) {
+      messages.push('⚠️ Batterie faible');
+    }
+  
+    if (objet.wifi === "faible") {
+      messages.push('⚠️ Signal Wi-Fi faible');
+    }
+  
+    if (objet.consommation > seuilConsommation) {
+      messages.push('⚠️ Consommation énergétique élevée');
+    }
+  
+    if (objet.temperature > seuilTemp) {
+      messages.push('⚠️ Température trop élevée');
+    }
+  
+    return messages.length > 0 ? messages.join(" • ") : null;
+  };
+  
+
 
   const handleAjouterObjet = () => {
     setEditMode(false);
@@ -106,6 +173,10 @@ const GestionDashboard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    const date = new Date().toISOString().split('T')[0];
+    const newConsommation = calculateConsommation();
+  
     if (editMode || configMode) {
       const updated = objets.map(obj =>
         obj.id === editingId ? {
@@ -121,9 +192,13 @@ const GestionDashboard = () => {
             batterie: parseInt(newObjet.batterie),
             wifi: newObjet.wifi,
             heureDebut: newObjet.heureDebut,
-            heureFin: newObjet.heureFin
-          })
-          
+            heureFin: newObjet.heureFin,
+          }),
+          // Met à jour directement l'historique ici
+          historiqueUtilisation: [
+            ...obj.historiqueUtilisation,
+            { date, consommation: newConsommation }
+          ]
         } : obj
       );
       setObjets(updated);
@@ -133,12 +208,14 @@ const GestionDashboard = () => {
         id,
         ...newObjet,
         temperature: newObjet.temperature ? parseFloat(newObjet.temperature) : null,
-        batterie: parseInt(newObjet.batterie)
+        batterie: parseInt(newObjet.batterie),
+        historiqueUtilisation: [{ date, consommation: newConsommation }]
       };
       setObjets([...objets, objetAjoute]);
     }
     handleCloseModal();
   };
+  
 
   const handleSupprimer = (id) => {
     const confirmer = window.confirm("Voulez-vous envoyer une demande de suppression à l'administrateur ?");
@@ -286,25 +363,35 @@ const GestionDashboard = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {objets.map((objet) => (
-          <div key={objet.id} className="border p-4 rounded-2xl shadow-md bg-gray-50">
-            <h2 className="text-xl font-bold mb-2 text-gray-800">{objet.name}</h2>
-            <p className="text-sm text-gray-700"><strong>Description:</strong> {objet.description}</p>
-            <p className="text-sm text-gray-700"><strong>Statut:</strong> {objet.status}</p>
-            <p className="text-sm text-gray-700"><strong>Zone:</strong> {objet.zone}</p>
-            <p className="text-sm text-gray-700"><strong>Horaires:</strong> {objet.heureDebut} - {objet.heureFin}</p>
-            <div className="flex gap-4 my-2">
-              {objet.temperature !== null && <Temperature value={objet.temperature} />}
-              <Battery level={objet.batterie} />
-              <Wifi strength={objet.wifi} />
-            </div>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => handleModifier(objet)} className="bg-blue-500 text-white px-3 py-1 rounded-xl">Modifier</button>
-              <button onClick={() => handleSupprimer(objet.id)} className="bg-red-500 text-white px-3 py-1 rounded-xl">Supprimer</button>
-              <button onClick={() => handleConfigurer(objet)} className="bg-green-500 text-white px-3 py-1 rounded-xl">Configurer</button>
-            </div>
+      {objets.map((objet) => (
+        <div key={objet.id} className="border p-4 rounded-2xl shadow-md bg-gray-50">
+          <h2 className="text-xl font-bold mb-2 text-gray-800">{objet.name}</h2>
+          <p className="text-sm text-gray-700"><strong>Description:</strong> {objet.description}</p>
+          <p className="text-sm text-gray-700"><strong>Statut:</strong> {objet.status}</p>
+          <p className="text-sm text-gray-700"><strong>Zone:</strong> {objet.zone}</p>
+          <p className="text-sm text-gray-700"><strong>Horaires:</strong> {objet.heureDebut} - {objet.heureFin}</p>
+          <p className="text-sm text-red-600 font-bold">{verifEfficacite(objet)}</p>
+
+         
+          <p className="text-sm text-gray-700"><strong>Consommation:</strong> {objet.consommation} kWh</p>
+
+          <div className="flex gap-4 my-2">
+            {objet.temperature !== null && <Temperature value={objet.temperature} />}
+            <Battery level={objet.batterie} />
+            <Wifi strength={objet.wifi} />
           </div>
-        ))}
+
+        
+          <Conso data={objet.historiqueUtilisation} />
+
+          <div className="flex gap-2 mt-4">
+            <button onClick={() => handleModifier(objet)} className="bg-blue-500 text-white px-3 py-1 rounded-xl">Modifier</button>
+            <button onClick={() => handleSupprimer(objet.id)} className="bg-red-500 text-white px-3 py-1 rounded-xl">Supprimer</button>
+            <button onClick={() => handleConfigurer(objet)} className="bg-green-500 text-white px-3 py-1 rounded-xl">Configurer</button>
+          </div>
+        </div>
+      ))}
+
       </div>
     </div>
   );
