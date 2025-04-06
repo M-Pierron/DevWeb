@@ -18,7 +18,7 @@ const GestionDashboard = () => {
       batterie: 67,
       temperature: 21,
       wifi: "fort",
-      heureDebut: "8:00",
+      heureDebut: "08:00",
       heureFin: "22:00"
     },
     {
@@ -65,6 +65,9 @@ const GestionDashboard = () => {
       temperature: objet.temperature || "",
       batterie: objet.batterie,
       wifi: objet.wifi,
+      heureDebut: objet.heureDebut || "",
+      heureFin: objet.heureFin || ""
+      
     });
     setShowModal(true);
   };
@@ -80,7 +83,9 @@ const GestionDashboard = () => {
       zone: objet.zone,
       temperature: objet.temperature || "",
       batterie: objet.batterie,
-      wifi: objet.wifi
+      wifi: objet.wifi,
+      heureDebut: objet.heureDebut || "",
+      heureFin: objet.heureFin || ""
       
     });
     setShowModal(true);
@@ -91,7 +96,7 @@ const GestionDashboard = () => {
     setEditMode(false);
     setConfigMode(false);
     setEditingId(null);
-    setNewObjet({ name: "", description: "", status: "actif", zone: "", temperature: "", batterie: "", wifi: "fort" });
+    setNewObjet({ name: "", description: "", status: "actif", zone: "", temperature: "", batterie: "", wifi: "fort",heureDebut:"",heureFin:"" });
   };
 
   const handleChange = (e) => {
