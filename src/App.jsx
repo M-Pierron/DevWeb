@@ -16,6 +16,7 @@ import Visualization from './pages/Visualization';
 import UserProfile from './pages/UserProfile';
 import EditProfile from './pages/EditProfile';
 import Verification from './pages/Verification';
+import GestionDashboard from './pages/gestionDashboard';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const ProtectedRoute = ({ element, adminOnly = false }) => {
@@ -100,6 +101,7 @@ function AppRoutes() {
         <Route path="/Accueil/À Propos" element={<About />} />
         <Route path="/Accueil/Visualisation" element={<Visualization />} />
         <Route path="/Accueil/Profil" element={<ProtectedRoute element={<UserProfile />} />} />
+        <Route path="/Accueil/Gestion" element={<ProtectedRoute element={<GestionDashboard />} />} />
         <Route path="/Accueil/Profil/Edit" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/Accueil/Verification" element={<ProtectedRoute element={<Verification />} adminOnly={true} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
