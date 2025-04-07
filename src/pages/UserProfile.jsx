@@ -13,7 +13,8 @@ const UserProfile = () => {
       dateNaissance: '',
       sexe: '',
       email: '',
-      photo: avatar1
+      photo: avatar1,
+      level: '' // Ajoutez le niveau ici
     },
     private: {
       nom: '',
@@ -153,7 +154,7 @@ const UserProfile = () => {
             Déconnexion
           </button>
 
-          {user?.level?.toLowerCase() === 'admin' && (
+          {(userData.public.level === 'admin' || user?.level === 'admin') && (
             <button
               onClick={() => navigate("/Accueil/Verification")}
               className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"

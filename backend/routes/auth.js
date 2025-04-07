@@ -117,7 +117,8 @@ router.get("/profile", authMiddleware, async (req, res) => {
                 sexe: user.sexe || '',
                 dateNaissance: user.dateNaissance || '',
                 email: user.email,
-                photo: user.photo || ''
+                photo: user.photo || '',
+                level: user.level 
             },
             private: {
                 nom: user.nom,
