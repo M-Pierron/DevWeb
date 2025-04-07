@@ -6,12 +6,51 @@ import Battery from "./battery"
 import Wifi from "./wifi"
 
 import DropDownItem from "../Dropdown/dropDownItem"
+import Timer from "../timer"
 
 const options = ["Automatique", "Manuel", "Programmé", "Économique"]
 
 const frame = () => {
   const [isModeDropDownOpen, setIsModeDropDownOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState("Automatique");
+  
+  const [onHour, setOnHour] = useState(0);
+  const [onMinute, setOnMinute] = useState(0);
+  const [offHour, setOffHour] = useState(0);
+  const [offMinute, setOffMinute] = useState(1);
+
+  const isTimeGreater = (h1, m1, h2, m2) => {
+    return h1 > h2 || (h1 === h2 && m1 >= m2);
+  };
+
+  const handleOnHourChange = (e) => {
+    const value = Math.max(0, Math.min(23, Number(e.target.value)));
+    if (!isTimeGreater(value, onMinute, offHour, offMinute)) {
+      setOnHour(value);
+    }
+  };
+
+  const handleOnMinuteChange = (e) => {
+    const value = Math.max(0, Math.min(59, Number(e.target.value)));
+    if (!isTimeGreater(onHour, value, offHour, offMinute)) {
+      setOnMinute(value);
+    }
+  };
+
+  const handleOffHourChange = (e) => {
+    const value = Math.max(0, Math.min(23, Number(e.target.value)));
+    if (!isTimeGreater(onHour, onMinute, value, offMinute)) {
+      setOffHour(value);
+    }
+  };
+
+  const handleOffMinuteChange = (e) => {
+    const value = Math.max(0, Math.min(59, Number(e.target.value)));
+    if (!isTimeGreater(onHour, onMinute, offHour, value)) {
+      setOffMinute(value);
+    }
+  };
+
 
   const onModeClick = (option) => {
     setSelectedMode(option);
@@ -76,14 +115,15 @@ const frame = () => {
                     </div>
 
                     <div className='flex flex-col w-[50%]'>
-                        <span>Allumer après</span>
-                        <span>13:00</span>
-                        <span>Eteindre après</span>
-                        <div className='flex flex-row size-full  text-black'>
-                          <input type="number" max="23" className='w-[20%] bg-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'></input>
-                          <span className='ml-2 mr-2'>:</span>
-                          <input type="number" max="59" className='w-[20%] bg-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'></input>
-                        </div>
+                      <div>
+                        <span className='block mb-1 font-semibold'>Allumer après</span>
+                        <Timer onHourChange={handleOnHourChange} onMinuteChange={handleOnMinuteChange} hour={onHour} minute={onMinute}/>
+                      </div>
+
+                      <div>
+                        <span className='block mb-1 font-semibold'>Éteindre après</span>
+                        <Timer onHourChange={handleOffHourChange} onMinuteChange={handleOffMinuteChange} hour={offHour} minute={offMinute}/>
+                      </div>
                     </div>
                   </div>
 
