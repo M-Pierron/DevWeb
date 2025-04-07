@@ -14,7 +14,7 @@ const UserProfile = () => {
       sexe: '',
       email: '',
       photo: avatar1,
-      level: '' // Ajoutez le niveau ici
+      level: ''
     },
     private: {
       nom: '',
@@ -26,6 +26,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     console.log("🔥 useEffect de UserProfile appelé");
+    console.log("Current user from context:", user); // Debugging user from context
     let isMounted = true;
   
     const token = localStorage.getItem("token");
@@ -52,12 +53,9 @@ const UserProfile = () => {
           logout();
           navigate("/");
         } else {
-          setUserData({
-            public: data.public,
-            private: data.private,
-          });
+          console.log("Profile data received:", data); // Debugging profile data
+          setUserData(data);
           setIsChecking(false);
-          console.log("Profile data fetched:", data);
         }
       })
       .catch((err) => {
@@ -71,7 +69,7 @@ const UserProfile = () => {
     return () => {
       isMounted = false;
     };
-  }, [navigate, logout]);
+  }, [navigate, logout, user]);
 
   if (isChecking) {
     return <div>Vérification en cours...</div>;
@@ -83,6 +81,17 @@ const UserProfile = () => {
     logout();
     navigate("/");
   };
+
+  const handleAdminVerification = () => {
+    console.log("Tentative d'accès à la page de vérification");
+    console.log("User level from context:", user?.level);
+    console.log("User level from profile:", userData.public.level);
+    navigate("/Accueil/Verification");
+  };
+
+  // Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil
+  const isAdmin = user?.level === 'admin' || userData.public.level === 'admin';
+  console.log("Is admin?", isAdmin); // Debugging admin status
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -129,6 +138,11 @@ const UserProfile = () => {
             <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
             <p className="p-2 bg-gray-50 rounded">{userData.public.email}</p>
           </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Niveau</label>
+            <p className="p-2 bg-gray-50 rounded">{userData.public.level || 'user'}</p>
+          </div>
         </div>
 
         {/* Boutons d'action */}
@@ -154,9 +168,9 @@ const UserProfile = () => {
             Déconnexion
           </button>
 
-          {(userData.public.level === 'admin' || user?.level === 'admin') && (
+          {isAdmin && (
             <button
-              onClick={() => navigate("/Accueil/Verification")}
+              onClick={handleAdminVerification}
               className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
             >
               Vérification Admin

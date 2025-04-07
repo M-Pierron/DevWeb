@@ -4,25 +4,63 @@ import { useAuth } from '../context/AuthContext';
 
 const Verification = () => {
   const [pendingUsers, setPendingUsers] = useState([]);
+  const [userLevel, setUserLevel] = useState(null);
+  const [isChecking, setIsChecking] = useState(true);
+
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
-    if (!user || user.level !== 'admin') {
-      navigate('/Accueil');
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      logout();
+      navigate('/');
       return;
     }
 
-    fetchPendingUsers();
-  }, [user, navigate]);
+    // 🔍 Récupérer les infos utilisateur depuis le profil complet
+    const fetchUserLevel = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/profile", {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-  const fetchPendingUsers = async () => {
+        const data = await res.json();
+        if (data?.public?.level === 'admin') {
+          setUserLevel('admin');
+          fetchPendingUsers(token); // ✅ On ne fetch les users que si admin
+        } else {
+          navigate('/Accueil'); // ❌ Pas admin = redirection
+        }
+      } catch (err) {
+        console.error("Erreur lors de la récupération du profil:", err);
+        logout();
+        navigate('/');
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    fetchUserLevel();
+  }, [navigate, logout]);
+
+  const fetchPendingUsers = async (token) => {
     try {
       const response = await fetch('http://localhost:5000/api/auth/pending-users', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       setPendingUsers(data);
     } catch (error) {
@@ -32,22 +70,29 @@ const Verification = () => {
 
   const handleVerification = async (userId, action) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/verify-user`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/verify-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ userId, action })
       });
 
-      if (response.ok) {
-        fetchPendingUsers();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      await fetchPendingUsers(token);
     } catch (error) {
       console.error('Error verifying user:', error);
     }
   };
+
+  if (isChecking) {
+    return <div>Chargement en cours...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">

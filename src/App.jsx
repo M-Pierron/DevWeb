@@ -103,7 +103,7 @@ function AppRoutes() {
         <Route path="/Accueil/Profil" element={<ProtectedRoute element={<UserProfile />} />} />
         <Route path="/Accueil/Gestion" element={<ProtectedRoute element={<GestionDashboard />} />} />
         <Route path="/Accueil/Profil/Edit" element={<ProtectedRoute element={<EditProfile />} />} />
-        <Route path="/Accueil/Verification" element={<ProtectedRoute element={<Verification />} adminOnly={true} />} />
+        <Route path="/Accueil/Verification" element={<ProtectedRoute element={<Verification />}  />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </>
     )
