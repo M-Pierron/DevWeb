@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const Device = require('./Device');
+
 const userSchema = new mongoose.Schema({
     prenom: String,
     nom: String,
@@ -11,7 +13,8 @@ const userSchema = new mongoose.Schema({
     sexe: String,
     dateNaissance: String,
     photo: String,
-    pseudonyme: { type: String, required: true }
+    pseudonyme: { type: String, required: true },
+    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Device' }]
 });
 
 const User = mongoose.model('User', userSchema);
