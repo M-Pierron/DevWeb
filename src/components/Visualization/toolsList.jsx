@@ -79,7 +79,7 @@ const ToolsList = () => {
 
   return (
     <>
-      <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
+      <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-dvh'>
         <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
         <div className='flex flex-col h-full'>
           <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
