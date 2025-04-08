@@ -107,7 +107,7 @@ const frame = () => {
                         {/* Dropdown Items */}
                         {isModeDropDownOpen && <div className={`absolute rounded shadow bg-white overflow-hidden flex flex-col w-full mt-1 border border-gray-200 text-black`}>
                           {options.map((option) => (
-                            <DropDownItem key={option} itemName={option} onClick={() => onModeClick(option)}/>
+                            <DropDownItem className={"block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"} key={option} itemName={option} onClick={() => onModeClick(option)}/>
                           ))}
                         </div>
                         }         

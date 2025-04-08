@@ -5,9 +5,9 @@ function Home() {
   return (
     <div>
       <Nav name={"ACCUEIL"}/>
-      <div className = "home">
+      {/* <div className = "home">
         
-      </div>
+      </div> */}
     </div>
   )
 }
