@@ -28,7 +28,7 @@ function Start({ setIsAuthenticated }) {
 
       setTimeout(() => {
         navigate("/Accueil");
-      }, 100);
+      }, 1000);
     }
   };
 

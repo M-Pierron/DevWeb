@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import avatar1 from '../assets/avatar1.png';
+import Nav from "../components/nav"
 
 const EditProfile = () => {
   const [userData, setUserData] = useState({
@@ -115,13 +116,15 @@ const EditProfile = () => {
   };
 
   return (
+    <>
+    <Nav name="PROFIL"/>
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Modifier le Profil</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
 
         {/* Photo de profil */}
         <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil :</label>
           <div className="flex items-center space-x-4">
             <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
             <input
@@ -151,7 +154,7 @@ const EditProfile = () => {
 
         {/* Pseudonyme */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme :</label>
           <input
             type="text"
             name="public.pseudonyme"
@@ -163,7 +166,7 @@ const EditProfile = () => {
 
         {/* Âge */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Âge :</label>
           <input
             type="number"
             name="public.age"
@@ -177,7 +180,7 @@ const EditProfile = () => {
 
         {/* Date de naissance */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance :</label>
           <input
             type="text"
             name="public.dateNaissance"
@@ -191,7 +194,7 @@ const EditProfile = () => {
 
         {/* Sexe */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre :</label>
           <select
             name="public.sexe"
             value={userData.public.sexe}
@@ -207,7 +210,7 @@ const EditProfile = () => {
 
         {/* Email */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Email :</label>
           <input
             type="email"
             name="public.email"
@@ -219,11 +222,11 @@ const EditProfile = () => {
 
         {/* Informations Privées */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">Informations Privées</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">-- Informations Privées --</h3>
 
           {/* Nom */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nom</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Nom :</label>
             <input
               type="text"
               name="private.nom"
@@ -235,7 +238,7 @@ const EditProfile = () => {
 
           {/* Prénom */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Prénom</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Prénom :</label>
             <input
               type="text"
               name="private.prenom"
@@ -263,7 +266,8 @@ const EditProfile = () => {
           </button>
         </div>
       </div>
-    </div>
+    </div>4
+    </>
   );
 };
 

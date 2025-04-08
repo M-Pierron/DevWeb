@@ -3,12 +3,15 @@ import Battery from "../components/DashBoard/battery";
 import Wifi from "../components/DashBoard/wifi";
 import Temperature from "../components/DashBoard/temperature";
 import Conso from "../components/DashBoard/conso.jsx"
+import { UNSAFE_ViewTransitionContext } from "react-router-dom";
+import Nav from "../components/nav"
 
 const GestionDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [configMode, setConfigMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [visibleNav, setVisibleNav] = useState(true);
   const [objets, setObjets] = useState([
     {
       id: 1,
@@ -102,6 +105,7 @@ const GestionDashboard = () => {
   
   
   const handleAjouterObjet = () => {
+    setVisibleNav(false);
     setEditMode(false);
     setConfigMode(false);
     setShowModal(true);
@@ -146,6 +150,7 @@ const GestionDashboard = () => {
   };
 
   const handleCloseModal = () => {
+    setVisibleNav(true);
     setShowModal(false);
     setEditMode(false);
     setConfigMode(false);
@@ -212,7 +217,21 @@ const GestionDashboard = () => {
     }
   };
 
+  const handleShowStats = () => {
+    setShowStats(true);
+    setVisibleNav(false);
+  }
+
+  const handleNoStats = () => {
+    setShowStats(false);
+    setVisibleNav(true);
+  }
+
   return (
+    <>
+    {visibleNav && (
+      <Nav name="GESTION"/>
+    )}
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-black">Gestion des Objets Connectés</h1>
 
@@ -224,7 +243,7 @@ const GestionDashboard = () => {
           + Ajouter un objet
         </button>
         <button
-    onClick={() => setShowStats(true)}
+    onClick={handleShowStats}
     className="bg-purple-600 text-white px-4 py-2 rounded-xl hover:bg-purple-700"
   >
     📊 Stat
@@ -262,8 +281,8 @@ const GestionDashboard = () => {
 
             <div className="flex justify-end mt-4">
               <button
-                onClick={() => setShowStats(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded"
+                onClick={handleNoStats}
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
               >
                 Fermer
               </button>
@@ -385,10 +404,10 @@ const GestionDashboard = () => {
 
 
               <div className="flex justify-end gap-2 mt-4">
-                <button type="button" onClick={handleCloseModal} className="px-4 py-2 bg-gray-300 rounded text-black">
+                <button type="button" onClick={handleCloseModal} className="px-4 py-2 bg-gray-300 rounded text-black hover:bg-gray-400">
                   Annuler
                 </button>
-                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">
+                <button type="submit" className="px-4 py-2 text-indigo-700 bg-indigo-700 border-indigo-700 text-white rounded hover:bg-indigo-800">
                   {editMode ? "Enregistrer" : configMode ? "Appliquer" : "Ajouter"}
                 </button>
               </div>
@@ -419,16 +438,17 @@ const GestionDashboard = () => {
         
           <Conso data={objet.historiqueUtilisation} />
 
-          <div className="flex gap-2 mt-4">
-            <button onClick={() => handleModifier(objet)} className="bg-blue-500 text-white px-3 py-1 rounded-xl">Modifier</button>
-            <button onClick={() => handleSupprimer(objet.id)} className="bg-red-500 text-white px-3 py-1 rounded-xl">Supprimer</button>
-            <button onClick={() => handleConfigurer(objet)} className="bg-green-500 text-white px-3 py-1 rounded-xl">Configurer</button>
+          <div className="flex gap-2 mt-10">
+            <button onClick={() => handleModifier(objet)} className="bg-blue-500 text-white px-3 py-1 rounded-xl hover:bg-blue-700">Modifier</button>
+            <button onClick={() => handleSupprimer(objet.id)} className="bg-red-500 text-white px-3 py-1 rounded-xl hover:bg-red-900">Supprimer</button>
+            <button onClick={() => handleConfigurer(objet)} className="bg-green-500 text-white px-3 py-1 rounded-xl hover:bg-green-600">Configurer</button>
           </div>
         </div>
       ))}
 
       </div>
     </div>
+    </>
   );
 };
 
