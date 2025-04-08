@@ -331,7 +331,7 @@ const GestionDashboard = () => {
                   </div>
                   <div>
                     <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
-                    <input id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+                    <input id="batterie" name="batterie" type="number" min="0" max="100" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
                   </div>
                   <div>
                     <label htmlFor="wifi" className="block text-sm font-medium mb-1">Connexion Wi-Fi</label>
