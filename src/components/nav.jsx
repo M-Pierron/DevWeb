@@ -13,9 +13,10 @@ function Nav({ name }) {
   };
 
   return (
-    <nav className="flex items-center justify-between bg-[#3c5497] w-full h-[5vw]">
-      <img className="h-full ml-[4vw]" src="/src/assets/logoCYhouse.png" alt="Logo de CY-House."/>
-      <div className="flex items-center gap-[4vw] h-full font-bold">
+    <nav className="flex items-center justify-between bg-[#3c5497] w-full h-[5vw] border-b-black border-b-2">
+      <div className="size-full">
+      </div>
+      <div className="flex justify-center items-center gap-[4vw] size-full font-bold">
         <Link className="hover:scale-125" to="/Accueil">Accueil</Link>
         
         {!isConnected ? (
@@ -31,18 +32,10 @@ function Nav({ name }) {
         <Link className="hover:scale-125" to="/Accueil/À Propos">À Propos</Link>
         
       </div>
-      <div className="relative h-[60%] mr-[6vw]" onClick={() => setIsUserProfilDropDownOpened((prev) => !prev)}>
-        <label className="size-full">
-          <img className="w-full h-full" src="/src/assets/userProfil.svg"/>
-        </label>
-        {isUserProfilDropDownOpened && <div className="flex flex-col absolute bg-black h-fit w-full">
-          <DropDownItem className={"text-white"} itemName={"Profil"}/>
-          <span>Test</span>
-          <span>Test</span>
-          <span>Test</span>
-          <span>Test</span>
-        </div>}
+      <div className="flex size-full justify-end">
+        <img className="h-full" src="/src/assets/logoCYhouse.png" alt="Logo de CY-House."/>
       </div>
+      
     </nav>
   );
 }
