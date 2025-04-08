@@ -106,7 +106,7 @@ const UserProfile = () => {
               <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
             ) : (
               <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">No Photo</span>
+                <span className="text-xs text-center text-gray-500">?</span>
               </div>
             )}
           </div>
