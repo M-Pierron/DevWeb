@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Visualization from './pages/Visualization';
 import UserProfile from './pages/UserProfile';
+<<<<<<< Updated upstream
 
 const checkAuth = (setIsAuthenticated, setIsLoading) => {
   const token = localStorage.getItem('token');
@@ -40,6 +41,20 @@ const checkAuth = (setIsAuthenticated, setIsLoading) => {
   } else {
     setIsAuthenticated(false); // Aucun token, utilisateur non authentifié
     setIsLoading(false); // Fin du chargement
+=======
+import EditProfile from './pages/EditProfile';
+import Verification from './pages/Verification';
+import GestionDashboard from './pages/gestionDashboard';
+import AdminPanel from "./pages/AdminPanel";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+
+
+const ProtectedRoute = ({ element, adminOnly = false }) => {
+  const { isConnected, user } = useAuth();
+  
+  if (!isConnected) {
+    return <Navigate to="/Accueil/Connexion&Inscription" replace />;
+>>>>>>> Stashed changes
   }
 };
 
@@ -64,12 +79,19 @@ function App() {
         <Route path="/Accueil/Connexion&Inscription" element={<Sign setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/Accueil/À Propos" element={<About />} />
         <Route path="/Accueil/Visualisation" element={<Visualization />} />
+<<<<<<< Updated upstream
         {/* Route protégée pour le profil */}
         <Route
           path="/profile"
           element={isAuthenticated ? <UserProfile setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/Accueil/Connexion&Inscription" />}
         />
         {/* Redirection pour les pages non définies */}
+=======
+        <Route path="/Accueil/Profil" element={<ProtectedRoute element={<UserProfile />} />} />
+        <Route path="/Accueil/Gestion" element={<ProtectedRoute element={<GestionDashboard />} />} />
+        <Route path="/Accueil/Profil/Edit" element={<ProtectedRoute element={<EditProfile />} />} />
+        <Route path="/Accueil/Admin" element={<AdminPanel />} />
+>>>>>>> Stashed changes
         <Route path="*" element={<Navigate to="/" replace />} />
       </>
     )
