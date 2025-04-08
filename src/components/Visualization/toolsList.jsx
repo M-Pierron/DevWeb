@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 import ToolsFilter from './toolsFilter';
 import ToolsSearchBar from './toolsSearchBar';
 import DeviceItem from "./deviceItem";
 
-const toolsList = () => {
+const ToolsList = () => {
   const iotDevices = [
     [
       "Sécurité & Contrôle d'accès", "security",
@@ -61,48 +61,43 @@ const toolsList = () => {
       ]
     ]
   ];
-  
+
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
-  const [selectedDeviceItem, setSelectedDeviceItem] = useState(false);
+  const [category, setCategory] = useState('');
+  const [filteredObjects, setFilteredObjects] = useState([]);
 
   const onToolFilterClick = () => {
     setToolsFilterVisibility(!isToolsFilterVisible);
   };
 
-  // Select device and update backend
-  const onDeviceItemClick = async (deviceName) => {
-    setSelectedDeviceItem(deviceName);
-
-    await fetch("http://localhost:5000/api/devices/select", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deviceName })
-    });
+  const handleCategorySelection = async (category) => {
+    setCategory(category); // Mémoriser la catégorie sélectionnée
+    const response = await fetch(`http://localhost:5000/api/objects/filter?category=${category}`);
+    const data = await response.json();
+    setFilteredObjects(data); // Mettre à jour les objets filtrés
   };
-
-  useEffect(() => {
-    fetch("http://localhost:5000/api/devices/selected")
-      .then(res => res.json())
-      .then(data => setSelectedDeviceItem(data.selectedDevice));
-  }, []);
 
   return (
     <>
-          <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
-            <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick}/>
-            <div className='flex flex-col h-full'>
-              <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
-              {/* Tools list */}
-              <div className='h-full mt-4 bg-white text-black' onClick={() => onDeviceItemClick("Thermostat Salon")}>
-                <DeviceItem 
-                  deviceName={"Thermostat Salon"} 
-                  isSelected={selectedDeviceItem === "Thermostat Salon"}
-                />
-              </div>
-            </div>
+      <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
+        <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
+        <div className='flex flex-col h-full'>
+          <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
+          {/* Tools list */}
+          <div className='h-full mt-4 bg-white text-black'>
+            {/* Afficher les objets filtrés */}
+            {filteredObjects.length > 0 ? (
+              filteredObjects.map((object) => (
+                <DeviceItem key={object._id} deviceName={object.name} />
+              ))
+            ) : (
+              <p>Aucun objet trouvé pour cette catégorie.</p>
+            )}
           </div>
+        </div>
+      </div>
     </>
-  )
+  );
 }
 
-export default toolsList
+export default ToolsList;

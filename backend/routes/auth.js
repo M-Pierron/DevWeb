@@ -2,9 +2,10 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Verif = require("../models/Verif");
 const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware"); // Middleware d'authentification
-const { v4: uuidv4 } = require("uuid"); // Pour générer un userId unique
+const authMiddleware = require("../middleware/authMiddleware");
+const { v4: uuidv4 } = require("uuid");
 
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
 
@@ -17,38 +18,38 @@ router.post("/verifyToken", (req, res) => {
         const decoded = jwt.verify(token, JWT_SECRET);
         res.status(200).json({ valid: true, user: decoded });
     } catch (error) {
+        console.error("Token verification error:", error);
         res.status(401).json({ valid: false, error: "Token invalide" });
     }
 });
 
-// Inscription utilisateur
+// Inscription utilisateur (sauvegarde dans Verif)
 router.post("/register", async (req, res) => {
-    const { email, password, prenom, nom, level } = req.body;
-
+    const { email, password, prenom, nom, pseudonyme } = req.body;
+    console.log("Registering user with email:", email);
+  
     try {
-        // Vérifier si l'utilisateur existe déjà avec le même email
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        const existingVerif = await Verif.findOne({ email });
+        
+        if (existingUser || existingVerif) {
             return res.status(400).json({ error: "Email déjà utilisé" });
         }
-
-        // Hasher le mot de passe avant de l'enregistrer
+  
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Créer un nouvel utilisateur avec un userId unique
-        const newUser = new User({
+        const newVerif = new Verif({
             prenom,
             nom,
+            pseudonyme, 
             email,
             password: hashedPassword,
-            level,
+            level: "user", 
             userId: uuidv4(),
         });
-
-        // Enregistrer l'utilisateur dans la base de données
-        await newUser.save();
-
-        res.status(201).json({ message: "Utilisateur enregistré avec succès" });
+  
+        await newVerif.save();
+        console.log("User registered for verification:", newVerif);
+        res.status(201).json({ message: "Inscription en attente de vérification" });
     } catch (error) {
         console.error("Erreur lors de l'inscription :", error);
         res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
@@ -59,12 +60,18 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log("Login attempt with email:", email);
         if (!email || !password) {
             return res.status(400).json({ error: "Email et mot de passe requis" });
         }
 
         const user = await User.findOne({ email });
         if (!user) {
+            // Vérifier si l'utilisateur est en attente de vérification
+            const pendingUser = await Verif.findOne({ email });
+            if (pendingUser) {
+                return res.status(401).json({ error: "Votre compte est en attente de vérification par un administrateur" });
+            }
             return res.status(401).json({ error: "Utilisateur non trouvé" });
         }
 
@@ -73,49 +80,137 @@ router.post("/login", async (req, res) => {
             return res.status(401).json({ error: "Mot de passe incorrect" });
         }
 
-        // Générer le token avec _id et userId
         const token = jwt.sign(
-            { email: user.email, _id: user._id, userId: user.userId }, 
-            JWT_SECRET, 
+            { email: user.email, _id: user._id, userId: user.userId, level: user.level },
+            JWT_SECRET,
             { expiresIn: "1h" }
         );
+        console.log("Generated token:", token);
 
-        res.json({ message: "Connexion réussie", token });
+        res.json({ 
+            message: "Connexion réussie", 
+            token,
+            user: {
+                email: user.email,
+                level: user.level,
+                userId: user.userId
+            }
+        });
     } catch (err) {
         console.error("Erreur lors de la connexion :", err);
         res.status(500).json({ error: "Erreur serveur lors de la connexion" });
     }
 });
 
+// Récupération du profil
 router.get("/profile", authMiddleware, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('-password'); // Exclure le mot de passe
+        const user = await User.findById(req.user._id).select('-password');
         if (!user) {
             return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
 
-        // Formater les données du profil comme attendu par le frontend
         const profileData = {
             public: {
-                pseudonyme: user.prenom, // Vous pouvez ajuster selon votre modèle
-                age: '', // À ajouter dans le modèle si nécessaire
-                sexe: '', // À ajouter dans le modèle si nécessaire
-                dateNaissance: '', // À ajouter dans le modèle si nécessaire
-                typeMembre: user.level || 'Membre',
-                photo: '' // À ajouter dans le modèle si nécessaire
+                pseudonyme: user.pseudonyme,
+                age: user.age || '',
+                sexe: user.sexe || '',
+                dateNaissance: user.dateNaissance || '',
+                email: user.email,
+                photo: user.photo || '',
+                level: user.level 
             },
             private: {
                 nom: user.nom,
                 prenom: user.prenom
             }
         };
-
+        console.log("Profile data fetched:", profileData);
         res.json(profileData);
     } catch (error) {
         console.error("Erreur lors de la récupération du profil:", error);
         res.status(500).json({ error: "Erreur serveur lors de la récupération du profil" });
     }
 });
-  
+
+// Récupérer les utilisateurs en attente de vérification
+router.get("/pending-users", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user || user.level !== 'admin') {
+            return res.status(403).json({ error: "Accès non autorisé" });
+        }
+
+        const pendingUsers = await Verif.find().select('-password');
+        res.json(pendingUsers);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs en attente:", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+// Vérifier un utilisateur
+router.post("/verify-user", authMiddleware, async (req, res) => {
+    try {
+        const { userId, action } = req.body;
+        const admin = await User.findById(req.user._id);
+        
+        if (!admin || admin.level !== 'admin') {
+            return res.status(403).json({ error: "Accès non autorisé" });
+        }
+
+        const pendingUser = await Verif.findOne({ userId });
+        if (!pendingUser) {
+            return res.status(404).json({ error: "Utilisateur en attente non trouvé" });
+        }
+
+        if (action === 'accept') {
+            const newUser = new User({
+                ...pendingUser.toObject(),
+                _id: undefined
+            });
+            await newUser.save();
+        }
+
+        await Verif.deleteOne({ userId });
+        res.json({ message: action === 'accept' ? "Utilisateur accepté" : "Utilisateur refusé" });
+    } catch (error) {
+        console.error("Erreur lors de la vérification:", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+// Mise à jour du profil
+router.put("/profile/update", authMiddleware, async (req, res) => {
+    try {
+        const { public: publicData, private: privateData } = req.body;
+        
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: {
+                    pseudonyme: publicData.pseudonyme,
+                    age: publicData.age,
+                    sexe: publicData.sexe,
+                    dateNaissance: publicData.dateNaissance,
+                    email: publicData.email,
+                    photo: publicData.photo,
+                    nom: privateData.nom,
+                    prenom: privateData.prenom
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+
+        res.json({ success: true, message: "Profil mis à jour avec succès" });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du profil:", error);
+        res.status(500).json({ error: "Erreur serveur lors de la mise à jour du profil" });
+    }
+});
 
 module.exports = router;

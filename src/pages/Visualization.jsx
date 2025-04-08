@@ -1,5 +1,4 @@
 import React from 'react'
-
 import Nav from "../components/nav"
 import ToolsList from "../components/Visualization/toolsList"
 import DashBoardFrame from "../components/DashBoard/frame"
@@ -7,7 +6,7 @@ import DashBoardFrame from "../components/DashBoard/frame"
 const Visualization = () => {
   return (
     <>
-        <Nav/>
+        <Nav name="Visualisation"/>
         <div className='h-dvh flex justify-between m-5'>
           <ToolsList />
           <DashBoardFrame />

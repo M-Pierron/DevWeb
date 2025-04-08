@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const verifSchema = new mongoose.Schema({
     prenom: String,
     nom: String,
     email: { type: String, required: true, unique: true },
@@ -11,9 +11,10 @@ const userSchema = new mongoose.Schema({
     sexe: String,
     dateNaissance: String,
     photo: String,
-    pseudonyme: { type: String, required: true }
+    pseudonyme: { type: String, required: true },
+    status: { type: String, default: 'pending' }
 });
 
-const User = mongoose.model('User', userSchema);
+const Verif = mongoose.model('Verif', verifSchema);
 
-module.exports = User;
+module.exports = Verif;
