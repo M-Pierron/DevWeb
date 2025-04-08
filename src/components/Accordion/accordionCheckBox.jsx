@@ -4,7 +4,7 @@ const accordionCheckBox = ({label}) => {
   return (
     <div>
         <input className='mr-2 bg-white' type="checkbox" id={label} name="interest" value={label} />
-        <label for={label}>{label}</label>
+        <label htmlFor={label}>{label}</label>
     </div>
   )
 }
