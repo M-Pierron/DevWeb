@@ -93,41 +93,6 @@ const SignIn = () => {
   };
   
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const url = isLogin
-      ? "http://localhost:5000/api/auth/login"
-      : "http://localhost:5000/api/auth/register";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-        ...(isLogin ? {} : { prenom: formData.prenom, nom: formData.nom }), // Ajoute prénom et nom si c'est une inscription
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.token) {
-      // Stocke le token dans le localStorage
-      localStorage.setItem("token", data.token);
-      setIsAuthenticated(true); // Mise à jour de l'état d'authentification
-      navigate("/profile"); // Redirige vers le profil
-    } else {
-      alert(data.error || "Une erreur est survenue");
-    }
-  };
-
   return (
     <div>
       <Nav name={isLogin ? 'CONNEXION' : 'INSCRIPTION'} />
