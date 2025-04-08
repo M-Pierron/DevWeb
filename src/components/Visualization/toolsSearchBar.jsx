@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const toolsSearchBar = ({onToolFilterClick}) => {
+
+  const [input, setInput] = useState("");
+
+  const onInputChange = (value) => {
+    setInput(value);
+    
+  }
 
   return (
     <div className="flex flex-row h-[5%]">
