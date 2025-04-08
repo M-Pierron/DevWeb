@@ -1,16 +1,20 @@
 import React from 'react'
 
-const battery = ({percentage}) => {
+const battery = ({ level }) => {
+  const color = level > 60 ? 'bg-green-500' : level > 30 ? 'bg-yellow-400' : 'bg-red-500';
   return (
-    <div className="flex size-full">
-      <div className="border-2 border-black rounded-xl flex items-center relative overflow-hidden size-full">
-        <div className="h-full bg-green-500 absolute left-0 top-0" style={{ width: `${percentage}%` }}></div>
-        <span className="text-full font-bold text-black w-full text-center relative">{percentage}%</span>
+    <div className="w-full mb-4">
+      <div className="text-sm font-bold mb-1 text-gray-800">🔋 Batterie</div>
+      <div className="w-full bg-gray-200 rounded-full h-4 text-black">
+        <div
+          className={`${color} h-4 rounded-full text-xs text-white text-center`} 
+          style={{ width: `${level}%` }}
+        >
+          {level}%
+        </div>
       </div>
-      {/* Tip of the battery */}
-      <div className="w-[10%] h-[80%] rounded-r-xl bg-black self-center"></div>
     </div>
-  )
-}
+  );
+};
 
 export default battery
