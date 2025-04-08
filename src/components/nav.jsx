@@ -21,8 +21,8 @@ function Nav({ name }) {
         ) : (
           <>
             <Link className="navElement" to="/Accueil/Profil">Profil</Link>
+            <Link className="navElement" to="/Accueil/Gestion">Gestion</Link>
             <Link className="navElement" to="/Accueil/Visualisation">Visualisation</Link>
-            <Link className="navElement" to="/" onClick={handleLogout}>Se déconnecter</Link>
           </>
         )}
         
