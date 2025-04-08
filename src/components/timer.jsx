@@ -1,7 +1,8 @@
-const timer = ({onHourChange, onMinuteChange, hour, minute}) => {
+import React from 'react'
 
+const timer = ({onHourChange, onMinuteChange, hour, minute}) => {
   return (
-    <div className='flex items-center space-x-2'>
+    <div className='flex flex-row size-full  text-black'>
         <input
             type="number"
             min="0"

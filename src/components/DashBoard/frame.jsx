@@ -115,15 +115,10 @@ const frame = () => {
                     </div>
 
                     <div className='flex flex-col w-[50%]'>
-                      <div>
-                        <span className='block mb-1 font-semibold'>Allumer après</span>
+                        <span>Allumer après</span>
                         <Timer onHourChange={handleOnHourChange} onMinuteChange={handleOnMinuteChange} hour={onHour} minute={onMinute}/>
-                      </div>
-
-                      <div>
-                        <span className='block mb-1 font-semibold'>Éteindre après</span>
+                        <span>Eteindre après</span>
                         <Timer onHourChange={handleOffHourChange} onMinuteChange={handleOffMinuteChange} hour={offHour} minute={offMinute}/>
-                      </div>
                     </div>
                   </div>
 
