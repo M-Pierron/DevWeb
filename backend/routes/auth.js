@@ -8,6 +8,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const { v4: uuidv4 } = require("uuid");
 
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
+const errors = {}
 
 // Vérification du token
 router.post("/verifyToken", (req, res) => {
@@ -33,7 +34,11 @@ router.post("/register", async (req, res) => {
         const existingVerif = await Verif.findOne({ email });
         
         if (existingUser || existingVerif) {
-            return res.status(400).json({ error: "Email déjà utilisé" });
+            errors.email = "Email déjà utilisé";
+        }
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json({ errors });
         }
   
         const hashedPassword = await bcrypt.hash(password, 10);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, Mail, Eye, EyeOff, CircleAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Nav from "../components/nav"; 
@@ -15,7 +15,7 @@ const SignIn = () => {
     email: '',
     password: '',
   });
-  const [formErrors, setFormErrors] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   const navigate = useNavigate();
   const { login, register } = useAuth(); // 💡 du contexte
@@ -87,7 +87,7 @@ const SignIn = () => {
         }
       }
       else if (!response.ok && data){
-        setFormErrors(data);
+        setFormErrors(data.errors);
       }
       
     } catch (error) {
@@ -149,18 +149,27 @@ const SignIn = () => {
                 </div>
               </>
             )}
-            <div className="input-container">
-              <Mail className="input-icon" />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                className="input-field"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
+
+            <div>
+              <div className="input-container">
+                <Mail className="input-icon" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className="input-field"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              {formErrors.email &&
+              <div className='flex flex-row size-full text-red-500'>
+                <CircleAlert className='mr-1'/>
+                <span>{formErrors.email}</span>
+              </div>}
             </div>
+
             <div className="input-container">
               <Lock className="input-icon" />
               <input
