@@ -59,6 +59,9 @@ const GestionDashboard = () => {
     heureFin: ""
   });
 
+  const [showStats, setShowStats] = useState(false);
+
+
   const calculateConsommation = () => {
     //la consommation est influencée par la température et la batterie
     let consommation = 0;
@@ -69,21 +72,6 @@ const GestionDashboard = () => {
       consommation += 1.5; // Batterie faible => Consommation plus élevée
     }
     return consommation;
-  };
-
-  const addToHistorique = (objetId) => {
-    const newConsommation = calculateConsommation();
-    const date = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
-    const updatedObjets = objets.map(obj =>
-      obj.id === objetId ? {
-        ...obj,
-        historiqueUtilisation: [
-          ...obj.historiqueUtilisation,
-          { date, consommation: newConsommation }
-        ]
-      } : obj
-    );
-    setObjets(updatedObjets); // Mettre à jour l'état avec les données mises à jour
   };
 
   const verifEfficacite = (objet) => {
@@ -112,8 +100,7 @@ const GestionDashboard = () => {
     return messages.length > 0 ? messages.join(" • ") : null;
   };
   
-
-
+  
   const handleAjouterObjet = () => {
     setEditMode(false);
     setConfigMode(false);
@@ -229,14 +216,61 @@ const GestionDashboard = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-black">Gestion des Objets Connectés</h1>
 
-      <div className="mb-6">
+      <div className="mb-6 flex gap-3">
         <button
           onClick={handleAjouterObjet}
           className="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700"
         >
           + Ajouter un objet
         </button>
+        <button
+    onClick={() => setShowStats(true)}
+    className="bg-purple-600 text-white px-4 py-2 rounded-xl hover:bg-purple-700"
+  >
+    📊 Stat
+  </button>
       </div>
+
+      {showStats && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-2xl shadow-xl text-black max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">📈 Rapports Statistiques</h2>
+
+            <p><strong>Total d’objets :</strong> {objets.length}</p>
+            <p><strong>Objets actifs :</strong> {objets.filter(o => o.status === 'actif').length}</p>
+            <p><strong>Objets inactifs :</strong> {objets.filter(o => o.status === 'inactif').length}</p>
+            <p><strong>Consommation moyenne par objet :</strong> {
+              (
+                objets.reduce((total, obj) => total + obj.historiqueUtilisation.reduce((sum, h) => sum + h.consommation, 0), 0)
+                / objets.length
+              ).toFixed(2)
+            } kWh</p>
+
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2">📅 Historique de consommation :</h3>
+              {objets.map(obj => (
+                <div key={obj.id} className="mb-4">
+                  <h4 className="font-bold">{obj.name}</h4>
+                  <ul className="text-sm list-disc pl-5">
+                    {obj.historiqueUtilisation.map((entry, index) => (
+                      <li key={index}>{entry.date} : {entry.consommation} kWh</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setShowStats(false)}
+                className="px-4 py-2 bg-gray-400 text-white rounded"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -346,7 +380,8 @@ const GestionDashboard = () => {
                 <input id="heureFin" name="heureFin" type="time" value={newObjet.heureFin} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
               </div>
             </>
-          )}
+          )}          
+
 
 
               <div className="flex justify-end gap-2 mt-4">
