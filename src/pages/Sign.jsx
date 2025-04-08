@@ -15,6 +15,7 @@ const SignIn = () => {
     email: '',
     password: '',
   });
+  const [formErrors, setFormErrors] = useState(null);
 
   const navigate = useNavigate();
   const { login, register } = useAuth(); // 💡 du contexte
@@ -84,6 +85,9 @@ const SignIn = () => {
             password: '',
           });
         }
+      }
+      else if (!response.ok && data){
+        setFormErrors(data);
       }
       
     } catch (error) {
