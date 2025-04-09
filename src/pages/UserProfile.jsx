@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import avatar1 from '../assets/avatar1.png';
@@ -22,6 +22,7 @@ const UserProfile = () => {
       prenom: ''
     }
   });
+  const profilePictureFileRef = useRef(null);
   
   const navigate = useNavigate();
 
@@ -94,6 +95,18 @@ const UserProfile = () => {
     navigate("/Accueil/Verification");
   };
 
+  const onProfilePictureFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      // You can handle the file upload or preview here
+    }
+  };
+
+  const onChangeProfilePictureClick = () => {
+    profilePictureFileRef.current.click();
+  };
+
   // Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil
   const isAdmin = user?.level === 'admin' || userData.public.level === 'admin';
   console.log("Is admin?", isAdmin); // Debugging admin status
@@ -113,8 +126,11 @@ const UserProfile = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="flex flex-row items-center justify-center text-black border-2 border-black w-full cursor-pointer bg-gray-300"> 
-                <span>Test</span>
+
+              {/* Cacher cette input pour l'utiliser dans le div */}
+              <input type="file" ref={profilePictureFileRef} onChange={onProfilePictureFileChange} className="hidden"/>
+              <div onClick={onChangeProfilePictureClick} className="flex flex-row items-center justify-center text-black border-2 border-black w-full cursor-pointer bg-gray-300"> 
+                <span>Changer photo de profile</span>
               </div>
             </div>
 
