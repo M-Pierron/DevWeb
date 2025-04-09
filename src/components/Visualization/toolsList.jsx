@@ -11,7 +11,7 @@ const ToolsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
   const [category, setCategory] = useState('');
-  const [filteredObjects, setFilteredObjects] = useState([]);
+  const [filteredDevices, setFilteredObjects] = useState([]);
 
   const onToolFilterClick = () => {
     setToolsFilterVisibility(!isToolsFilterVisible);
@@ -49,8 +49,8 @@ const ToolsList = () => {
           {/* Tools list */}
           <div className='flex flex-col h-full bg-white text-black'>
             {/* Afficher les objets filtrés */}
-            {filteredObjects.length > 0 ? (
-              filteredObjects.map((object) => (
+            {filteredDevices.length > 0 ? (
+              filteredDevices.map((object) => (
                 <DeviceItem key={object._id} deviceName={object.name} />
               ))
             ) : (
