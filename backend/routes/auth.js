@@ -8,7 +8,6 @@ const authMiddleware = require("../middleware/authMiddleware");
 const { v4: uuidv4 } = require("uuid");
 
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
-const errors = {}
 
 // Vérification du token
 router.post("/verifyToken", (req, res) => {
@@ -26,7 +25,8 @@ router.post("/verifyToken", (req, res) => {
 
 // Inscription utilisateur (sauvegarde dans Verif)
 router.post("/register", async (req, res) => {
-    const { email, password, prenom, nom, pseudonyme } = req.body;
+    const errors = {}
+    const { email, password, prenom, nom, pseudonyme, confirmPassword } = req.body;
     console.log("Registering user with email:", email);
   
     try {
@@ -35,6 +35,10 @@ router.post("/register", async (req, res) => {
         
         if (existingUser || existingVerif) {
             errors.email = "Email déjà utilisé";
+        }
+
+        if (password != confirmPassword){
+            errors.confirmPassword = "Le mot de passe n'est pas le même";
         }
 
         if (Object.keys(errors).length > 0) {
