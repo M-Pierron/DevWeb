@@ -109,7 +109,7 @@ const UserProfile = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="text-black border-2 border-black w-full"> 
+              <div className="flex flex-row items-center justify-center text-black border-2 border-black w-full cursor-pointer bg-gray-300"> 
                 <span>Test</span>
               </div>
             </div>
@@ -128,6 +128,7 @@ const UserProfile = () => {
 
           {/* Right side */}
           <div className="bg-white w-[50%] h-full flex flex-col p-4 border-2 border-[#3c5497] rounded-lg">
+            {/* Form frame */}
             <div className="flex flex-col h-[80%] justify-between mb-4">
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
@@ -155,6 +156,7 @@ const UserProfile = () => {
               </div>
             </div>
 
+            {/* Buttons frame */}
             <div className="flex flex-row gap-4 h-[20%]">
               <button
                 onClick={() => navigate("/Accueil/Profil/Edit")}
