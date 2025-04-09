@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const Device = require('./Device');
 
@@ -14,8 +15,16 @@ const userSchema = new mongoose.Schema({
     dateNaissance: String,
     photo: String,
     pseudonyme: { type: String, required: true },
+    
+    verificationToken: String,
+    isVerified: {type: Boolean, default: false},
+
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Device' }]
 });
+
+userSchema.methods.generateVerificationToken = function () {
+    this.verificationToken = crypto.randomBytes(32).toString('hex');
+};
 
 const User = mongoose.model('User', userSchema);
 

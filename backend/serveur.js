@@ -18,9 +18,9 @@ const authMiddleware = require("./middleware/authMiddleware"); // 🔍 Ajoute bi
 app.use(express.json());
 app.use("/api/auth", require("./routes/auth"));
 app.use("/auth", authRoutes);
-app.use(authMiddleware);
-app.use("/user", userRoutes);
-app.use("/api/objects", objectRoutes); 
+
+app.use("/user", authMiddleware, userRoutes);
+app.use("/api/objects", authMiddleware, objectRoutes); 
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
