@@ -28,7 +28,7 @@ const frame = () => {
                       <div className='flex justify-center w-full bg-gray-400 border-2 border-black border-b-0 rounded-t-xl'>
                         <h3 className="text-lg font-bold">🔋 Batterie</h3>
                       </div>
-                      <div className='flex flex-col border-2 border-black size-full p-4 justify-center rounded-b-xl'>
+                      <div className='bg-white flex flex-col border-2 border-black size-full p-4 justify-center rounded-b-xl'>
                         <Battery percentage={65}/>  
                       </div>
                   </div>
@@ -37,7 +37,7 @@ const frame = () => {
                       <div className='flex justify-center w-full bg-gray-400 border-2 border-black border-b-0 rounded-t-xl'>
                         <h3 className="text-lg font-bold">📶 Wi-Fi</h3>
                       </div>
-                      <div className='flex flex-col border-2 border-black size-full p-4 justify-center rounded-b-xl'>
+                      <div className='bg-white flex flex-col border-2 border-black size-full p-4 justify-center rounded-b-xl'>
                         <Wifi/>  
                       </div>
                   </div>
@@ -49,7 +49,9 @@ const frame = () => {
                   <div className='bg-gray-400 self-start w-full text-center rounded-t-xl border-2 border-black'>
                     <h3 className="text-lg font-bold">Mode</h3>
                   </div>
-                  <Mode/>
+                  <div className='bg-white flex flex-row size-full p-4 border-2 border-t-0 border-black rounded-b-xl shadow-lg'>
+                    <Mode/>
+                  </div>
                 </div>
                 
                 <div className='flex flex-col mb-4 size-full'>
@@ -57,7 +59,7 @@ const frame = () => {
                   <div className='flex justify-center w-full bg-gray-400 border-2 border-black border-b-0 rounded-xl rounded-b-none'>
                     <h3 className="text-lg font-bold">📈 Consommation récente</h3>
                   </div>
-                  <div className="flex justify-center size-full border-2 border-black rounded-b-xl">
+                  <div className="bg-white flex justify-center size-full border-2 border-black rounded-b-xl">
                     <Conso/>
                   </div>
                 </div>
