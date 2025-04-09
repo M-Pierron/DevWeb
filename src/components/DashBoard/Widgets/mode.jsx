@@ -54,19 +54,18 @@ const mode = () => {
   return (
     <>        
         {/* Cadre pour le selecteur de mode */}
-        <div className='flex flex-row size-full p-4 border-2 border-t-0 border-black size-full rounded-b-xl shadow-lg'>
             {/* Selecteur de mode */}
             <div className='w-[50%] mr-4 h-full'>
                 {/* Utilisé pour le positionnement des éléments de la liste déroulante */}
                 <div className="relative h-full">
                     {/* Cadre du séléctionneur pour les modes */}
-                    <div className="h-full bg-white flex border border-gray-200 rounded items-center">
+                    <div className="h-full bg-white flex border-2 border-black rounded items-center">
                         {/* Nom du mode */}
                         <span name="select" id="select" className="px-4 appearance-none outline-none text-gray-800 w-full">{selectedMode}</span>
 
                         {/* Cadre pour le button d'affichage de la liste déroulante des modes */}
                         <label 
-                        className="flex flex-row cursor-pointer outline-none focus:outline-none border-l border-gray-200 transition-all text-gray-300 hover:text-gray-600 h-full"
+                        className="flex flex-row cursor-pointer outline-none focus:outline-none border-l-2 border-black transition-all text-gray-300 hover:text-gray-600 h-full"
                         onClick={() => setIsModeDropDownOpen((prev) => !prev)}
                         >
                             {/* Dessin de la flèche */}
@@ -107,7 +106,6 @@ const mode = () => {
                     </label>
                 </div>
             }
-        </div>
     </>
   )
 }
