@@ -19,14 +19,23 @@ const frame = () => {
             </div>
 
             <div id="sideFrame" className='flex flex-col pr-4 h-full w-full'>
+              {/* Cadre pour la batterie et WIFI */}
               <div className='flex flex-row m-4 ml-0 h-[30%] w-full'>
-                <div className='flex mr-2 items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg size-full'>
-                    <Battery percentage={65}/>  
+                {/* Cadre pour la batterie */}
+                <div className='flex flex-col mr-2 items-center size-full'>
+                    <div className='flex justify-center w-full bg-gray-400 border-2 border-black border-b-0 rounded-t-xl'>
+                      <h3 className="text-lg font-bold">🔋 Batterie</h3>
+                    </div>
+                    <div className='flex flex-col border-2 border-black size-full p-4 justify-center rounded-b-xl'>
+                      <Battery percentage={65}/>  
+                    </div>
                 </div>
                 <div className='flex items-center gap-2 p-4 border-2 border-black rounded-xl shadow-lg size-full'>
                     <Wifi/>  
                 </div>
               </div>
+              
+              {/* Cadre pour les modes */}
               <div className='flex flex-col mb-4 items-center w-full h-[40%]'>
                 {/* En-tête */}
                 <div className='bg-gray-400 self-start w-full text-center rounded-t-xl border-2 border-black'>
@@ -34,6 +43,7 @@ const frame = () => {
                 </div>
                 <Mode/>
               </div>
+              
               <div className='flex flex-col mb-4 size-full'>
                 {/* En-tête */}
                 <div className='flex justify-center w-full bg-gray-400 border-2 border-black border-b-0 rounded-xl rounded-b-none'>
