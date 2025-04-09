@@ -1,8 +1,8 @@
 import React, { useState,useEffect } from "react";
-import Battery from "../components/DashBoard/battery";
-import Wifi from "../components/DashBoard/wifi";
-import Temperature from "../components/DashBoard/temperature";
-import Conso from "../components/DashBoard/conso.jsx"
+import Battery from "../components/DashBoard/Widgets/battery.jsx";
+import Wifi from "../components/DashBoard/Widgets/wifi.jsx";
+import Temperature from "../components/DashBoard/Widgets/temperature.jsx";
+import Conso from "../components/DashBoard/Widgets/conso.jsx"
 
 const GestionDashboard = () => {
   const [showModal, setShowModal] = useState(false);
