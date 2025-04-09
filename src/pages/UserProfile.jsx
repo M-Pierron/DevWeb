@@ -72,6 +72,10 @@ const UserProfile = () => {
     };
   }, [navigate, logout, user]);
 
+  useEffect(() => {
+    console.log("🔁 userData mis à jour:", userData);
+  }, [userData]);
+
   if (isChecking) {
     return <div>Vérification en cours...</div>;
   }
@@ -129,7 +133,7 @@ const UserProfile = () => {
           {/* Right side */}
           <div className="bg-white w-[50%] h-full flex flex-col p-4 border-2 border-[#3c5497] rounded-lg">
             {/* Form frame */}
-            <div className="flex flex-col h-[80%] justify-between mb-4">
+            <div className="flex flex-col h-[80%] justify-between mb-4 text-black">
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
                 <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.pseudonyme}</p>
@@ -193,130 +197,6 @@ const UserProfile = () => {
         </div>
       </div>
     </div>
-
-    // <div className="min-h-screen bg-black flex items-center justify-center">
-    //   <div className="flex flex-row h-[50%]">
-    //     {/* Photo de profil */}
-    //     <div className="bg-white p-8 rounded-lg shadow-xl w-fit max-w-2xl border-2 border-[#3c5497] h-full">
-    //       <img src="/src/assets/placeholderpfp.jpg" className="size-[256px] mb-2"/>
-    //       <div className="border-1 border-black text-center h-full">
-    //         <span className="text-black">Mettre une photo de profile</span>
-    //       </div>
-          
-    //       {/* <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Profil Utilisateur</h2> */}
-
-    //       {/* Photo de profil */}
-    //       {/* <div className="mb-6">
-    //         <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
-    //         <div className="flex items-center space-x-4">
-    //           {userData.public.photo ? (
-    //             <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
-    //           ) : (
-    //             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-    //               <span className="text-xs text-center text-gray-500">?</span>
-    //             </div>
-    //           )}
-    //         </div>
-    //       </div> */}
-
-    //       {/* Informations publiques */}
-    //       {/* <div className="space-y-4 mb-6">
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
-    //           <p className="p-2 bg-gray-50 rounded">{userData.public.pseudonyme}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
-    //           <p className="p-2 bg-gray-50 rounded">{userData.public.age}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
-    //           <p className="p-2 bg-gray-50 rounded">{userData.public.dateNaissance}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
-    //           <p className="p-2 bg-gray-50 rounded">{userData.public.sexe}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-    //           <p className="p-2 bg-gray-50 rounded">{userData.public.email}</p>
-    //         </div>
-
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Niveau</label>
-    //           <p className="p-2 bg-gray-50 rounded">{userData.public.level || 'user'}</p>
-    //         </div>
-    //       </div> */}
-
-    //       {/* Boutons d'action */}
-    //       {/* <div className="flex flex-wrap gap-4">
-    //         <button
-    //           onClick={() => navigate("/Accueil/Profil/Edit")}
-    //           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    //         >
-    //           Modifier le profil
-    //         </button>
-
-    //         <button
-    //           onClick={() => navigate("/Accueil")}
-    //           className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-    //         >
-    //           Retour à l'Accueil
-    //         </button>
-
-    //         <button
-    //           onClick={handleLogout}
-    //           className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-    //         >
-    //           Déconnexion
-    //         </button>
-
-    //         {isAdmin && (
-    //           <button
-    //             onClick={handleAdminVerification}
-    //             className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-    //           >
-    //             Vérification Admin
-    //           </button>
-    //         )}
-    //       </div> */}
-    //     </div>
-        
-    //     <div className="bg-white p-8 rounded-lg shadow-xl w-fit max-w-2xl border-2 border-[#3c5497] h-full">
-    //       <div className="space-y-4 mb-6">
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
-    //           <p className="p-2 bg-gray-50 rounded border-2 border-blue-500">{userData.public.pseudonyme}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
-    //           <p className="p-2 bg-gray-50 rounded border-2 border-blue-500 ">{userData.public.age}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
-    //           <p className="p-2 bg-gray-50 rounded border-2 border-blue-500">{userData.public.dateNaissance}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
-    //           <p className="p-2 bg-gray-50 rounded border-2 border-blue-500">{userData.public.sexe}</p>
-    //         </div>
-            
-    //         <div>
-    //           <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-    //           <p className="p-2 pb-0 bg-gray-50 rounded border-2 border-blue-500">{userData.public.email}</p>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-
-    // </div>
   );
 };
 
