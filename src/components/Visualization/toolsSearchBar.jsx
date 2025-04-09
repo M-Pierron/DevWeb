@@ -16,7 +16,7 @@ const toolsSearchBar = ({onToolFilterClick}) => {
           <Search className='ml-2 mr-2 h-[80%] self-center'/>
           <input type='search' className='w-[90%] outline-none'/>
         </div>
-        <Funnel className="w-[10%] ml-2 h-full text-black" onClick={onToolFilterClick}/>
+        <Funnel className="w-[10%] ml-2 h-full text-black bg-gray-500 rounded-lg p-1" onClick={onToolFilterClick}/>
     </div>
   )
 }
