@@ -53,6 +53,7 @@ const SignIn = () => {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
+          // Ajouter les informations supplémentaire si l'utilisateur est en mode inscription
           ...(isLogin ? {} : { 
             prenom: formData.prenom,
             nom: formData.nom,
