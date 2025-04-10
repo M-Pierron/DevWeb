@@ -34,9 +34,8 @@ router.post("/register", async (req, res) => {
   
     try {
         const existingUser = await User.findOne({ email });
-        const existingVerif = await Verif.findOne({ email });
         
-        if (existingUser || existingVerif) {
+        if (existingUser) {
             errors.email = "Email déjà utilisé";
         }
 
@@ -67,33 +66,19 @@ router.post("/register", async (req, res) => {
 
             // Send email using transporter
             const info = await Transporter.sendMail({
-              from: 'CYHouse', // sender address
-              to: "dylanmei19@gmail.com",                                         
-              subject: "Confirmation inscription",                                     
-              text: `Click this link to verify your email: ${verificationUrl}`,                                  
-              // html: '<b>Hello world?</b>'
+                from: 'CYHouse', // sender address
+                to: "dylanmei19@gmail.com",                                         
+                subject: "Confirmation inscription",                                     
+                text: `Click this link to verify your email: ${verificationUrl}`,                                  
+                // html: '<b>Hello world?</b>'
             });
         
-            console.log('Message sent: %s', info.messageId);
-        
-          } catch (err) {
+            res.status(201).json({ message: "Inscription en attente de vérification" });
+
+        } catch (err) {
             console.error('Error sending email:', err);
-          }
-  
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newVerif = new Verif({
-            prenom,
-            nom,
-            pseudonyme, 
-            email,
-            password: hashedPassword,
-            level: "user", 
-            userId: uuidv4(),
-        });
-  
-        await newVerif.save();
-        console.log("User registered for verification:", newVerif);
-        res.status(201).json({ message: "Inscription en attente de vérification" });
+        }
+
     } catch (error) {
         console.error("Erreur lors de l'inscription :", error);
         res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
