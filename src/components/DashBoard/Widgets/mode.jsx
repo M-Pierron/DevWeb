@@ -79,7 +79,7 @@ const mode = () => {
                     {isModeDropDownOpen && <div className={`absolute rounded shadow bg-white overflow-hidden flex flex-col w-full mt-1 border border-gray-200 text-black`}>
                         {/* Mettre chaque options */}
                         {options.map((option) => (
-                            <DropDownItem className={"block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"} key={option} itemName={option} onClick={() => onModeClick(option)}/>
+                            <DropDownItem style={"block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"} key={option} itemName={option} onClick={() => onModeClick(option)}/>
                         ))}
                     </div>
                     }         
@@ -99,7 +99,7 @@ const mode = () => {
             {/*  */}
             {selectedMode == "Manuel" &&
                 <div className="flex w-[50%]">
-                    <label for="toggle" class="relative flex flex-row items-center size-full rounded-full bg-white">
+                    <label for="toggle" class="relative flex flex-row items-center size-full rounded-full bg-gray-600 border-2 border-black">
                         <input type="checkbox" id="toggle" class="sr-only peer" />
                         <span class="peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 size-full transform bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-full peer-checked:bg-indigo-600"></span>
                         <span class="peer-checked:bg-indigo-600 size-full bg-gray-300 rounded-full"></span>
