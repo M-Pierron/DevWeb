@@ -52,6 +52,17 @@ const GestionDashboard = () => {
     });
   };
 
+  const objetsInefficaces = objets.map(obj => {
+    const problemes = [];
+
+    if (obj.batterie < 30) problemes.push("🔋 Batterie faible");
+    if (obj.wifi === "faible") problemes.push("📶 Connexion Wi-Fi faible");
+    if (obj.temperature > 30) problemes.push("🌡️ Température élevée");
+    return problemes.length > 0 ? { ...obj, problemes } : null;
+  })
+  .filter(Boolean);
+
+  
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -137,6 +148,25 @@ const GestionDashboard = () => {
   <button onClick={handleAjouter} className="bg-indigo-600 text-white px-4 py-2 rounded-xl">+ Ajouter un objet</button>
   <button onClick={() => setShowStats(true)} className="bg-emerald-600 text-white px-4 py-2 rounded-xl">Stats</button>
 </div>
+
+{objetsInefficaces.length > 0 && (
+  <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-xl space-y-2">
+    ⚠️ <strong>{objetsInefficaces.length} objet(s) nécessitent une attention :</strong>
+    <ul className="list-disc ml-6 text-sm space-y-1">
+      {objetsInefficaces.map(obj => (
+        <li key={obj.id}>
+          <strong>{obj.name}</strong> :
+          <ul className="list-none ml-4 mt-1">
+            {obj.problemes.map((p, index) => (
+              <li key={index}>• {p}</li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
   <div className="grid grid-cols-2 gap-4">
     {filtrerObjets().map(obj => (
   <div key={obj.id} className="grid grid-cols-2 gap-4 border p-4 rounded-xl bg-white shadow items-start">
@@ -202,12 +232,17 @@ const GestionDashboard = () => {
           (objets.reduce((sum, o) => sum + (o.batterie ?? 0), 0) / objets.length).toFixed(1)
         }%</li>
       </ul>
-      <div className="flex justify-end mt-4">
+
+      <div className="flex justify-between mt-6">
+        <button onClick={() => alert("📂 Fonction Historique à intégrer ici (graphiques, logs, etc.)")} className="bg-indigo-600 text-white px-4 py-2 rounded">
+          📂 Voir les historiques
+        </button>
         <button onClick={() => setShowStats(false)} className="bg-gray-300 px-4 py-2 rounded">Fermer</button>
       </div>
     </div>
   </div>
 )}
+
 
 </div>
 </div>
