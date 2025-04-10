@@ -13,10 +13,10 @@ const toolsFilter = ({tools, isVisible, toggleVisibility}) => {
               key={categoryId} 
               category={categoryName} 
               // Checkbox pour chaque appareils
-              items={devices.map(([itemName, itemID]) => (
-                <div>
-                  <input className='mr-2 bg-white' type="checkbox" name="interest" value={itemName} />
-                  <label htmlFor={itemName}>{itemName}</label>
+              items={devices.map(([deviceName, deviceID]) => (
+                <div key={deviceID}>
+                  <input className='mr-2 bg-white' type="checkbox" name="interest" value={deviceName} />
+                  <label htmlFor={deviceName}>{deviceName}</label>
                 </div>
               ))} 
               headerStyle={"w-full h-10 flex flex-row bg-gray-300 text-black p-2"}

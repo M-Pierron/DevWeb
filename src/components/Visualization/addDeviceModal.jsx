@@ -5,13 +5,16 @@ import Modal from "../modal"
 import { iotDevices } from '../iotDevices';
 
 const addDeviceModal = ({onCancelClick}) => {
+  const [isTypeDropDownOpen, setIsTypeDropDownOpen] = useState(false)
+  const [selectedDeviceType, setSelectedDeviceType] = useState(null)
+
   const [newObjet, setNewObjet] = useState({
     name: "",
     description: "",
-    mode: "actif",
+    mode: "automatique",
     type: "",
-    batterie: "",
-    wifi: "fort"
+    batterie: "0",
+    wifi: "aucun"
   });
 
   const handleChange = (e) => {
@@ -24,7 +27,7 @@ const addDeviceModal = ({onCancelClick}) => {
         <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
           <form className="flex flex-col gap-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l’objet</label>
+              <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l'objet</label>
               <input id="name" name="name" value={newObjet.name} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
             </div>
             
@@ -34,36 +37,65 @@ const addDeviceModal = ({onCancelClick}) => {
             </div>
             
             <div>
-              <label htmlFor="mode" className="block text-sm font-medium mb-1">Statut</label>
+              <label htmlFor="mode" className="block text-sm font-medium mb-1">Mode</label>
               <select id="mode" name="mode" value={newObjet.status} onChange={handleChange} className="border p-2 rounded w-full text-black">
-                <option value="actif">Actif</option>
-                <option value="inactif">Inactif</option>
+                <option value="automatique">Automatique</option>
+                <option value="manuel">Manuel</option>
+                <option value="programme">Programmé</option>
               </select>
             </div>
             
             <div className="relative">
               <label htmlFor="type" className="block text-sm font-medium mb-1">Type</label>
-              <select id="type" name="type" value={newObjet.type} onChange={handleChange} className="border p-2 rounded w-full text-black" required>
-              </select>
-              <div className="absolute flex flex-col bg-white w-full border border-gray-200">
-                {iotDevices.map(([categoryName, categoryId, devices]) => (
-                  <AccordionItem key={categoryId} category={categoryName} items={devices}/>
-                ))}
+              <div className="h-full bg-white flex border p-2 border-black rounded items-center" onClick={() => setIsTypeDropDownOpen((prev) => !prev)}>
+                  {/* Nom du type d'appareil */}
+                  <span className="appearance-none outline-none text-black w-full select-none">
+                    {selectedDeviceType === null
+                      ? "Selectioner un type d'appareil"
+                      : selectedDeviceType}
+                  </span>
+
+                  {/* Cadre pour le button d'affichage de la liste déroulante */}
+                  <label 
+                    className="flex flex-row cursor-pointer outline-none focus:outline-none border-black transition-all text-gray-300 hover:text-gray-600 h-full"
+                  >
+                      {/* Dessin de la flèche */}
+                      <svg className="w-4 h-4 mx-2 fill-current self-center" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                  </label>
               </div>
+              
+              {/* Afficher la liste déroulante des types d'appareil */}
+              { isTypeDropDownOpen && 
+                <div className="mt-2 absolute flex flex-col bg-white w-full border border-black rounded overflow-y-auto max-h-50">
+                  {iotDevices.map(([categoryName, categoryId, devices]) => (
+                    <AccordionItem 
+                      key={categoryId} 
+                      category={categoryName} 
+                      items={devices.map(([deviceName, deviceID]) => (
+                        <div key={deviceID} className="cursor-pointer group" onClick={() => setSelectedDeviceType(deviceName)}>
+                          <a className="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100">{deviceName}</a>
+                        </div>
+                      ))}
+                      headerStyle={"w-full h-10 flex flex-row bg-gray-300 text-black p-2"}
+                    />
+                  ))}
+                </div> }
             </div>
             
             <div>
               <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
-              <input id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              <input min="0" max="100" id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
             </div>
             
             <div>
               <label htmlFor="wifi" className="block text-sm font-medium mb-1">Signal Connexion Wi-Fi</label>
               <select id="wifi" name="wifi" value={newObjet.wifi} onChange={handleChange} className="border p-2 rounded w-full text-black">
-                <option value="Aucun">Aucun</option>
-                <option value="Faible">Faible</option>
-                <option value="Moyen">Moyen</option>
-                <option value="Fort">Fort</option>
+                <option value="aucun">Aucun</option>
+                <option value="faible">Faible</option>
+                <option value="moyen">Moyen</option>
+                <option value="fort">Fort</option>
               </select>
             </div>
           </form>

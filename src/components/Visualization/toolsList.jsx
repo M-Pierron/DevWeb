@@ -54,7 +54,9 @@ const ToolsList = () => {
                 <DeviceItem key={object._id} deviceName={object.name} />
               ))
             ) : (
-              <p className='self-center'>Aucun objet trouvé pour cette catégorie.</p>
+              <div className="flex items-center justify-center h-full">
+                <p className='text-center'>Aucun objet trouvé pour cette catégorie.</p>
+              </div>
             )}
           </div>
         </div>
