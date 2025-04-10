@@ -10,7 +10,7 @@ const battery = ({percentage}) => {
         className={`${color} h-full rounded-full`}
         style={{ width: `${percentage}%` }}
       ></div>
-      <span className="absolute inset-0 flex items-center justify-center text-xs text-black">
+      <span className="absolute inset-0 flex items-center justify-center text-xs text-black font-bold">
         {percentage}%
       </span>
     </div>

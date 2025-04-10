@@ -9,7 +9,7 @@ import Conso from './Widgets/conso'
 
 const frame = () => {
   return (
-    <div className='flex flex-col w-[70%]'>
+    <div className='flex flex-col w-[70%] h-full'>
         {/* En-tête qui montre l'ID et la dernière interaction */}
         <Header/>
         {/* Cadre qu contient les widgets */}
@@ -20,7 +20,7 @@ const frame = () => {
                 <Temperature/>
               </div>
 
-              <div id="sideFrame" className='flex flex-col pr-4 h-full w-full'>
+              <div id="sideFrame" className='flex flex-col pr-4 size-full'>
                 {/* Cadre pour la batterie et WIFI */}
                 <div className='flex flex-row m-4 ml-0 h-[30%] w-full'>
                   {/* Cadre pour la batterie */}
