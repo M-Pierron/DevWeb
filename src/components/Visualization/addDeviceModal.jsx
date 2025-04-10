@@ -17,28 +17,57 @@ const addDeviceModal = ({onCancelClick}) => {
     wifi: "aucun"
   });
 
-  const handleChange = (e) => {
+  const onNewObjectChange = (e) => {
     const { name, value } = e.target;
+    console.log(`[handleChange] ${name}:`, value); // 📝 LOG
     setNewObjet({ ...newObjet, [name]: value });
+  }
+
+  const onNewObjectSubmit = async (e) => {
+    e.preventDefault();
+    console.log("[onNewObjectSubmit] Formulaire soumis !");
+
+    try {
+      console.log(`[handleSubmit] Envoi requête vers: http://localhost:5000/api/devices/newObject`);
+      const token = localStorage.getItem('token');
+      const response = await fetch("http://localhost:5000/api/devices/newObject", {
+        method: "POST",
+        headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: newObjet.name,
+          description: newObjet.description,
+          mode: newObjet.mode,
+          type: newObjet.type,
+          battery: newObjet.batterie,
+          wifi: newObjet.wifi
+        }),
+      });
+
+    } catch (error) {
+      console.error("[onNewObjectSubmit] Erreur catché:", error);
+    }
   }
 
   return (
       <Modal children={        
         <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
-          <form className="flex flex-col gap-4">
+          <form onSubmit={onNewObjectSubmit} className="flex flex-col gap-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l'objet</label>
-              <input id="name" name="name" value={newObjet.name} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              <input id="name" name="name" value={newObjet.name} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black"/>
             </div>
             
             <div>
               <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
-              <input id="description" name="description" value={newObjet.description} onChange={handleChange} className="border p-2 rounded w-full text-black" />
+              <input id="description" name="description" value={newObjet.description} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black" />
             </div>
             
             <div>
               <label htmlFor="mode" className="block text-sm font-medium mb-1">Mode</label>
-              <select id="mode" name="mode" value={newObjet.status} onChange={handleChange} className="border p-2 rounded w-full text-black">
+              <select id="mode" name="mode" value={newObjet.status} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black">
                 <option value="automatique">Automatique</option>
                 <option value="manuel">Manuel</option>
                 <option value="programme">Programmé</option>
@@ -86,28 +115,30 @@ const addDeviceModal = ({onCancelClick}) => {
             
             <div>
               <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
-              <input min="0" max="100" id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={handleChange} className="border p-2 rounded w-full text-black" required />
+              <input min="0" max="100" id="batterie" name="batterie" type="number" value={newObjet.batterie} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black" required />
             </div>
             
             <div>
               <label htmlFor="wifi" className="block text-sm font-medium mb-1">Signal Connexion Wi-Fi</label>
-              <select id="wifi" name="wifi" value={newObjet.wifi} onChange={handleChange} className="border p-2 rounded w-full text-black">
+              <select id="wifi" name="wifi" value={newObjet.wifi} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black">
                 <option value="aucun">Aucun</option>
                 <option value="faible">Faible</option>
                 <option value="moyen">Moyen</option>
                 <option value="fort">Fort</option>
               </select>
             </div>
+
+            {/* Cadre pour les buttons */}
+            <div className="flex justify-end gap-2 mt-4">
+                <button type="button" onClick={onCancelClick} className="px-4 py-2 bg-gray-300 rounded text-black hover:bg-gray-400">
+                  Annuler
+                </button>
+                <button type="submit" className="px-4 py-2  bg-indigo-700 border-indigo-700 text-white rounded hover:bg-indigo-800">
+                  Ajouter
+                </button>
+            </div>
           </form>
-      
-          <div className="flex justify-end gap-2 mt-4">
-              <button type="button" onClick={onCancelClick} className="px-4 py-2 bg-gray-300 rounded text-black hover:bg-gray-400">
-                Annuler
-              </button>
-              <button type="submit" className="px-4 py-2 text-indigo-700 bg-indigo-700 border-indigo-700 text-white rounded hover:bg-indigo-800">
-                Ajouter
-              </button>
-          </div>
+
         </div>
       }/>
   )
