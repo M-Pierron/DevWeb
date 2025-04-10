@@ -2,11 +2,9 @@ const mongoose = require('mongoose');
 
 const WIFI_ENUM = [
     'NONE', 
-    'VERY WEAK', 
     'WEAK', 
     'MODERATE', 
     'STRONG', 
-    'VERY STRONG'
 ]
 
 const DEVICE_TYPE_ENUM = [
@@ -74,8 +72,13 @@ const DEVICE_CATEGORY_MAP = {
 };
 
 const deviceSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        required : true
+    },
+    description : String,
     id: { type: String, required: true, unique: true },
+    mode : {type: String },
     battery: Number,
     wifi: { 
         type: String, 
