@@ -27,7 +27,7 @@ const ToolsList = () => {
 
   const handleCategorySelection = async (category) => {
     setCategory(category); // Mémoriser la catégorie sélectionnée
-    const response = await fetch(`http://localhost:5000/api/objects/filter?category=${category}`);
+    const response = await fetch(`http://localhost:5000/api/devices/filter?category=${category}`);
     const data = await response.json();
     setFilteredObjects(data); // Mettre à jour les objets filtrés
   };
@@ -37,6 +37,7 @@ const ToolsList = () => {
       <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-dvh'>
         {/* Le cadre utilisé pour filtrer les appareils, caché */}
         <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
+        
         <div className='flex flex-col h-full'>
           {/* La barre de recherche qui contient le button pour afficher le filtre */}
           <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
