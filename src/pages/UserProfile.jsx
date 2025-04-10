@@ -30,10 +30,13 @@ const UserProfile = () => {
     console.log("🔥 useEffect de UserProfile appelé");
     console.log("Current user from context:", user); // Debugging user from context
     let isMounted = true;
-  
+
+    // Récuper le token coté client
     const token = localStorage.getItem("token");
     console.log("🧾 Token dispo dans UserProfile:", token);
   
+    // Si le token n'existe pas, cela veut dire que l'utilisateur n'existe pas/son token a expiré
+    // Donc le faire deconnecter
     if (!token) {
       logout();
       navigate("/");
@@ -81,9 +84,12 @@ const UserProfile = () => {
     return <div>Vérification en cours...</div>;
   }
 
+  // Event lorsque l'utiliseur se déconnecte
   const handleLogout = () => {
+    // Supprimer le token
     console.log("Déconnexion, suppression du token");
     localStorage.removeItem("token");
+    // 
     logout();
     navigate("/");
   };
