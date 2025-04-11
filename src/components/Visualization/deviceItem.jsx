@@ -1,4 +1,5 @@
 import React from 'react'
+import { getWifiColor, getMode } from '../../utils';
 
 // Component qui représente un appareil pour la liste d'appareils
 const deviceItem = ({userDevice, onClick, isSelected}) => {
@@ -12,12 +13,12 @@ const deviceItem = ({userDevice, onClick, isSelected}) => {
           <span className='text-gray-400'>{userDevice.description}</span>
 
           <div className='flex flex-row'>
-            <span><strong>Mode : </strong>{userDevice.mode}</span>
+            <span><strong>Mode : </strong>{getMode(userDevice.mode)}</span>
           </div>
       </div>
       
       <div className='flex flex-col w-[50%] items-end justify-between'>
-        <div className='rounded-full bg-amber-500 size-[24px] border-1 border-black'>
+        <div className={`rounded-full ${getWifiColor(userDevice.wifi)} size-[24px] border-1 border-black`}>
         </div>
         <span>{userDevice.battery}%</span>
 
