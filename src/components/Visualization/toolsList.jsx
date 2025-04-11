@@ -86,27 +86,29 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
     fetchUserDevices();
   }, []);
 
-  const onToolFilterClick = () => {
+  const toggleToolFilterVisibility = () => {
     setToolsFilterVisibility(!isToolsFilterVisible);
+  };
+
+  const toggleModalVisibility = () => {
+    setIsModalVisible(!isModalVisible);
   };
 
   const onAddObjectClick = () => {
     setIsModalVisible(true);
   };
 
-  const onCloseModalClick = () => {
-    setIsModalVisible(false);
-  };
+
 
   return (
     <>
       <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-dvh'>
         {/* Le cadre utilisé pour filtrer les appareils, caché */}
-        <ToolsFilter devicesCategories={deviceCategories} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} setUserDevices={setUserDevices} />
+        <ToolsFilter devicesCategories={deviceCategories} isVisible={isToolsFilterVisible} toggleVisibility={toggleToolFilterVisibility} setUserDevices={setUserDevices} />
         
         <div className='flex flex-col h-full'>
           {/* La barre de recherche qui contient le button pour afficher le filtre */}
-          <ToolsSearchBar onToolFilterClick={onToolFilterClick} isFilterLoading={isToolsFilterLoading}/>
+          <ToolsSearchBar onToolFilterClick={toggleToolFilterVisibility} isFilterLoading={isToolsFilterLoading}/>
           <div 
             onClick={onAddObjectClick}
             className="flex flex-row mb-2 mt-4 bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700 cursor-pointer w-[60%] text-center">
@@ -114,7 +116,7 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
             <span className='self-start w-full'>Ajouter un object</span>
           </div>
           {/* Tools list */}
-          <div className='flex flex-col h-full bg-white text-black'>
+          <div className='flex flex-col h-full bg-white text-black border-1 border-black'>
             {/* Afficher les objets filtrés */}
             {!isUserDevicesLoading && userDevices.length > 0 ? (
               userDevices.map((userDevice) => (
@@ -134,7 +136,7 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
         </div>
       </div>
 
-      {isModalVisible && <AddDeviceModal deviceCategories={deviceCategories} onCancelClick={onCloseModalClick}/>}
+      {isModalVisible && <AddDeviceModal deviceCategories={deviceCategories} onCancelClick={toggleModalVisibility}/>}
     </>
   );
 }
