@@ -13,7 +13,7 @@ const frame = ({selectedDevice}) => {
     <div className='flex flex-col w-[70%] h-full'>
       
       {/* En-tête qui montre l'ID et la dernière interaction */}
-      <Header/>
+      <Header selectedDevice={selectedDevice}/>
       
       {/* Cadre qui contient les widgets */}
       <div className='bg-gray-500 border-2 border-black h-full rounded-xl shadow-lg'>
