@@ -50,6 +50,9 @@
           }),
         });
 
+        const data = await response.json();
+        console.log("[onNewDeviceSubmit] Réponse reçue:", data);
+
         
 
       } catch (error) {
@@ -60,6 +63,7 @@
     return (
         <Modal children={        
           <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
+            
             <form onSubmit={onNewDeviceSubmit} className="flex flex-col gap-4">
               {/* Saisie pour le nom de l'appareil */}
               <div>
