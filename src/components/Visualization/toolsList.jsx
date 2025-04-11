@@ -4,7 +4,6 @@ import ToolsFilter from './toolsFilter';
 import ToolsSearchBar from './toolsSearchBar';
 import DeviceItem from "./deviceItem";
 import { Plus } from 'lucide-react';
-import { iotDevices } from "../iotDevices"
 import AddDeviceModal from "./addDeviceModal"
 
 const ToolsList = () => {
@@ -12,6 +11,32 @@ const ToolsList = () => {
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
   const [category, setCategory] = useState('');
   const [filteredDevices, setFilteredObjects] = useState([]);
+
+  const [deviceCategories, setDeviceCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        console.log(`[fetchCategories] Envoi requête vers: http://localhost:5000/api/devices/deviceCategories`);
+        const token = localStorage.getItem('token');
+        const response = await fetch("http://localhost:5000/api/devices/deviceCategories", {
+          method: "GET",
+          headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        console.log(data);
+        
+        setDeviceCategories(data);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
+    fetchCategories(); // call the async function
+  }, []);
 
   const onToolFilterClick = () => {
     setToolsFilterVisibility(!isToolsFilterVisible);
@@ -36,7 +61,7 @@ const ToolsList = () => {
     <>
       <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-dvh'>
         {/* Le cadre utilisé pour filtrer les appareils, caché */}
-        <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
+        <ToolsFilter devicesCategories={deviceCategories} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
         
         <div className='flex flex-col h-full'>
           {/* La barre de recherche qui contient le button pour afficher le filtre */}
@@ -63,7 +88,7 @@ const ToolsList = () => {
         </div>
       </div>
 
-      {isModalVisible && <AddDeviceModal onCancelClick={onCloseModalClick}/>}
+      {isModalVisible && <AddDeviceModal deviceCategories={deviceCategories} onCancelClick={onCloseModalClick}/>}
     </>
   );
 }
