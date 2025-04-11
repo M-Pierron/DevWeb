@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { getMode } from '../../../utils';
 
 import DropDownItem from "../../Dropdown/dropDownItem"
 import Timer from "../../timer"
@@ -65,7 +66,7 @@ const mode = ({mode}) => {
                     {/* Cadre du séléctionneur pour les modes */}
                     <div className="h-full bg-white flex border-2 border-black rounded items-center">
                         {/* Nom du mode */}
-                        <span name="select" id="select" className="px-4 appearance-none outline-none text-gray-800 w-full">{mode}</span>
+                        <span name="select" id="select" className="px-4 appearance-none outline-none text-gray-800 w-full">{getMode(mode)}</span>
 
                         {/* Cadre pour le button d'affichage de la liste déroulante des modes */}
                         <label 
@@ -83,7 +84,7 @@ const mode = ({mode}) => {
                     {isModeDropDownOpen && <div className={`absolute rounded shadow bg-white overflow-hidden flex flex-col w-full mt-1 border border-gray-200 text-black`}>
                         {/* Mettre chaque options */}
                         {options.map((option) => (
-                            <DropDownItem style={"block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"} key={option} itemName={option} onClick={() => onModeClick(option)}/>
+                            <DropDownItem style={"block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100"} key={option} itemName={getMode(option)} onClick={() => onModeClick(option)}/>
                         ))}
                     </div>
                     }         
