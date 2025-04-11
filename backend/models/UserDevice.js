@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const WIFI_ENUM = [
     'NONE', 
+    'VERY_WEAK',
     'WEAK', 
     'MODERATE', 
     'STRONG', 
