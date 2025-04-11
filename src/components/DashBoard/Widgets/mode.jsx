@@ -3,11 +3,15 @@ import React, { useState } from 'react'
 import DropDownItem from "../../Dropdown/dropDownItem"
 import Timer from "../../timer"
 
-const options = ["Automatique", "Manuel", "Programmé"]
+const options = [
+    'AUTOMATIC',
+    'MANUAL',
+    'SCHEDULE'
+]
 
-const mode = () => {
+const mode = ({mode}) => {
     const [isModeDropDownOpen, setIsModeDropDownOpen] = useState(false);
-    const [selectedMode, setSelectedMode] = useState("Automatique");
+    const [selectedMode, setSelectedMode] = useState(mode);
 
     const [onHour, setOnHour] = useState(0);
     const [onMinute, setOnMinute] = useState(0);
@@ -61,7 +65,7 @@ const mode = () => {
                     {/* Cadre du séléctionneur pour les modes */}
                     <div className="h-full bg-white flex border-2 border-black rounded items-center">
                         {/* Nom du mode */}
-                        <span name="select" id="select" className="px-4 appearance-none outline-none text-gray-800 w-full">{selectedMode}</span>
+                        <span name="select" id="select" className="px-4 appearance-none outline-none text-gray-800 w-full">{mode}</span>
 
                         {/* Cadre pour le button d'affichage de la liste déroulante des modes */}
                         <label 
