@@ -11,14 +11,22 @@ import AddDeviceModal from "./addDeviceModal"
 // setSelectedDevice : Etat qui determine 
 const ToolsList = ({selectedDevice, setSelectedDevice}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // 
+  const [isToolsFilterLoading, setToolsFilterLoading] = useState(false);
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
   
+  // 
+  const [isUserDevicesLoading, setUserDevicesLoading] = useState(false);
   const [userDevices, setUserDevices] = useState([]);
+
   const [deviceCategories, setDeviceCategories] = useState([]);
 
   useEffect(() => {
     // Récuperer les appareils (et leur catégories)
     const fetchCategories = async () => {
+      setToolsFilterLoading(true);
+
       try {
         console.log(`[fetchCategories] Envoi requête vers: http://localhost:5000/api/devices/deviceCategories`);
         const token = localStorage.getItem('token');
@@ -39,11 +47,15 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
         
       } catch (err) {
         console.error('Error fetching categories:', err);
+      } finally {
+        setToolsFilterLoading(false);
       }
     };
 
     // Récuperer les appareils de l'utilisateur
     const fetchUserDevices = async () => {
+      setUserDevicesLoading(true);
+
       try {
         console.log(`[fetchUserDevices] Envoi requête vers: http://localhost:5000/api/devices/getConnectedUserDevices`);
         const token = localStorage.getItem('token');
@@ -65,6 +77,8 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
 
       } catch (err) {
         console.error("[fetchUserDevices] Erreur catché:", error);
+      } finally {
+        setUserDevicesLoading(false);
       }
     };
 
@@ -92,7 +106,7 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
         
         <div className='flex flex-col h-full'>
           {/* La barre de recherche qui contient le button pour afficher le filtre */}
-          <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
+          <ToolsSearchBar onToolFilterClick={onToolFilterClick} isFilterLoading={isToolsFilterLoading}/>
           <div 
             onClick={onAddObjectClick}
             className="flex flex-row mb-2 mt-4 bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700 cursor-pointer w-[60%] text-center">
@@ -102,7 +116,7 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
           {/* Tools list */}
           <div className='flex flex-col h-full bg-white text-black'>
             {/* Afficher les objets filtrés */}
-            {userDevices.length > 0 ? (
+            {!isUserDevicesLoading && userDevices.length > 0 ? (
               userDevices.map((userDevice) => (
                 <DeviceItem
                   key={userDevice._id}
@@ -113,7 +127,7 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
               ))
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className='text-center'>Aucun objet trouvé pour cette catégorie.</p>
+                <img src="/src/assets/loading/90-ring.svg" className='self-center'></img>
               </div>
             )}
           </div>

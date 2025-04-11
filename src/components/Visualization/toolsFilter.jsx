@@ -8,6 +8,7 @@ import AccordionItem from "../Accordion/accordionItem";
 // toggleVisibility : Etat qui determine si la fênetre est visible ou non
 const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDevices}) => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedDevices, setSelectedDevices] = useState([]);
 
     // Handle checkbox change
@@ -24,8 +25,9 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
     };
 
     useEffect(() => {
-      async function test (){
+      async function filterDevices (){
         console.log("[onDeviceFilterSubmit] Formulaire soumis !");
+        setIsLoading(true);
 
         try {
           console.log(`[onDeviceFilterSubmit] Envoi requête vers: http://localhost:5000/api/devices/filter`);
@@ -51,9 +53,11 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
   
         } catch (error) {
           console.error("[onDeviceFilterSubmit] Erreur catché:", error);
+        } finally {
+          setIsLoading(false);
         }
       }
-      test();
+      filterDevices();
     }, [selectedDevices])
 
   return (
@@ -61,7 +65,14 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
       {/* Cadre qui contient le design de la fênetre de filtrage */}
       <div className={`absolute flex flex-col top-0 right-0 p-4 size-full bg-gray-500 overflow-y-auto ${isVisible ? "block" : "hidden"}`}>
         {/* Button pour éteindre la fênetre de filtre */}
-        <input type="image" src="/src/assets/backArrow.svg" className="h-[5%] w-full mb-4" onClick={toggleVisibility}/>
+        <div className="flex">
+          <input 
+            type="image" 
+            src={isLoading ? "/src/assets/loading/90-ring.svg" : "/src/assets/backArrow.svg"} 
+            className="h-full w-10 mb-4 self-center" 
+            onClick={toggleVisibility}
+          />
+        </div>
         
           {/*  */}
           <div className="flex flex-col size-full">
