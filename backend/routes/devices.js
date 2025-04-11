@@ -1,13 +1,12 @@
 const express = require("express");
-const ObjectModel = require("../models/objectModel");
 const DeviceCategory = require("../models/DeviceCategory");
 const Device = require("../models/Device");
 const UserDevice = require("../models/UserDevice");
 const User = require("../models/User");
-const Category = require("../models/categoryModel");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 
+// Route pour avoir tous les appareils
 router.get("/deviceCategories", async(req, res) => {
   const categories = await DeviceCategory.find({});
   
@@ -28,21 +27,9 @@ router.get("/deviceCategories", async(req, res) => {
 
 // Route pour filtrer les objets par catégorie
 router.get("/filter", async (req, res) => {
-  const categoryName = req.query.category;
-
-  // Trouver la catégorie par son nom
-  const category = await Category.findOne({ name: categoryName });
-  
-  if (!category) {
-    return res.status(404).json({ message: "Category not found" });
-  }
-
-  // Trouver les objets qui correspondent à cette catégorie
-  const objects = await ObjectModel.find({ category_id: category._id });
-
-  res.json(objects);
 });
 
+// Route pour avoir les appareils de l'utilisateur connecté
 router.get("/getConnectedUserDevices", async(req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
@@ -59,6 +46,7 @@ router.get("/getConnectedUserDevices", async(req, res) => {
     }
 });
 
+// Route pour l'utilisateur qui va ajouter un nouvelle appareil à travers du formulaire
 router.post("/newObject", async (req, res) => {
   try {
     // Les erreurs lié au formulaire
