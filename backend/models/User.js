@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 
-const Device = require('./Device');
+const UserDevice = require('./UserDevice');
 
 const userSchema = new mongoose.Schema({
     prenom: String,
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     verificationToken: String,
     isVerified: {type: Boolean, default: false},
 
-    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Device' }]
+    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserDevice' }]
 });
 
 userSchema.methods.generateVerificationToken = function () {
