@@ -20,21 +20,34 @@ const userDeviceSchema = new mongoose.Schema({
         required : true
     },
     description : String,
-    id: { type: String, required: true, unique: true },
+    id: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
     mode : { 
         type: String,
         enum: MODE_ENUM,
         default: 'AUTOMATIC'
     },
-    battery: Number,
+    battery: {
+        type: Number,
+        min: 0,
+        max: 100
+    },
+    // Le status wifi de l'appareil
     wifi: { 
         type: String, 
         enum: WIFI_ENUM,
         default: 'NONE'
     },
-    device: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Device' 
+    lastInteraction: {
+        type: Date,
+        default: Date.now,  
+    },
+    deviceId: {
+        type: String,
+        required: true 
     }
 });
 
