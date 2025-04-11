@@ -43,6 +43,22 @@ router.get("/filter", async (req, res) => {
   res.json(objects);
 });
 
+router.get("/getConnectedUserDevices", async(req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        if (!user) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+        const devices = await user.getDevices();
+
+        console.error("Appareils de l'utilisateur:", devices);
+        res.json(devices);
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération des appareils de l'utilisateur:", error);
+    }
+});
+
 router.post("/newObject", async (req, res) => {
   try {
     // Les erreurs lié au formulaire
@@ -58,15 +74,14 @@ router.post("/newObject", async (req, res) => {
       formErrors.name = "Veuillez saisir le nom de l'appareil";
     }
 
-    if (req.body.type.trim() === ""){
-      formErrors.type = "Veuillez choisir le type de l'appareil";
+    if (req.body.deviceId.trim() === ""){
+      formErrors.deviceId = "Veuillez choisir le type de l'appareil";
     }
 
     // if (Object.keys(formErrors).length > 0) {
     //   return res.status(400).json({ error: "Erreur de formulaire", formErrors: formErrors });
     // }
-
-    console.log(req.body);
+    
     const userDevice = await UserDevice.create({
       name: req.body.name,
       description: req.body.description,
@@ -74,11 +89,12 @@ router.post("/newObject", async (req, res) => {
       mode: req.body.mode,
       battery: req.body.battery,
       wifi: req.body.wifi,
-      type: req.body.type
+      deviceId: req.body.deviceId
     });
 
+    console.log(userDevice);
     user.devices.push(userDevice._id)
-    //await user.save();
+    await user.save();
 
   } catch (err) {
     console.log(err)
