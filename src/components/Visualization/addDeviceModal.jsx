@@ -2,17 +2,17 @@
 
   import AccordionItem from '../Accordion/accordionItem';
   import Modal from "../modal"
-  import { iotDevices } from '../iotDevices';
-
+  
+  // Modale qui permet de rajouter un appareil pour l'utilisateur
   const addDeviceModal = ({deviceCategories, onCancelClick}) => {
     const [isTypeDropDownOpen, setIsTypeDropDownOpen] = useState(false)
-    const [selectedDeviceType, setSelectedDeviceType] = useState("")
+    const [selectedDeviceType, setSelectedDeviceType] = useState(null)
 
     const [newObjet, setNewObjet] = useState({
       name: "",
       description: "",
       mode: "AUTOMATIC",
-      type: "",
+      deviceId: "",
       battery: "0",
       wifi: "NONE"
     });
@@ -40,11 +40,13 @@
             name: newObjet.name,
             description: newObjet.description,
             mode: newObjet.mode,
-            type: selectedDeviceType,
+            deviceId: selectedDeviceType.id,
             battery: newObjet.battery,
             wifi: newObjet.wifi
           }),
         });
+
+        
 
       } catch (error) {
         console.error("[onNewObjectSubmit] Erreur catché:", error);
@@ -55,25 +57,29 @@
         <Modal children={        
           <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
             <form onSubmit={onNewObjectSubmit} className="flex flex-col gap-4">
+              {/* Saisie pour le nom de l'appareil */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l'objet</label>
                 <input id="name" name="name" value={newObjet.name} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black"/>
               </div>
               
+              {/* Saisie pour la description de l'appareil */}
               <div>
                 <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
                 <input id="description" name="description" value={newObjet.description} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black" />
               </div>
               
+              {/* Saisie pour le mode de l'appareil */}
               <div>
                 <label htmlFor="mode" className="block text-sm font-medium mb-1">Mode</label>
-                <select id="mode" name="mode" value={newObjet.status} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black">
+                <select id="mode" name="mode" value={newObjet.mode} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black">
                   <option value="AUTOMATIC">Automatique</option>
                   <option value="MANUAL">Manuel</option>
                   <option value="SCHEDULE">Programmé</option>
                 </select>
               </div>
               
+              {/* Saisie pour selection de type d'appareil */}
               <div className="relative">
                 <label htmlFor="type" className="block text-sm font-medium mb-1">Type</label>
                 <div className="h-full bg-white flex border p-2 border-black rounded items-center" onClick={() => setIsTypeDropDownOpen((prev) => !prev)}>
@@ -81,7 +87,7 @@
                     <span className="appearance-none outline-none text-black w-full select-none">
                       {selectedDeviceType === null
                         ? "Selectioner un type d'appareil"
-                        : selectedDeviceType}
+                        : selectedDeviceType.name}
                     </span>
 
                     {/* Cadre pour le button d'affichage de la liste déroulante */}
@@ -99,13 +105,16 @@
                 { isTypeDropDownOpen && 
                   <div className="mt-2 absolute flex flex-col bg-white w-full border border-black rounded overflow-y-auto max-h-50">
                     {deviceCategories && deviceCategories.length > 0 && deviceCategories.map((category) => (
+                      // Afficher chaque catégorie d'appareil
                       <AccordionItem 
                         key={category._id}
                         category={category.name}
+                        // Afficher les appareils lié à cette catégorie
                         items={category.devices.map((device) => (
                           <div key={device._id} className="cursor-pointer group" 
                             onClick={(e) => {
-                              setSelectedDeviceType(device.id);
+                              setSelectedDeviceType(device);
+                              setIsTypeDropDownOpen(false);
                             }} 
                           >
                             <a className="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100">{device.name}</a>
@@ -117,11 +126,13 @@
                   </div> }
               </div>
               
+              {/* Saisie pour la batterie */}
               <div>
                 <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
                 <input min="0" max="100" id="batterie" name="batterie" type="number" value={newObjet.battery} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black" required />
               </div>
               
+              {/* Saisie pour la WIFI */}
               <div>
                 <label htmlFor="wifi" className="block text-sm font-medium mb-1">Signal Connexion Wi-Fi</label>
                 <select id="wifi" name="wifi" value={newObjet.wifi} onChange={onNewObjectChange} className="border p-2 rounded w-full text-black">
