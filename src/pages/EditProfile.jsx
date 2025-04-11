@@ -120,35 +120,42 @@ const EditProfile = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Modifier le Profil</h2>
 
         {/* Photo de profil */}
-        <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
-          <div className="flex items-center space-x-4">
-            <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
-            <input
-              type="file"
-              accept="image/*"
-              name="public.photo"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setUserData({
-                      ...userData,
-                      public: {
-                        ...userData.public,
-                        photo: reader.result
-                      }
-                    });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <div className="mb-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
+        <div className="flex items-center space-x-4">
+          <img 
+            src={userData.public.photo} 
+            alt="Avatar" 
+            className="w-12 h-12 rounded-full cursor-pointer" 
+            onClick={() => document.getElementById('photoInput').click()} 
+          />
+          <input
+            id="photoInput"
+            type="file"
+            accept="image/*"
+            name="public.photo"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setUserData({
+                    ...userData,
+                    public: {
+                      ...userData.public,
+                      photo: reader.result
+                    }
+                  });
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="hidden"
+          />
         </div>
+      </div>
 
+      <div className="w-full mt-8 flex flex-col gap-4 text-black">
         {/* Pseudonyme */}
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
@@ -244,6 +251,7 @@ const EditProfile = () => {
               className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
         </div>
 
         {/* Boutons */}
