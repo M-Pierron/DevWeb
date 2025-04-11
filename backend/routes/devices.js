@@ -25,20 +25,50 @@ router.get("/deviceCategories", async(req, res) => {
   res.json(categoriesWithDevices);
 });
 
-// Route pour filtrer les objets par catégorie
-router.get("/filter", async (req, res) => {
+// Route pour filtrer les appareils par catégorie
+router.post("/filter", async (req, res) => {
+  try {
+    // Récuperer l'utilisateur connectée
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+    // Récuperer les appareils de l'utilisateur
+    const devices = await user.getDevices();
+
+    // Les appareils qui ont été selectionnées
+    const selectedDevices = req.body.selectedDevices;
+
+    if (selectedDevices.length === 0){
+      console.log("Aucun filtrage selectionnée:", devices);
+      return res.json(devices);
+    }
+
+    // Filtres les appareils de l'utilisateur
+    const filteredDevices = devices.filter(device => 
+      selectedDevices.includes(device.deviceId)
+    );
+
+    console.log("Filtrage des appareils:", filteredDevices);
+    res.json(filteredDevices);
+
+} catch (error) {
+    console.error("Erreur lors de la récupération des appareils de l'utilisateur:", error);
+}
 });
 
 // Route pour avoir les appareils de l'utilisateur connecté
 router.get("/getConnectedUserDevices", async(req, res) => {
     try {
+        // Récuperer l'utilisateur connectée
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {
             return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
+        // Récuperer les appareils de l'utilisateur
         const devices = await user.getDevices();
 
-        console.error("Appareils de l'utilisateur:", devices);
+        console.log("Appareils de l'utilisateur:", devices);
         res.json(devices);
 
     } catch (error) {
