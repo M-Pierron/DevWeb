@@ -1,5 +1,6 @@
 import React from 'react'
 
+// Component qui représente un appareil pour la liste d'appareils
 const deviceItem = ({userDevice, onClick, isSelected}) => {
   return (
     <div 
@@ -14,6 +15,7 @@ const deviceItem = ({userDevice, onClick, isSelected}) => {
             <span><strong>Mode : </strong>{userDevice.mode}</span>
           </div>
       </div>
+      
       <div className='flex flex-col w-[50%] items-end'>
         
         <span><strong>📶 Wi-Fi : </strong>{userDevice.wifi}</span>

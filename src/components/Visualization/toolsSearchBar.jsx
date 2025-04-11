@@ -1,16 +1,10 @@
 import { Funnel, Search } from 'lucide-react';
 import React, { useState } from 'react'
 
+// Component qui représente la barre de recherche pour les appareils
 const toolsSearchBar = ({onToolFilterClick}) => {
-
-  const [input, setInput] = useState("");
-
-  const onInputChange = (value) => {
-    setInput(value);
-    
-  }
-
   return (
+    // Cadre pour la barre de recherche
     <div className="flex flex-row h-[5%] ">
         {/* Cadre qui contient la barre de recherche et son icone */}
         <div className='flex flex-row size-full bg-white text-black rounded-lg border-1 border-black'>

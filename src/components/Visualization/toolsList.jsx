@@ -6,6 +6,9 @@ import DeviceItem from "./deviceItem";
 import { Plus } from 'lucide-react';
 import AddDeviceModal from "./addDeviceModal"
 
+// Component qui représente la fênetre qui contient les appareils de l'utilisateur
+// selectedDevice : L'appareil selectionnée
+// setSelectedDevice : Etat qui determine 
 const ToolsList = ({selectedDevice, setSelectedDevice}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
