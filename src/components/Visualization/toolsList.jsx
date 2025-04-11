@@ -6,14 +6,15 @@ import DeviceItem from "./deviceItem";
 import { Plus } from 'lucide-react';
 import AddDeviceModal from "./addDeviceModal"
 
-const ToolsList = () => {
+const ToolsList = ({selectedDevice, setSelectedDevice}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
-
+  
   const [userDevices, setUserDevices] = useState([]);
   const [deviceCategories, setDeviceCategories] = useState([]);
 
   useEffect(() => {
+    // Récuperer les appareils (et leur catégories)
     const fetchCategories = async () => {
       try {
         console.log(`[fetchCategories] Envoi requête vers: http://localhost:5000/api/devices/deviceCategories`);
@@ -34,6 +35,7 @@ const ToolsList = () => {
       }
     };
 
+    // Récuperer les appareils de l'utilisateur
     const fetchUserDevices = async () => {
       try {
         console.log(`[fetchUserDevices] Envoi requête vers: http://localhost:5000/api/devices/getConnectedUserDevices`);
@@ -92,7 +94,12 @@ const ToolsList = () => {
             {/* Afficher les objets filtrés */}
             {userDevices.length > 0 ? (
               userDevices.map((userDevice) => (
-                <DeviceItem key={userDevice._id} userDevice={userDevice} />
+                <DeviceItem
+                  key={userDevice._id}
+                  userDevice={userDevice}
+                  onClick={() => setSelectedDevice(userDevice)}
+                  isSelected={selectedDevice?._id === userDevice._id}
+                />
               ))
             ) : (
               <div className="flex items-center justify-center h-full">
