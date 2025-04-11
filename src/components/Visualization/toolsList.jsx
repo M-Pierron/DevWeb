@@ -9,9 +9,8 @@ import AddDeviceModal from "./addDeviceModal"
 const ToolsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
-  const [category, setCategory] = useState('');
-  const [filteredDevices, setFilteredObjects] = useState([]);
 
+  const [userDevices, setUserDevices] = useState([]);
   const [deviceCategories, setDeviceCategories] = useState([]);
 
   useEffect(() => {
@@ -27,7 +26,7 @@ const ToolsList = () => {
           }
         });
         const data = await response.json();
-        console.log(data);
+        console.log("[fetchCategories] Réponse reçue:", data);
         
         setDeviceCategories(data);
       } catch (err) {
@@ -35,7 +34,30 @@ const ToolsList = () => {
       }
     };
 
+    const fetchUserDevices = async () => {
+      try {
+        console.log(`[fetchUserDevices] Envoi requête vers: http://localhost:5000/api/devices/getConnectedUserDevices`);
+        const token = localStorage.getItem('token');
+        const response = await fetch("http://localhost:5000/api/devices/getConnectedUserDevices", {
+          method: "GET",
+          headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        console.log("[fetchUserDevices] Réponse reçue:", data);
+
+        setUserDevices(data);
+
+      } catch (err) {
+        console.error("[fetchUserDevices] Erreur catché:", error);
+      }
+    };
+
     fetchCategories(); // call the async function
+    fetchUserDevices();
   }, []);
 
   const onToolFilterClick = () => {
@@ -48,13 +70,6 @@ const ToolsList = () => {
 
   const onCloseModalClick = () => {
     setIsModalVisible(false);
-  };
-
-  const handleCategorySelection = async (category) => {
-    setCategory(category); // Mémoriser la catégorie sélectionnée
-    const response = await fetch(`http://localhost:5000/api/devices/filter?category=${category}`);
-    const data = await response.json();
-    setFilteredObjects(data); // Mettre à jour les objets filtrés
   };
 
   return (
@@ -75,9 +90,9 @@ const ToolsList = () => {
           {/* Tools list */}
           <div className='flex flex-col h-full bg-white text-black'>
             {/* Afficher les objets filtrés */}
-            {filteredDevices.length > 0 ? (
-              filteredDevices.map((object) => (
-                <DeviceItem key={object._id} deviceName={object.name} />
+            {userDevices.length > 0 ? (
+              userDevices.map((userDevice) => (
+                <DeviceItem key={userDevice._id} userDevice={userDevice} />
               ))
             ) : (
               <div className="flex items-center justify-center h-full">
