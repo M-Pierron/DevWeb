@@ -67,7 +67,7 @@ router.post("/register", async (req, res) => {
             // Send email using transporter
             const info = await Transporter.sendMail({
                 from: 'CYHouse', // sender address
-                to: "dylanmei19@gmail.com",                                         
+                to: email,                                         
                 subject: "Confirmation inscription",                                     
                 text: `Click this link to verify your email: ${verificationUrl}`,                                  
                 // html: '<b>Hello world?</b>'
