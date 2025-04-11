@@ -11,7 +11,7 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
     const [selectedDevices, setSelectedDevices] = useState([]);
 
     // Handle checkbox change
-    const onCheckboxChange = (deviceId, isChecked) => {
+    const onCheckboxChange = async (deviceId, isChecked) => {
       setSelectedDevices((prevSelectedDevices) => {
         // If checked, add the device name to the array
         if (isChecked) {
@@ -23,38 +23,38 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
       });
     };
 
-    // 
-    const onDeviceFilterSubmit = async (e) => {
-      e.preventDefault();
-      console.log("[onDeviceFilterSubmit] Formulaire soumis !");
+    useEffect(() => {
+      async function test (){
+        console.log("[onDeviceFilterSubmit] Formulaire soumis !");
 
-      try {
-        console.log(`[onDeviceFilterSubmit] Envoi requête vers: http://localhost:5000/api/devices/filter`);
-        const token = localStorage.getItem('token');     
-        const response = await fetch("http://localhost:5000/api/devices/filter", {
-          method: "POST",
-          headers: { 
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            selectedDevices: selectedDevices,  // Send the selected devices
-          }),
-        });
-
-        const data = await response.json();
-        console.log("[onDeviceFilterSubmit] Réponse reçue:", data);
-
-        if (data){
-          console.log("[onDeviceFilterSubmit] Succès côté serveur");
-          setUserDevices(data);
-          toggleVisibility();
+        try {
+          console.log(`[onDeviceFilterSubmit] Envoi requête vers: http://localhost:5000/api/devices/filter`);
+          const token = localStorage.getItem('token');     
+          const response = await fetch("http://localhost:5000/api/devices/filter", {
+            method: "POST",
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              selectedDevices: selectedDevices,  // Send the selected devices
+            }),
+          });
+  
+          const data = await response.json();
+          console.log("[onDeviceFilterSubmit] Réponse reçue:", data);
+  
+          if (data){
+            console.log("[onDeviceFilterSubmit] Succès côté serveur");
+            setUserDevices(data);
+          }
+  
+        } catch (error) {
+          console.error("[onDeviceFilterSubmit] Erreur catché:", error);
         }
-
-      } catch (error) {
-        console.error("[onDeviceFilterSubmit] Erreur catché:", error);
       }
-    }
+      test();
+    }, [selectedDevices])
 
   return (
     <>
@@ -63,7 +63,6 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
         {/* Button pour éteindre la fênetre de filtre */}
         <input type="image" src="/src/assets/backArrow.svg" className="h-[5%] w-full mb-4" onClick={toggleVisibility}/>
         
-        <form onSubmit={onDeviceFilterSubmit} className="flex flex-col">
           {/*  */}
           <div className="flex flex-col size-full">
             {devicesCategories && devicesCategories.length > 0 && devicesCategories.map((category) => (
@@ -94,10 +93,6 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
               />
             ))}
           </div>
-  
-          {/* Button pour valider le filtrage */}
-          <button type="submit" className="bg-blue-700 border-1 border-black w-full self-end mt-auto shadow-lg rounded-lg py-2 cursor-pointer">APPLIQUER</button>
-        </form>
 
       </div>
     </>
