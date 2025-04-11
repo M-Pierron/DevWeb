@@ -26,6 +26,11 @@ userSchema.methods.generateVerificationToken = function () {
     this.verificationToken = crypto.randomBytes(32).toString('hex');
 };
 
+userSchema.methods.getDevices = async function () {
+    const user = await this.populate('devices');
+    return user.devices;
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
