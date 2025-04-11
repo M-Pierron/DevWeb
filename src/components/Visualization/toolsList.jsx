@@ -81,7 +81,7 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
     <>
       <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-dvh'>
         {/* Le cadre utilisé pour filtrer les appareils, caché */}
-        <ToolsFilter devicesCategories={deviceCategories} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
+        <ToolsFilter devicesCategories={deviceCategories} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} setUserDevices={setUserDevices} />
         
         <div className='flex flex-col h-full'>
           {/* La barre de recherche qui contient le button pour afficher le filtre */}
