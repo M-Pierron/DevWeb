@@ -6,7 +6,8 @@ import AccordionBody from "./accordionBody"
 const accordionItem = ({category, items, headerStyle, headerOpenStyle, headerClosedStyle, blockStyle, headerImage}) => {
     const [accordionOpen, setAccordionOpen] = useState(false);
 
-    const openAccordion = () => {
+    const openAccordion = (e) => {
+        e.preventDefault(); // ???????????? sans ça, ca active l'envoi du formulaire
         setAccordionOpen(!accordionOpen)
     };
 

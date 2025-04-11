@@ -1,10 +1,30 @@
 const express = require("express");
 const ObjectModel = require("../models/objectModel");
+const DeviceCategory = require("../models/DeviceCategory");
 const Device = require("../models/Device");
+const UserDevice = require("../models/UserDevice");
 const User = require("../models/User");
 const Category = require("../models/categoryModel");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
+
+router.get("/deviceCategories", async(req, res) => {
+  const categories = await DeviceCategory.find({});
+  
+  //
+  // On utilise Promise pour attendre que tous appareils lié à la catégorie on été chargées
+  const categoriesWithDevices = await Promise.all(
+    categories.map(async (category) => {
+      const devices = await Device.find({ categoryId: category.id });
+      return {
+        ...category.toObject(),
+        devices
+      };
+    })
+  );
+
+  res.json(categoriesWithDevices);
+});
 
 // Route pour filtrer les objets par catégorie
 router.get("/filter", async (req, res) => {
@@ -25,9 +45,11 @@ router.get("/filter", async (req, res) => {
 
 router.post("/newObject", async (req, res) => {
   try {
+    // Les erreurs lié au formulaire
     const formErrors = {}
+    // Trouver l'utilisateur qui est connecté dans la BDD
     const user = await User.findById(req.user._id).select('-password');
-    console.log(user);
+
     if (!user) {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
@@ -40,11 +62,12 @@ router.post("/newObject", async (req, res) => {
       formErrors.type = "Veuillez choisir le type de l'appareil";
     }
 
-    if (Object.keys(formErrors).length > 0) {
-      return res.status(400).json({ error: "Erreur de formulaire", formErrors: formErrors });
-    }
+    // if (Object.keys(formErrors).length > 0) {
+    //   return res.status(400).json({ error: "Erreur de formulaire", formErrors: formErrors });
+    // }
 
-    const device = new Device({
+    console.log(req.body);
+    const userDevice = await UserDevice.create({
       name: req.body.name,
       description: req.body.description,
       id: uuidv4(),
@@ -53,6 +76,9 @@ router.post("/newObject", async (req, res) => {
       wifi: req.body.wifi,
       type: req.body.type
     });
+
+    user.devices.push(userDevice._id)
+    //await user.save();
 
   } catch (err) {
     console.log(err)
