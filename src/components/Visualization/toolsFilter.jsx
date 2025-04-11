@@ -80,7 +80,7 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
                         type="checkbox" 
                         checked={selectedDevices.includes(device.id)} 
                         onChange={(e) => onCheckboxChange(device.id, e.target.checked)} 
-                        className="mr-2" 
+                        className="hidden" 
                       />
                       {device.name}
                     </label>

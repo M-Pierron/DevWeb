@@ -32,7 +32,11 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
         const data = await response.json();
         console.log("[fetchCategories] Réponse reçue:", data);
         
-        setDeviceCategories(data);
+        if (data){
+          console.log("[fetchCategories] Succès côté serveur");
+          setDeviceCategories(data);
+        }
+        
       } catch (err) {
         console.error('Error fetching categories:', err);
       }
@@ -54,7 +58,10 @@ const ToolsList = ({selectedDevice, setSelectedDevice}) => {
         const data = await response.json();
         console.log("[fetchUserDevices] Réponse reçue:", data);
 
-        setUserDevices(data);
+        if (data){
+          console.log("[fetchUserDevices] Succès côté serveur");
+          setUserDevices(data);
+        }
 
       } catch (err) {
         console.error("[fetchUserDevices] Erreur catché:", error);

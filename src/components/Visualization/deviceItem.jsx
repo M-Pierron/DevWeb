@@ -16,10 +16,10 @@ const deviceItem = ({userDevice, onClick, isSelected}) => {
           </div>
       </div>
       
-      <div className='flex flex-col w-[50%] items-end'>
-        
-        <span><strong>📶 Wi-Fi : </strong>{userDevice.wifi}</span>
-        <span><strong>🔋 Batterie : </strong>{userDevice.battery}%</span>
+      <div className='flex flex-col w-[50%] items-end justify-between'>
+        <div className='rounded-full bg-amber-500 size-[24px] border-1 border-black'>
+        </div>
+        <span>{userDevice.battery}%</span>
 
       </div>
     </div>
