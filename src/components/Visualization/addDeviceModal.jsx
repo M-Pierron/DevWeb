@@ -53,10 +53,16 @@
         const data = await response.json();
         console.log("[onNewDeviceSubmit] Réponse reçue:", data);
 
+        if (data){
+          toggleModalVisibility();
+        }
+
         
 
       } catch (error) {
         console.error("[onNewDeviceSubmit] Erreur catché:", error);
+      } finally {
+        
       }
     }
 
