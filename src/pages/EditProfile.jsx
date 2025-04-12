@@ -19,6 +19,7 @@ const EditProfile = () => {
     }
   });
   
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,8 +43,22 @@ const EditProfile = () => {
           console.warn("Erreur:", data.error);
           navigate("/");
         } else {
+          let rawDate = data.public.dateNaissance;
+
+          // 🧼 Reformat ISO -> JJ/MM/AAAA si nécessaire
+          if (rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+            const [year, month, day] = rawDate.split("-");
+            rawDate = `${day}/${month}/${year}`;
+          }
+
+          const age = calculateAge(rawDate);
+
           setUserData({
-            public: data.public,
+            public: {
+              ...data.public,
+              dateNaissance: rawDate,
+              age: age,
+            },
             private: data.private,
           });
         }
@@ -66,34 +81,59 @@ const EditProfile = () => {
     });
   };
 
-  const handleAgeChange = (e) => {
-    let value = e.target.value;
-    if (value > 100) value = 100;
-    if (value < 0) value = 0;
+  const calculateAge = (dateString) => {
+    if (!dateString) return '';
+    const [day, month, year] = dateString.split('/').map(Number);
+    const birthDate = new Date(year, month - 1, day);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age.toString();
+  };
+
+  const handleDateInput = (e) => {
+    let value = e.target.value.replace(/\D/g, ''); // Supprimer tout sauf chiffres
+
+    if (value.length >= 5) {
+      value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+    } else if (value.length >= 3) {
+      value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+
+    value = value.slice(0, 10); // JJ/MM/AAAA
+
+    const age = calculateAge(value);
+
     setUserData({
       ...userData,
       public: {
         ...userData.public,
-        age: value
+        dateNaissance: value,
+        age: age
       }
     });
   };
 
-  const handleDateInput = (e) => {
-    let value = e.target.value;
-    if (value.length <= 10) {
-      setUserData({
-        ...userData,
-        public: {
-          ...userData.public,
-          dateNaissance: value
-        }
-      });
-    }
-  };
-
   const handleSave = async () => {
     const token = localStorage.getItem("token");
+
+    // ✅ Reconvertir date vers format ISO pour l’API
+    const [day, month, year] = userData.public.dateNaissance.split('/');
+    const dateFormattedForServer = `${year}-${month}-${day}`;
+
+    const updatedUserData = {
+      ...userData,
+      public: {
+        ...userData.public,
+        dateNaissance: dateFormattedForServer
+      }
+    };
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/profile/update", {
         method: "PUT",
@@ -101,7 +141,7 @@ const EditProfile = () => {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(updatedUserData),
       });
 
       const data = await response.json();
@@ -116,52 +156,43 @@ const EditProfile = () => {
   };
 
   return (
-    <>
-    <Nav name="PROFIL"/>
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Modifier le Profil</h2>
 
         {/* Photo de profil */}
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
-        <div className="flex items-center space-x-4">
-          <img 
-            src={userData.public.photo} 
-            alt="Avatar" 
-            className="w-12 h-12 rounded-full cursor-pointer" 
-            onClick={() => document.getElementById('photoInput').click()} 
-          />
-          <input
-            id="photoInput"
-            type="file"
-            accept="image/*"
-            name="public.photo"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setUserData({
-                    ...userData,
-                    public: {
-                      ...userData.public,
-                      photo: reader.result
-                    }
-                  });
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
-            className="hidden"
-          />
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
+          <div className="flex items-center space-x-4">
+            <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
+            <input
+              type="file"
+              accept="image/*"
+              name="public.photo"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setUserData({
+                      ...userData,
+                      public: {
+                        ...userData.public,
+                        photo: reader.result
+                      }
+                    });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              className="p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="w-full mt-8 flex flex-col gap-4 text-black">
         {/* Pseudonyme */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme :</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
           <input
             type="text"
             name="public.pseudonyme"
@@ -171,23 +202,9 @@ const EditProfile = () => {
           />
         </div>
 
-        {/* Âge */}
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Âge :</label>
-          <input
-            type="number"
-            name="public.age"
-            value={userData.public.age}
-            onChange={handleAgeChange}
-            min="0"
-            max="100"
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
         {/* Date de naissance */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance :</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
           <input
             type="text"
             name="public.dateNaissance"
@@ -199,9 +216,20 @@ const EditProfile = () => {
           />
         </div>
 
+        {/* Âge (lecture seule) */}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
+          <input
+            type="text"
+            value={userData.public.age}
+            readOnly
+            className="w-full p-2 bg-gray-100 border border-gray-300 rounded shadow-sm"
+          />
+        </div>
+
         {/* Sexe */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre :</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
           <select
             name="public.sexe"
             value={userData.public.sexe}
@@ -215,25 +243,24 @@ const EditProfile = () => {
           </select>
         </div>
 
-        {/* Email */}
+        {/* Email (readonly) */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Email :</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Email (non modifiable)</label>
           <input
             type="email"
-            name="public.email"
             value={userData.public.email}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            readOnly
+            className="w-full p-2 bg-gray-100 border border-gray-300 rounded shadow-sm"
           />
         </div>
 
         {/* Informations Privées */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">-- Informations Privées --</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Informations Privées</h3>
 
           {/* Nom */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nom :</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Nom</label>
             <input
               type="text"
               name="private.nom"
@@ -245,7 +272,7 @@ const EditProfile = () => {
 
           {/* Prénom */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Prénom :</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Prénom</label>
             <input
               type="text"
               name="private.prenom"
@@ -254,7 +281,6 @@ const EditProfile = () => {
               className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-        </div>
         </div>
 
         {/* Boutons */}
@@ -265,7 +291,6 @@ const EditProfile = () => {
           >
             Enregistrer les modifications
           </button>
-          
           <button
             onClick={() => navigate("/Accueil/Profil")}
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
@@ -274,8 +299,7 @@ const EditProfile = () => {
           </button>
         </div>
       </div>
-    </div>4
-    </>
+    </div>
   );
 };
 

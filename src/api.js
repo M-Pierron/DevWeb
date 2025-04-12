@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: "http://localhost:5000/api/auth" });
+const API = axios.create({ baseURL: "http://localhost:5000/api" });
 
-// Intercepteur pour ajouter le token aux requêtes
+// Interceptor to add token to requests
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -11,17 +11,47 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Authentification
-export const register = (data) => API.post("/register", data);
-export const login = (data) => API.post("/login", data);
-export const verifyToken = () => API.post("/verifyToken");
+// Authentication
+export const auth = {
+  register: (data) => API.post("/auth/register", data),
+  login: (data) => API.post("/auth/login", data),
+  verifyToken: () => API.post("/auth/verifyToken"),
+  getProfile: () => API.get("/auth/profile"),
+  updateProfile: (data) => API.put("/auth/profile/update", data)
+};
 
-// Profil utilisateur
-export const getProfile = () => API.get("/profile");
-export const updateProfile = (data) => API.put("/profile/update", data);
+// Admin management
+export const admin = {
+  getAllUsers: () => API.get("/auth/users"),
+  updateUser: (userId, data) => API.put(`/auth/users/${userId}`, data),
+  deleteUser: (userId) => API.delete(`/auth/users/${userId}`),
+  createUser: (data) => API.post("/auth/users", data),
+  getPendingUsers: () => API.get("/auth/pending-users"),
+  verifyUser: (data) => API.post("/auth/verify-user", data),
+  getDashboard: () => API.get("/auth/admin-dashboard")
+};
+
+// Categories
+export const categories = {
+  getAll: () => API.get("/categories"),
+  create: (data) => API.post("/categories", data),
+  update: (id, data) => API.put(`/categories/${id}`, data),
+  delete: (id) => API.delete(`/categories/${id}`)
+};
+
+// Objects
+export const objects = {
+  getAll: () => API.get("/objects"),
+  create: (data) => API.post("/objects", data),
+  update: (id, data) => API.put(`/objects/${id}`, data),
+  delete: (id) => API.delete(`/objects/${id}`),
+  filterByCategory: (categoryName) => API.get(`/objects/filter?category=${encodeURIComponent(categoryName)}`)
+};
 
 // Dashboard
-export const getUserDashboard = () => API.get("/user-dashboard");
-export const getAdminDashboard = () => API.get("/admin-dashboard");
+export const dashboard = {
+  getUser: () => API.get("/auth/user-dashboard"),
+  getAdmin: () => API.get("/auth/admin-dashboard")
+};
 
 export default API;

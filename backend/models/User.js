@@ -15,11 +15,20 @@ const userSchema = new mongoose.Schema({
     dateNaissance: String,
     photo: String,
     pseudonyme: { type: String, required: true },
-    
     verificationToken: String,
     isVerified: {type: Boolean, default: false},
-
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserDevice' }]
+});
+
+// Pre-save hook to calculate and set the age before saving
+userSchema.pre('save', function(next) {
+    if (this.dateNaissance) {
+        const birthDate = new Date(this.dateNaissance);
+        const ageDifMs = Date.now() - birthDate.getTime();
+        const ageDate = new Date(ageDifMs);
+        this.age = Math.abs(ageDate.getUTCFullYear() - 1970); // Calculate age
+    }
+    next();
 });
 
 userSchema.methods.generateVerificationToken = function () {
