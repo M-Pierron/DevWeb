@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 import ToolsFilter from './toolsFilter';
+import ToolsSearchBar from './toolsSearchBar';
 import DeviceItem from "./deviceItem";
 
-const toolsList = () => {
+const ToolsList = () => {
   const iotDevices = [
     [
       "Sécurité & Contrôle d'accès", "security",
@@ -60,34 +61,43 @@ const toolsList = () => {
       ]
     ]
   ];
-  
-  const [isVisible, setIsVisible] = useState(false);
 
-  const handleClick = () => {
-    setIsVisible(!isVisible);
+  const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
+  const [category, setCategory] = useState('');
+  const [filteredObjects, setFilteredObjects] = useState([]);
+
+  const onToolFilterClick = () => {
+    setToolsFilterVisibility(!isToolsFilterVisible);
+  };
+
+  const handleCategorySelection = async (category) => {
+    setCategory(category); // Mémoriser la catégorie sélectionnée
+    const response = await fetch(`http://localhost:5000/api/objects/filter?category=${category}`);
+    const data = await response.json();
+    setFilteredObjects(data); // Mettre à jour les objets filtrés
   };
 
   return (
     <>
-          <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
-            <ToolsFilter tools={iotDevices} isVisible={isVisible} toggleVisibility={handleClick}/>
-            <div className='flex flex-col h-full'>
-              <div className="flex flex-row h-[5%]">
-                <input type='search' className='w-[90%] bg-white text-black rounded-xl'></input>
-                <input 
-                  type="image" 
-                  src="/src/assets/filter.svg" 
-                  className="w-[10%] h-full"
-                  onClick={handleClick}
-                />
-              </div>
-              <div className='h-full mt-4 bg-white text-black'>
-                <DeviceItem />
-              </div>
-            </div>
+      <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
+        <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
+        <div className='flex flex-col h-full'>
+          <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
+          {/* Tools list */}
+          <div className='h-full mt-4 bg-white text-black'>
+            {/* Afficher les objets filtrés */}
+            {filteredObjects.length > 0 ? (
+              filteredObjects.map((object) => (
+                <DeviceItem key={object._id} deviceName={object.name} />
+              ))
+            ) : (
+              <p>Aucun objet trouvé pour cette catégorie.</p>
+            )}
           </div>
+        </div>
+      </div>
     </>
-  )
+  );
 }
 
-export default toolsList
+export default ToolsList;

@@ -1,54 +1,109 @@
 import React, { useState } from 'react';
 import { User, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Nav from "../components/nav"; // Assure-toi d'avoir ce composant de navigation
+import { useAuth } from '../context/AuthContext';
+import Nav from "../components/nav"; 
 import "../App.css";
 
-const SignIn = ({ setIsAuthenticated }) => {
+const SignIn = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     prenom: '',
     nom: '',
+    pseudonyme: '',
     email: '',
     password: '',
   });
+
   const navigate = useNavigate();
+  const { login, register } = useAuth(); // 💡 du contexte
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    console.log(`[handleChange] ${name}:`, value); // 📝 LOG
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("[handleSubmit] Formulaire soumis !");
+    console.log("isLogin ?", isLogin);
+    console.log("formData:", formData);
+  
     const url = isLogin
       ? "http://localhost:5000/api/auth/login"
       : "http://localhost:5000/api/auth/register";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-        ...(isLogin ? {} : { prenom: formData.prenom, nom: formData.nom }), // Ajoute prénom et nom si c'est une inscription
-      }),
-    });
-
-    const data = await response.json();
-
-    if (data.token) {
-      // Stocke le token dans le localStorage
-      localStorage.setItem("token", data.token);
-      setIsAuthenticated(true); // Mise à jour de l'état d'authentification
-      navigate("/profile"); // Redirige vers le profil
-    } else {
-      alert(data.error || "Une erreur est survenue");
+  
+    try {
+      console.log(`[handleSubmit] Envoi requête vers: ${url}`);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          ...(isLogin ? {} : { 
+            prenom: formData.prenom,
+            nom: formData.nom,
+            pseudonyme: formData.pseudonyme
+          }),
+        }),
+      });
+  
+      const data = await response.json();
+      if (!response.ok) {
+        console.log("[handleSubmit] Erreur d'inscription:", data.error);
+      
+        if (!isLogin && data.error === "Email déjà utilisé") {
+          alert("❌ Cet email est déjà utilisé.");
+          return;
+        }
+      
+        // Pour toute autre erreur
+        alert("❌ Une erreur est survenue : " + (data.error || "Erreur inconnue"));
+        return;
+      }
+      console.log("[handleSubmit] Réponse reçue:", data);
+      console.log("[handleSubmit] Statut HTTP:", response.status);
+  
+      if (response.ok && data) {
+        console.log("[handleSubmit] Succès côté serveur");
+        if (isLogin) {
+          console.log("[handleSubmit] Login via contexte avec:", data);
+          login(data);
+      
+          // Enregistrer le token dans localStorage
+          localStorage.setItem("token", data.token);
+          console.log("🔑 Token enregistré localement:", localStorage.getItem("token"));
+      
+          // Navigation vers le profil après connexion
+          console.log("[handleSubmit] Navigation vers /Profil");
+          navigate("/Accueil/Profil");
+        } else {
+          // ✅ ALERTE INSCRIPTION RÉUSSIE
+          alert("Inscription réussie ! Attendez la vérifiquation d'un admin.");
+      
+          
+          setIsLogin(true);
+          
+          // Optionnel : reset le formulaire
+          setFormData({
+            prenom: '',
+            nom: '',
+            pseudonyme: '',
+            email: '',
+            password: '',
+          });
+        }
+      }
+      
+    } catch (error) {
+      console.error("[handleSubmit] Erreur catché:", error);
+      alert("Une erreur est survenue lors de la connexion ou de l'inscription.");
     }
   };
+  
 
   return (
     <div>
@@ -76,7 +131,6 @@ const SignIn = ({ setIsAuthenticated }) => {
                     required
                   />
                 </div>
-
                 <div className="input-container">
                   <User className="input-icon" />
                   <input
@@ -89,9 +143,20 @@ const SignIn = ({ setIsAuthenticated }) => {
                     required
                   />
                 </div>
+                <div className="input-container">
+                  <User className="input-icon" />
+                  <input
+                    type="text"
+                    name="pseudonyme"
+                    placeholder="Pseudonyme"
+                    className="input-field"
+                    value={formData.pseudonyme}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </>
             )}
-
             <div className="input-container">
               <Mail className="input-icon" />
               <input
@@ -104,7 +169,6 @@ const SignIn = ({ setIsAuthenticated }) => {
                 required
               />
             </div>
-
             <div className="input-container">
               <Lock className="input-icon" />
               <input
@@ -118,13 +182,15 @@ const SignIn = ({ setIsAuthenticated }) => {
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => {
+                  console.log("[togglePassword] Affichage mdp :", !showPassword);
+                  setShowPassword(!showPassword);
+                }}
                 className="toggle-password"
               >
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
-
             {!isLogin && (
               <div className="input-container">
                 <Lock className="input-icon" />
@@ -144,7 +210,13 @@ const SignIn = ({ setIsAuthenticated }) => {
 
           <p className="switch-text">
             {isLogin ? "Vous n'avez pas encore de compte ?" : "Vous avez déjà un compte ?"}
-            <button onClick={() => setIsLogin(!isLogin)} className="switch-button">
+            <button
+              onClick={() => {
+                console.log("[switchForm] Passage à :", !isLogin ? "Connexion" : "Inscription");
+                setIsLogin(!isLogin);
+              }}
+              className="switch-button"
+            >
               {isLogin ? "S'INSCRIRE" : "SE CONNECTER"}
             </button>
           </p>

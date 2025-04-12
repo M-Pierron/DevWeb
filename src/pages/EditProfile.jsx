@@ -17,7 +17,7 @@ const EditProfile = () => {
       prenom: ''
     }
   });
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,8 +40,22 @@ const EditProfile = () => {
           console.warn("Erreur:", data.error);
           navigate("/");
         } else {
+          let rawDate = data.public.dateNaissance;
+
+          // 🧼 Reformat ISO -> JJ/MM/AAAA si nécessaire
+          if (rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+            const [year, month, day] = rawDate.split("-");
+            rawDate = `${day}/${month}/${year}`;
+          }
+
+          const age = calculateAge(rawDate);
+
           setUserData({
-            public: data.public,
+            public: {
+              ...data.public,
+              dateNaissance: rawDate,
+              age: age,
+            },
             private: data.private,
           });
         }
@@ -71,31 +85,52 @@ const EditProfile = () => {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age.toString();
   };
 
   const handleDateInput = (e) => {
-    let value = e.target.value;
-    if (value.length <= 10) {
-      const age = calculateAge(value);
-      setUserData({
-        ...userData,
-        public: {
-          ...userData.public,
-          dateNaissance: value,
-          age: age
-        }
-      });
+    let value = e.target.value.replace(/\D/g, ''); // Supprimer tout sauf chiffres
+
+    if (value.length >= 5) {
+      value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
+    } else if (value.length >= 3) {
+      value = value.slice(0, 2) + '/' + value.slice(2);
     }
+
+    value = value.slice(0, 10); // JJ/MM/AAAA
+
+    const age = calculateAge(value);
+
+    setUserData({
+      ...userData,
+      public: {
+        ...userData.public,
+        dateNaissance: value,
+        age: age
+      }
+    });
   };
 
   const handleSave = async () => {
     const token = localStorage.getItem("token");
+
+    // ✅ Reconvertir date vers format ISO pour l’API
+    const [day, month, year] = userData.public.dateNaissance.split('/');
+    const dateFormattedForServer = `${year}-${month}-${day}`;
+
+    const updatedUserData = {
+      ...userData,
+      public: {
+        ...userData.public,
+        dateNaissance: dateFormattedForServer
+      }
+    };
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/profile/update", {
         method: "PUT",
@@ -103,7 +138,7 @@ const EditProfile = () => {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(updatedUserData),
       });
 
       const data = await response.json();
@@ -178,9 +213,9 @@ const EditProfile = () => {
           />
         </div>
 
-        {/* Âge (calculé, en lecture seule) */}
+        {/* Âge (lecture seule) */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Âge </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
           <input
             type="text"
             value={userData.public.age}
@@ -205,7 +240,7 @@ const EditProfile = () => {
           </select>
         </div>
 
-        {/* Email (en lecture seule) */}
+        {/* Email (readonly) */}
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Email (non modifiable)</label>
           <input
@@ -253,7 +288,7 @@ const EditProfile = () => {
           >
             Enregistrer les modifications
           </button>
-          
+
           <button
             onClick={() => navigate("/Accueil/Profil")}
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
