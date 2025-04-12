@@ -6,6 +6,7 @@ import Nav from "../components/nav";
 import "../App.css";
 
 const SignIn = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,6 +34,7 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     console.log("[handleSubmit] Formulaire soumis !");
     console.log("isLogin ?", isLogin);
     console.log("formData:", formData);
@@ -107,6 +109,8 @@ const SignIn = () => {
     } catch (error) {
       console.error("[handleSubmit] Erreur catché:", error);
       alert("Une erreur est survenue lors de la connexion ou de l'inscription.");
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -229,8 +233,10 @@ const SignIn = () => {
 
             )}
 
-            <button type="submit" className="submit-button">
-              {isLogin ? 'Se connecter' : "S'inscrire"}
+            <button type="submit" className="submit-button flex flex-row justify-center">
+              {!isLoading ? (<span>{isLogin ? 'Se connecter' : "S'inscrire"}</span>
+              ) : (
+              <img src="/src/assets/loading/90-ring.svg" className='text-center'/> )}
             </button>
           </form>
 
@@ -243,7 +249,7 @@ const SignIn = () => {
               }}
               className="switch-button"
             >
-              {isLogin ? "S'INSCRIRE" : "SE CONNECTER"}
+              <span>{isLogin ? "S'INSCRIRE" : "SE CONNECTER"}</span>
             </button>
           </p>
         </div>
