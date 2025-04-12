@@ -202,10 +202,10 @@
   
   .logo_nav {
     object-fit : cover;
-    left : 90%;
-    top : -1%;
+    left : 92%;
+    top : 1%;
     position : fixed;
-    width : 10%;
+    width : 7%;
     z-index : 1000;
   }
   
