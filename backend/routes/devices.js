@@ -115,6 +115,8 @@ router.post("/newObject", async (req, res) => {
     user.devices.push(userDevice._id)
     await user.save();
 
+    res.json(userDevice);
+
   } catch (err) {
     console.log(err)
   }
