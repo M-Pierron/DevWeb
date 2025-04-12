@@ -26,6 +26,41 @@ router.get("/deviceCategories", async(req, res) => {
   res.json(categoriesWithDevices);
 });
 
+// Route pour supprimer un appareil par l'utilisateur
+router.post("/deleteSelectedDevice", async(req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+    // Récuperer les appareils de l'utilisateur
+    const result = await UserDevice.deleteOne({ _id: req.body.selectedDevice._id });
+    if (result.deletedCount === 0) {
+      console.log("[/devices/deleteSelectedDevice] Appareil non trouvé ou déja supprimé");
+      
+    } else {
+      console.log("[/devices/deleteSelectedDevice] Appareil supprimé");
+
+      // Récuperer l'utilisateur connectée
+      const user = await User.findById(req.user._id).select('-password');
+      if (!user) {
+          return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+      // Enlever l'apparail dans la liste des appareils de l'utilisateur en utilisant son ID
+      await user.removeDevice(req.body.selectedDevice._id);
+
+      // Récuperer les appareils de l'utilisateur pour les mettre à jour
+      const devices = await user.getDevices();
+
+      console.log("[/devices/deleteSelectedDevice] Appareils de l'utilisateur:", devices);
+      res.json(devices);
+    }
+
+  } catch (error) {
+    console.error("[/devices/deleteSelectedDevice] Erreur:", error);
+  }
+});
+
 // Route pour filtrer les appareils par catégorie
 router.post("/filter", async (req, res) => {
   try {
@@ -37,11 +72,12 @@ router.post("/filter", async (req, res) => {
     // Récuperer les appareils de l'utilisateur
     const devices = await user.getDevices();
 
-    // Les appareils qui ont été selectionnées
+    // Les appareils qui ont été selectionnées dans le filtrage
     const selectedDevices = req.body.selectedDevices;
 
+    // Si aucun filtres à été selectionnée, faire apparaitre tout les appareils
     if (selectedDevices.length === 0){
-      console.log("Aucun filtrage selectionnée:", devices);
+      console.log("[/devices/filter] Aucun filtrage selectionnée:", devices);
       return res.json(devices);
     }
 
@@ -50,11 +86,11 @@ router.post("/filter", async (req, res) => {
       selectedDevices.includes(device.deviceId)
     );
 
-    console.log("Filtrage des appareils:", filteredDevices);
+    console.log("[/devices/filter] Filtrage des appareils:", filteredDevices);
     res.json(filteredDevices);
 
 } catch (error) {
-    console.error("Erreur lors de la récupération des appareils de l'utilisateur:", error);
+    console.error("[/devices/filter] Erreur lors de la récupération des appareils de l'utilisateur:", error);
 }
 });
 
@@ -69,11 +105,11 @@ router.get("/getConnectedUserDevices", async(req, res) => {
         // Récuperer les appareils de l'utilisateur
         const devices = await user.getDevices();
 
-        console.log("Appareils de l'utilisateur:", devices);
+        console.log("[/devices/getConnectedUserDevices] Appareils de l'utilisateur:", devices);
         res.json(devices);
 
     } catch (error) {
-        console.error("Erreur lors de la récupération des appareils de l'utilisateur:", error);
+        console.error("[/devices/getConnectedUserDevices] Erreur lors de la récupération des appareils de l'utilisateur:", error);
     }
 });
 
@@ -100,7 +136,11 @@ router.post("/newObject", async (req, res) => {
     // if (Object.keys(formErrors).length > 0) {
     //   return res.status(400).json({ error: "Erreur de formulaire", formErrors: formErrors });
     // }
-    
+
+    // Récuper le type d'appareil avec son "deviceId" qui se trouve dans le schema de UserDevice
+    const device = await Device.findOne({ id: req.body.deviceId });
+    const deviceAttributesMap = device.getAttributesMap();
+
     const userDevice = await UserDevice.create({
       name: req.body.name,
       description: req.body.description,
@@ -108,14 +148,16 @@ router.post("/newObject", async (req, res) => {
       mode: req.body.mode,
       battery: req.body.battery,
       wifi: req.body.wifi,
-      deviceId: req.body.deviceId
+      deviceId: req.body.deviceId,
+      attributes: deviceAttributesMap
     });
 
     console.log(userDevice);
     user.devices.push(userDevice._id)
     await user.save();
 
-    res.json(userDevice);
+    const userDevices = await user.getDevices();
+    res.json(userDevices);
 
   } catch (err) {
     console.log(err)
