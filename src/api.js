@@ -16,6 +16,14 @@ export const register = (data) => API.post("/register", data);
 export const login = (data) => API.post("/login", data);
 export const verifyToken = () => API.post("/verifyToken");
 
+// Admin management
+export const getAllUsers = () => API.get("/users");
+export const updateUser = (userId, data) => API.put(`/users/${userId}`, data);
+export const deleteUser = (userId) => API.delete(`/users/${userId}`);
+export const createUser = (data) => API.post("/users", data);
+export const getPendingUsers = () => API.get("/pending-users");
+export const verifyUser = (data) => API.post("/verify-user", data);
+
 // Profil utilisateur
 export const getProfile = () => API.get("/profile");
 export const updateProfile = (data) => API.put("/profile/update", data);

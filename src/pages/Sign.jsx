@@ -64,6 +64,18 @@ const SignIn = () => {
       });
   
       const data = await response.json();
+      if (!response.ok) {
+        console.log("[handleSubmit] Erreur d'inscription:", data.error);
+      
+        if (!isLogin && data.error === "Email déjà utilisé") {
+          alert("❌ Cet email est déjà utilisé.");
+          return;
+        }
+      
+        // Pour toute autre erreur
+        alert("❌ Une erreur est survenue : " + (data.error || "Erreur inconnue"));
+        return;
+      }
       console.log("[handleSubmit] Réponse reçue:", data);
       console.log("[handleSubmit] Statut HTTP:", response.status);
   
@@ -163,27 +175,18 @@ const SignIn = () => {
                 </div>
               </>
             )}
-
-            <div>
-              <div className="input-container">
-                <Mail className="input-icon" />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  className="input-field"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              {formErrors.email && !isLogin &&
-              <div className='flex flex-row size-full text-red-500'>
-                <CircleAlert className='mr-1'/>
-                <span>{formErrors.email}</span>
-              </div>}
+            <div className="input-container">
+              <Mail className="input-icon" />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="input-field"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
             </div>
-
             <div className="input-container">
               <Lock className="input-icon" />
               <input
@@ -206,7 +209,6 @@ const SignIn = () => {
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
-            
             {!isLogin && (
               <div>
                 <div className="input-container">
