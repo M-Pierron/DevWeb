@@ -3,6 +3,7 @@ import Battery from "../components/DashBoard/Widgets/battery.jsx";
 import Wifi from "../components/DashBoard/Widgets/wifi.jsx";
 import Temperature from "../components/DashBoard/Widgets/temperature.jsx";
 import Conso from "../components/DashBoard/Widgets/conso.jsx"
+import Nav from "../components/nav.jsx"
 
 const GestionDashboard = () => {
   const [search, setSearch] = useState("");
