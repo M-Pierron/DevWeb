@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserCheck } from 'lucide-react';
-import API from '../../api';
+import { admin } from '../../api';
 
 const VerificationManagement = () => {
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -13,7 +13,7 @@ const VerificationManagement = () => {
 
   const fetchPendingUsers = async () => {
     try {
-      const response = await API.get('/pending-users');
+      const response = await admin.getPendingUsers();
       setPendingUsers(response.data);
       setError(null);
     } catch (err) {

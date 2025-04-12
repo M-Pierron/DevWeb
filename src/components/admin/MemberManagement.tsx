@@ -11,8 +11,12 @@ const formatDate = (dateString: string) => {
   return `${day}/${month}/${year}`;
 };
 
-const calculateAge = (dateNaissance: string): number => {
+const calculateAge = (dateNaissance: string): number | null => {
+  if (!dateNaissance) return null;
+  
   const birthDate = new Date(dateNaissance);
+  if (isNaN(birthDate.getTime())) return null;
+  
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const month = today.getMonth();
@@ -34,7 +38,7 @@ interface User {
   prenom: string;
   nom: string;
   dateNaissance: string;
-  age: number;
+  age: number | null;
 }
 
 interface JWTPayload {
@@ -106,10 +110,9 @@ const MemberManagement = () => {
       }
   
       const response = await axiosInstance.get('/users');
-      // Ajouter l'âge à chaque utilisateur
       const usersWithAge = response.data.map((user: User) => ({
         ...user,
-        age: calculateAge(user.dateNaissance) // Ajout de l'âge ici
+        age: calculateAge(user.dateNaissance)
       }));
       setUsers(usersWithAge);
       setTotalUsers(usersWithAge.length);
@@ -148,52 +151,46 @@ const MemberManagement = () => {
   const handleEditUser = (user: User) => {
     setEditingUser(user);
     setFormData({
-        pseudonyme: user.pseudonyme,
-        email: user.email,
-        password: '', // Pas besoin de mot de passe ici lors de l'édition
-        level: user.level,
-        prenom: user.prenom || '',
-        nom: user.nom || '',
-        dateNaissance: formatDate(user.dateNaissance) || '' // Formater la date avant de la définir dans le formData
+      pseudonyme: user.pseudonyme,
+      email: user.email,
+      password: '',
+      level: user.level,
+      prenom: user.prenom || '',
+      nom: user.nom || '',
+      dateNaissance: user.dateNaissance ? formatDate(user.dateNaissance) : ''
     });
     setShowModal(true);
-};
+  };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let dateValue = event.target.value.replace(/\D/g, ''); // Remove non-digit characters
+    let dateValue = event.target.value.replace(/\D/g, '');
     if (dateValue.length >= 5) {
-      dateValue = dateValue.slice(0, 2) + '/' + dateValue.slice(2, 4) + '/' + dateValue.slice(4, 8); // Format JJ/MM/AAAA
+      dateValue = dateValue.slice(0, 2) + '/' + dateValue.slice(2, 4) + '/' + dateValue.slice(4, 8);
     } else if (dateValue.length >= 3) {
       dateValue = dateValue.slice(0, 2) + '/' + dateValue.slice(2);
     }
-
-    // Limit the length to 10 characters
     dateValue = dateValue.slice(0, 10);
-
     setFormData({ ...formData, dateNaissance: dateValue });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    // Convertir la date de JJ/MM/AAAA à YYYY-MM-DD
     let formattedDate = formData.dateNaissance;
     const [day, month, year] = formattedDate.split('/');
-    formattedDate = `${year}-${month}-${day}`; // Convert to YYYY-MM-DD format
+    formattedDate = `${year}-${month}-${day}`;
   
-    // Calculer l'âge à partir de la date de naissance
     const age = calculateAge(formattedDate);
   
     try {
       if (editingUser) {
-        // Mettre à jour l'utilisateur avec l'âge
         await axiosInstance.put(`/users/${editingUser._id}`, {
           pseudonyme: formData.pseudonyme,
           level: formData.level,
           prenom: formData.prenom,
           nom: formData.nom,
           dateNaissance: formattedDate,
-          age: age,  // Ajouter l'âge aux données envoyées
+          age: age
         });
       } else {
         await axiosInstance.post('/users', {
@@ -204,7 +201,7 @@ const MemberManagement = () => {
           prenom: formData.prenom,
           nom: formData.nom,
           dateNaissance: formattedDate,
-          age: age,  // Ajouter l'âge aux données envoyées
+          age: age
         });
       }
   
@@ -245,7 +242,6 @@ const MemberManagement = () => {
 
   return (
     <div>
-      {/* Layout and Table for Managing Users */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
           <h2 className="text-2xl font-bold">Gestion des Membres</h2>
@@ -262,14 +258,12 @@ const MemberManagement = () => {
         </button>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
           {error}
         </div>
       )}
 
-      {/* Search Bar */}
       <div className="mb-6 relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
         <input
@@ -281,75 +275,51 @@ const MemberManagement = () => {
         />
       </div>
 
-      {/* Table displaying Users */}
       <div className="overflow-x-auto">
         <table className="w-full">
-        <thead>
-          <tr className="bg-gray-50">
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Membre
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Email
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Âge
-            </th>  {/* Nouvelle colonne pour l'âge */}
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Niveau
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {filteredUsers.map((user) => (
-            <tr key={user._id}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">{user.pseudonyme}</div>
-                <div className="text-sm text-gray-500">
-                  {user.prenom} {user.nom}
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-500">{user.email}</div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-500">{user.age}</div> {/* Affichage de l'âge */}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span
-                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.level === 'admin'
-                      ? 'bg-purple-100 text-purple-800'
-                      : 'bg-green-100 text-green-800'
-                  }`}
-                >
-                  {user.level}
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  onClick={() => handleEditUser(user)}
-                  className="text-blue-600 hover:text-blue-900 mr-4"
-                >
-                  <Edit2 className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDeleteUser(user._id)}
-                  className="text-red-600 hover:text-red-900"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </td>
+          <thead>
+            <tr className="bg-gray-50">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Membre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Âge</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredUsers.map((user) => (
+              <tr key={user._id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">{user.pseudonyme}</div>
+                  <div className="text-sm text-gray-500">{user.prenom} {user.nom}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-500">{user.email}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-500">{user.age !== null ? String(user.age) : '-'}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.level === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
+                  }`}>
+                    {user.level}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button onClick={() => handleEditUser(user)} className="text-blue-600 hover:text-blue-900 mr-4">
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                  <button onClick={() => handleDeleteUser(user._id)} className="text-red-600 hover:text-red-900">
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 
-      {/* Modal for Add/Edit User */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-8 max-w-md w-full">
@@ -357,7 +327,6 @@ const MemberManagement = () => {
               {editingUser ? 'Modifier un membre' : 'Ajouter un membre'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Form Fields */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Pseudonyme</label>
                 <input
@@ -379,7 +348,6 @@ const MemberManagement = () => {
                 />
               </div>
 
-              {/* Only show password field when adding a user */}
               {!editingUser && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
@@ -432,10 +400,10 @@ const MemberManagement = () => {
                   onChange={handleDateChange}
                   className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   maxLength={10}
+                  placeholder="JJ/MM/AAAA"
                 />
               </div>
 
-              {/* Submit Button */}
               <div className="flex justify-end mt-4">
                 <button
                   type="submit"
