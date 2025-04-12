@@ -26,4 +26,19 @@ const DeviceSchema = new mongoose.Schema({
     },
 });
 
+DeviceSchema.methods.getAttributesMap = function () {
+    // Recuperer les clées de "attributes"
+    const attributeKeys = Array.from(this.attributes.keys());
+
+    // Créer un dictionaire, ou les clées sera celle de "attributeKeys"
+    const attributesMap = new Map();
+
+    attributeKeys.forEach((key) => {
+        const attribute = this.attributes.get(key);
+        attributesMap.set(key, attribute.defaultValue === null ? null : attribute.defaultValue);
+    });
+
+    return attributesMap;
+};
+
 module.exports = mongoose.model('Device', DeviceSchema);
