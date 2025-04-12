@@ -7,7 +7,7 @@ import Wifi from "../../DashBoard/Widgets/wifi"
 import Mode from "../../DashBoard/Widgets/mode"
 import Conso from '../../DashBoard/Widgets/conso'
 
-import { useDeviceContext } from "../context/DeviceContext";
+import { useDeviceContext } from "../../../context/DeviceContext";
 
 const frame = () => {
   const {

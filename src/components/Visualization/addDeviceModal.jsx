@@ -2,9 +2,18 @@
 
   import AccordionItem from '../Accordion/accordionItem';
   import Modal from "../modal"
+
+  import { useDeviceContext } from "../../context/DeviceContext";
   
   // Modale qui permet de rajouter un appareil pour l'utilisateur
-  const addDeviceModal = ({deviceCategories, onCancelClick}) => {
+  const addDeviceModal = () => {
+    const {
+      deviceCategories,
+      setIsAddNewDeviceVisible,
+      onAddDeviceSubmit,
+      isAddNewDeviceLoading
+    } = useDeviceContext();
+
     // La liste déroulante des types d'appareils
     const [isDeviceTypesDropDownOpen, setIsDeviceTypesDropDownOpen] = useState(false)
     // Le type d'appareil qui est selectionnée
@@ -26,51 +35,11 @@
       setNewDevice({ ...newDevice, [name]: value });
     }
 
-    // Event lorsque le formulaire pour un nouveau appareil de l'utilisateur est validé 
-    const onNewDeviceSubmit = async (e) => {
-      e.preventDefault();
-      console.log("[onNewDeviceSubmit] Formulaire soumis !");
-
-      try {
-        console.log(`[onNewDeviceSubmit] Envoi requête vers: http://localhost:5000/api/devices/newObject`);
-        const token = localStorage.getItem('token');
-        const response = await fetch("http://localhost:5000/api/devices/newObject", {
-          method: "POST",
-          headers: { 
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: newDevice.name,
-            description: newDevice.description,
-            mode: newDevice.mode,
-            deviceId: selectedDeviceType.id,
-            battery: newDevice.battery,
-            wifi: newDevice.wifi
-          }),
-        });
-
-        const data = await response.json();
-        console.log("[onNewDeviceSubmit] Réponse reçue:", data);
-
-        if (data){
-          toggleModalVisibility();
-        }
-
-        
-
-      } catch (error) {
-        console.error("[onNewDeviceSubmit] Erreur catché:", error);
-      } finally {
-        
-      }
-    }
-
     return (
         <Modal children={        
           <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
             
-            <form onSubmit={onNewDeviceSubmit} className="flex flex-col gap-4">
+            <form onSubmit={(e) => onAddDeviceSubmit(e, newDevice, selectedDeviceType)} className="flex flex-col gap-4">
               {/* Saisie pour le nom de l'appareil */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l'objet</label>
@@ -159,12 +128,18 @@
 
               {/* Cadre pour les buttons */}
               <div className="flex justify-end gap-2 mt-4">
-                  <button type="button" onClick={onCancelClick} className="px-4 py-2 bg-gray-300 rounded text-black hover:bg-gray-400">
-                    Annuler
+                  <button type="button" onClick={() => setIsAddNewDeviceVisible(false)} className="px-4 py-2 bg-gray-300 rounded text-black hover:bg-gray-400 cursor-pointer">
+                    <span>Annuler</span>
                   </button>
-                  <button type="submit" className="px-4 py-2  bg-indigo-700 border-indigo-700 text-white rounded hover:bg-indigo-800">
-                    Ajouter
-                  </button>
+                  <div className='flex flex-row px-4 py-2 justify-center bg-indigo-700 border-indigo-700 text-white rounded hover:bg-indigo-800 cursor-pointer'>
+                    {!isAddNewDeviceLoading ? (
+                      <button type="submit" className="cursor-pointer">
+                        <span>Ajouter</span>
+                      </button>) : (
+                        <img src="/src/assets/loading/90-ring.svg"/>
+                    )}
+                  </div>
+
               </div>
             </form>
 
