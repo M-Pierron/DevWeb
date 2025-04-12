@@ -14,18 +14,18 @@ export const getWifiColor = (level) => {
   };
 
 export const getWifiStrength = (strength) => {
-switch (strength) {
-    case 'STRONG':
-    return [true, true, true, true];
-    case 'MODERATE':
-    return [true, true, true, false];
-    case 'WEAK':
-    return [true, true, false, false];
-    case 'VERY_WEAK':
-    return [true, false, false, false];
-    default:
-    return [false, false, false, false];
-}
+  switch (strength) {
+      case 'STRONG':
+        return [true, true, true, true];
+      case 'MODERATE':
+        return [true, true, true, false];
+      case 'WEAK':
+        return [true, true, false, false];
+      case 'VERY_WEAK':
+        return [true, false, false, false];
+      default:
+        return [false, false, false, false];
+  }
 };
   
 export const getDate = (date) => {
