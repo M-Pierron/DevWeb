@@ -49,6 +49,11 @@ const userDeviceSchema = new mongoose.Schema({
     deviceId: {
         type: String,
         required: true 
+    },
+    attributes: {
+        type: Map,
+        of: String,
+        required: true,
     }
 });
 
