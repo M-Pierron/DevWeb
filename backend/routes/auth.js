@@ -7,6 +7,9 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const { v4: uuidv4 } = require("uuid");
 
+const Email = require("../email/email");
+const Transporter = require("../email/transporter");
+
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
 
 // Vérification du token
@@ -25,31 +28,57 @@ router.post("/verifyToken", (req, res) => {
 
 // Inscription utilisateur (sauvegarde dans Verif)
 router.post("/register", async (req, res) => {
-    const { email, password, prenom, nom, pseudonyme } = req.body;
+    const errors = {}
+    const { email, password, prenom, nom, pseudonyme, confirmPassword } = req.body;
     console.log("Registering user with email:", email);
   
     try {
         const existingUser = await User.findOne({ email });
-        const existingVerif = await Verif.findOne({ email });
         
-        if (existingUser || existingVerif) {
-            return res.status(400).json({ error: "Email déjà utilisé" });
+        if (existingUser) {
+            errors.email = "Email déjà utilisé";
         }
-  
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newVerif = new Verif({
-            prenom,
-            nom,
-            pseudonyme, 
-            email,
-            password: hashedPassword,
-            level: "user", 
-            userId: uuidv4(),
-        });
-  
-        await newVerif.save();
-        console.log("User registered for verification:", newVerif);
-        res.status(201).json({ message: "Inscription en attente de vérification" });
+
+        if (password != confirmPassword){
+            errors.confirmPassword = "Le mot de passe n'est pas le même";
+        }
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json({ errors });
+        }
+
+        try {
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = new User({
+                prenom: prenom,
+                nom: nom, 
+                pseudonyme: pseudonyme,
+                email: email,
+                password: hashedPassword,
+                level: "user", 
+                userId: uuidv4(),
+            });
+            user.generateVerificationToken();
+            await user.save();
+
+            const verificationUrl = `http://localhost:5000/api/auth/verify?token=${user.verificationToken}`;
+
+            // Send email using transporter
+            const info = await Transporter.sendMail({
+                from: 'CYHouse', // sender address
+                to: email,                                         
+                subject: "Confirmation inscription",                                     
+                text: `Click this link to verify your email: ${verificationUrl}`,                                  
+                // html: '<b>Hello world?</b>'
+            });
+        
+            res.status(201).json({ message: "Inscription en attente de vérification" });
+
+        } catch (err) {
+            console.error('Error sending email:', err);
+        }
+
     } catch (error) {
         console.error("Erreur lors de l'inscription :", error);
         res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
@@ -100,6 +129,27 @@ router.post("/login", async (req, res) => {
         console.error("Erreur lors de la connexion :", err);
         res.status(500).json({ error: "Erreur serveur lors de la connexion" });
     }
+});
+
+router.get("/verify", async (req, res) => {
+    try{
+        const { token } = req.query;
+        const user = await User.findOne({ verificationToken: token });
+      
+        if (!user) {
+          return res.status(400).send('Invalid or expired token.');
+        }
+      
+        user.isVerified = true;
+        user.verificationToken = undefined; // Remove token after verification
+        await user.save();
+      
+        res.send('Email successfully verified!');
+    } catch (error) {
+        console.error("Erreur lors de la vérification:", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+
 });
 
 // Récupération du profil

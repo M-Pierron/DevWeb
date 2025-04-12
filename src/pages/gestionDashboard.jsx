@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import Nav from "../components/nav";
+import React, { useState,useEffect } from "react";
+import Battery from "../components/DashBoard/Widgets/battery.jsx";
+import Wifi from "../components/DashBoard/Widgets/wifi.jsx";
+import Temperature from "../components/DashBoard/Widgets/temperature.jsx";
+import Conso from "../components/DashBoard/Widgets/conso.jsx"
 
 const GestionDashboard = () => {
   const [search, setSearch] = useState("");

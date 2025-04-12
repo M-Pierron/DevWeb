@@ -3,99 +3,140 @@ import React, { useState, useEffect } from 'react';
 import ToolsFilter from './toolsFilter';
 import ToolsSearchBar from './toolsSearchBar';
 import DeviceItem from "./deviceItem";
+import { Plus } from 'lucide-react';
+import AddDeviceModal from "./addDeviceModal"
 
-const ToolsList = () => {
-  const iotDevices = [
-    [
-      "Sécurité & Contrôle d'accès", "security",
-      [
-        ["Serrures connectées", "smart_locks"],
-        ["Sonnette vidéo", "video_doorbell"],
-        ["Caméras de sécurité", "security_cameras"],
-        ["Capteurs de mouvement", "motion_sensors"],
-        ["Alarmes connectées", "smart_alarms"]
-      ]
-    ],
-    [
-      "Éclairage & Énergie", "energy",
-      [
-        ["Ampoules connectées", "smart_bulbs"],
-        ["Interrupteurs et variateurs connectés", "smart_switches"],
-        ["Prises intelligentes", "smart_plugs"],
-        ["Multiprises connectées", "smart_power_strips"]
-      ]
-    ],
-    [
-      "Climatisation & Confort", "comfort",
-      [
-        ["Thermostats intelligents", "smart_thermostats"],
-        ["Ventilateurs de plafond connectés", "smart_ceiling_fans"],
-        ["Purificateurs d'air connectés", "smart_air_purifiers"],
-        ["Humidificateurs et déshumidificateurs intelligents", "smart_humidifiers"]
-      ]
-    ],
-    [
-      "Divertissement", "entertainment",
-      [
-        ["Téléviseurs intelligents", "smart_tvs"],
-        ["Enceintes connectées", "smart_speakers"],
-        ["Appareils de streaming", "streaming_devices"],
-        ["Vidéoprojecteurs connectés", "smart_projectors"]
-      ]
-    ],
-    [
-      "Cuisine & Électroménager", "kitchen",
-      [
-        ["Réfrigérateurs intelligents", "smart_fridges"],
-        ["Fours et plaques de cuisson connectés", "smart_ovens"],
-        ["Cafetières connectées", "smart_coffee_machines"],
-        ["Lave-vaisselle intelligents", "smart_dishwashers"]
-      ]
-    ],
-    [
-      "Entretien & Nettoyage", "cleaning",
-      [
-        ["Aspirateurs robots", "robot_vacuums"],
-        ["Machines à laver et sèche-linge connectés", "smart_washers"],
-        ["Systèmes d'arrosage intelligents", "smart_irrigation"]
-      ]
-    ]
-  ];
+// Component qui représente la fênetre qui contient les appareils de l'utilisateur
+// selectedDevice : L'appareil selectionnée
+// setSelectedDevice : Etat qui determine 
+const ToolsList = ({selectedDevice, setSelectedDevice}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // 
+  const [isToolsFilterLoading, setToolsFilterLoading] = useState(false);
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
-  const [category, setCategory] = useState('');
-  const [filteredObjects, setFilteredObjects] = useState([]);
+  
+  // 
+  const [isUserDevicesLoading, setUserDevicesLoading] = useState(false);
+  const [userDevices, setUserDevices] = useState([]);
 
-  const onToolFilterClick = () => {
+  const [deviceCategories, setDeviceCategories] = useState([]);
+
+  useEffect(() => {
+    // Récuperer les appareils (et leur catégories)
+    const fetchCategories = async () => {
+      setToolsFilterLoading(true);
+
+      try {
+        console.log(`[fetchCategories] Envoi requête vers: http://localhost:5000/api/devices/deviceCategories`);
+        const token = localStorage.getItem('token');
+        const response = await fetch("http://localhost:5000/api/devices/deviceCategories", {
+          method: "GET",
+          headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        console.log("[fetchCategories] Réponse reçue:", data);
+        
+        if (data){
+          console.log("[fetchCategories] Succès côté serveur");
+          setDeviceCategories(data);
+        }
+        
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      } finally {
+        setToolsFilterLoading(false);
+      }
+    };
+
+    // Récuperer les appareils de l'utilisateur
+    const fetchUserDevices = async () => {
+      setUserDevicesLoading(true);
+
+      try {
+        console.log(`[fetchUserDevices] Envoi requête vers: http://localhost:5000/api/devices/getConnectedUserDevices`);
+        const token = localStorage.getItem('token');
+        const response = await fetch("http://localhost:5000/api/devices/getConnectedUserDevices", {
+          method: "GET",
+          headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        console.log("[fetchUserDevices] Réponse reçue:", data);
+
+        if (data){
+          console.log("[fetchUserDevices] Succès côté serveur");
+          setUserDevices(data);
+        }
+
+      } catch (err) {
+        console.error("[fetchUserDevices] Erreur catché:", error);
+      } finally {
+        setUserDevicesLoading(false);
+      }
+    };
+
+    fetchCategories(); // call the async function
+    fetchUserDevices();
+  }, []);
+
+  const toggleToolFilterVisibility = () => {
     setToolsFilterVisibility(!isToolsFilterVisible);
   };
 
-  const handleCategorySelection = async (category) => {
-    setCategory(category); // Mémoriser la catégorie sélectionnée
-    const response = await fetch(`http://localhost:5000/api/objects/filter?category=${category}`);
-    const data = await response.json();
-    setFilteredObjects(data); // Mettre à jour les objets filtrés
+  const toggleModalVisibility = () => {
+    setIsModalVisible(!isModalVisible);
   };
+
+  const onAddObjectClick = () => {
+    setIsModalVisible(true);
+  };
+
+
 
   return (
     <>
-      <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-full'>
-        <ToolsFilter tools={iotDevices} isVisible={isToolsFilterVisible} toggleVisibility={onToolFilterClick} />
+      <div className='relative bg-gray-400 rounded-xl p-4 w-[25%] h-dvh'>
+        {/* Le cadre utilisé pour filtrer les appareils, caché */}
+        <ToolsFilter devicesCategories={deviceCategories} isVisible={isToolsFilterVisible} toggleVisibility={toggleToolFilterVisibility} setUserDevices={setUserDevices} />
+        
         <div className='flex flex-col h-full'>
-          <ToolsSearchBar onToolFilterClick={onToolFilterClick} />
+          {/* La barre de recherche qui contient le button pour afficher le filtre */}
+          <ToolsSearchBar onToolFilterClick={toggleToolFilterVisibility} isFilterLoading={isToolsFilterLoading}/>
+          <div 
+            onClick={onAddObjectClick}
+            className="flex flex-row mb-2 mt-4 bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700 cursor-pointer w-[60%] text-center">
+            <Plus className='self-center w-[20%]'/>
+            <span className='self-start w-full'>Ajouter un object</span>
+          </div>
           {/* Tools list */}
-          <div className='h-full mt-4 bg-white text-black'>
+          <div className='flex flex-col h-full bg-white text-black border-1 border-black'>
             {/* Afficher les objets filtrés */}
-            {filteredObjects.length > 0 ? (
-              filteredObjects.map((object) => (
-                <DeviceItem key={object._id} deviceName={object.name} />
+            {!isUserDevicesLoading && userDevices.length > 0 ? (
+              userDevices.map((userDevice) => (
+                <DeviceItem
+                  key={userDevice._id}
+                  userDevice={userDevice}
+                  onClick={() => setSelectedDevice(userDevice)}
+                  isSelected={selectedDevice?._id === userDevice._id}
+                />
               ))
             ) : (
-              <p>Aucun objet trouvé pour cette catégorie.</p>
+              <div className="flex items-center justify-center h-full">
+                <img src="/src/assets/loading/90-ring.svg" className='self-center'></img>
+              </div>
             )}
           </div>
         </div>
       </div>
+
+      {isModalVisible && <AddDeviceModal deviceCategories={deviceCategories} onCancelClick={toggleModalVisibility}/>}
     </>
   );
 }

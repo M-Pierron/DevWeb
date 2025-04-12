@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
+
+const UserDevice = require('./UserDevice');
 
 const userSchema = new mongoose.Schema({
     prenom: String,
@@ -11,8 +14,22 @@ const userSchema = new mongoose.Schema({
     sexe: String,
     dateNaissance: String,
     photo: String,
-    pseudonyme: { type: String, required: true }
+    pseudonyme: { type: String, required: true },
+    
+    verificationToken: String,
+    isVerified: {type: Boolean, default: false},
+
+    devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserDevice' }]
 });
+
+userSchema.methods.generateVerificationToken = function () {
+    this.verificationToken = crypto.randomBytes(32).toString('hex');
+};
+
+userSchema.methods.getDevices = async function () {
+    const user = await this.populate('devices');
+    return user.devices;
+};
 
 const User = mongoose.model('User', userSchema);
 
