@@ -22,7 +22,7 @@ router.get("/deviceCategories", async(req, res) => {
     })
   );
 
-  console.log("Appareils:", devices);
+  console.log("Appareils:", categoriesWithDevices);
   res.json(categoriesWithDevices);
 });
 
