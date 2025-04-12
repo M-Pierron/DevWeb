@@ -34,7 +34,7 @@ interface User {
   prenom: string;
   nom: string;
   dateNaissance: string;
-  age: Number;
+  age: number;
 }
 
 interface JWTPayload {
