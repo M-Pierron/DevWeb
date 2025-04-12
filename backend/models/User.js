@@ -31,6 +31,13 @@ userSchema.methods.getDevices = async function () {
     return user.devices;
 };
 
+userSchema.methods.removeDevice = async function(_id) {
+    const updatedUser = await this.updateOne(
+        { $pull: { devices: _id } }
+    );
+    return updatedUser;
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
