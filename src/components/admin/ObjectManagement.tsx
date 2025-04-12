@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
-//import API from '../../api';
+import { objects, categories } from '../../api';
 
 interface Object {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   status: 'actif' | 'inactif';
@@ -11,19 +11,25 @@ interface Object {
 }
 
 interface Category {
-  id: string;
+  _id: string;
   name: string;
 }
 
 const ObjectManagement = () => {
-  const [objects, setObjects] = useState<Object[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [objectList, setObjects] = useState<Object[]>([]);
+  const [categoryList, setCategories] = useState<Category[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingObject, setEditingObject] = useState<Object | null>(null);
-  const [formData, setFormData] = useState({
+  const [error, setError] = useState<string>('');
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    status: 'actif' | 'inactif';
+    category_id: string;
+  }>({
     name: '',
     description: '',
-    status: 'actif',
+    status: 'actif', // OK ici
     category_id: ''
   });
 
@@ -34,20 +40,22 @@ const ObjectManagement = () => {
 
   const fetchObjects = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/objects');
-      const data = await response.json();
-      setObjects(data);
+      const response = await objects.getAll();
+      setObjects(response.data);
+      setError('');
     } catch (error) {
+      setError('Error fetching objects');
       console.error('Error fetching objects:', error);
     }
   };
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/categories');
-      const data = await response.json();
-      setCategories(data);
+      const response = await categories.getAll();
+      setCategories(response.data);
+      setError('');
     } catch (error) {
+      setError('Error fetching categories');
       console.error('Error fetching categories:', error);
     }
   };
@@ -61,6 +69,7 @@ const ObjectManagement = () => {
       category_id: ''
     });
     setShowModal(true);
+    setError('');
   };
 
   const handleEditObject = (object: Object) => {
@@ -72,31 +81,22 @@ const ObjectManagement = () => {
       category_id: object.category_id
     });
     setShowModal(true);
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (editingObject) {
-        await fetch(`http://localhost:5000/api/objects/${editingObject.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        });
+        await objects.update(editingObject._id, formData);
       } else {
-        await fetch('http://localhost:5000/api/objects', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        });
+        await objects.create(formData);
       }
       fetchObjects();
       setShowModal(false);
+      setError('');
     } catch (error) {
+      setError('Error saving object');
       console.error('Error saving object:', error);
     }
   };
@@ -104,11 +104,11 @@ const ObjectManagement = () => {
   const handleDeleteObject = async (objectId: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cet objet ?')) {
       try {
-        await fetch(`http://localhost:5000/api/objects/${objectId}`, {
-          method: 'DELETE'
-        });
+        await objects.delete(objectId);
         fetchObjects();
+        setError('');
       } catch (error) {
+        setError('Error deleting object');
         console.error('Error deleting object:', error);
       }
     }
@@ -116,18 +116,24 @@ const ObjectManagement = () => {
 
   return (
     <div>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Gestion des Objets</h2>
         <button
           onClick={handleAddObject}
-          className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
           <Plus className="w-5 h-5 mr-2" />
           Ajouter un objet
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50">
@@ -149,8 +155,8 @@ const ObjectManagement = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {objects.map((object) => (
-              <tr key={object.id}>
+            {objectList.map((object) => (
+              <tr key={object._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{object.name}</div>
                 </td>
@@ -159,7 +165,7 @@ const ObjectManagement = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500">
-                    {categories.find(c => c.id === object.category_id)?.name}
+                    {categoryList.find(c => c._id === object.category_id)?.name}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -172,13 +178,15 @@ const ObjectManagement = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={() => handleEditObject(object)}
-                    className="text-blue-600 hover:text-blue-900 mr-4"
+                    className="text-blue-600 hover:text-blue-900 mr-4 transition-colors"
+                    title="Modifier"
                   >
                     <Edit2 className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => handleDeleteObject(object.id)}
-                    className="text-red-600 hover:text-red-900"
+                    onClick={() => handleDeleteObject(object._id)}
+                    className="text-red-600 hover:text-red-900 transition-colors"
+                    title="Supprimer"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -190,8 +198,8 @@ const ObjectManagement = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full m-4">
             <h3 className="text-lg font-bold mb-4">
               {editingObject ? 'Modifier un objet' : 'Ajouter un objet'}
             </h3>
@@ -224,8 +232,8 @@ const ObjectManagement = () => {
                   required
                 >
                   <option value="">Sélectionner une catégorie</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                  {categoryList.map((category) => (
+                    <option key={category._id} value={category._id}>
                       {category.name}
                     </option>
                   ))}
@@ -246,13 +254,13 @@ const ObjectManagement = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                 >
                   {editingObject ? 'Mettre à jour' : 'Ajouter'}
                 </button>
