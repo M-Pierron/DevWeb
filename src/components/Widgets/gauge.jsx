@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 
-const gauge = ({defaultValue = 0, text}) => {
-    const [value, setValue] = useState(defaultValue); 
-    const maxValue = 100; 
-    
-   
-    const strokeValue = (value / maxValue) * 75; 
+const gauge = ({data}) => {   
+  const strokeValue = (data.value / data.max) * 75; 
 
   return (
     <div className="relative size-full">
@@ -42,7 +38,7 @@ const gauge = ({defaultValue = 0, text}) => {
       {/* Value Text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xl font-bold text-green-600 dark:text-green-500">
-          {value}{text}
+          {data.value}{data.unit}
         </span>
       </div>
     </div>
