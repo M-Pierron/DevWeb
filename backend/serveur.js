@@ -8,7 +8,7 @@ const app = express(); // -- Créer l'instance de l'application --
 
 app.use(cors({
     origin: "http://localhost:5173", 
-    credentials: true, n
+    credentials: true,
 }));
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
