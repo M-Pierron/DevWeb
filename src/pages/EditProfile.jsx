@@ -123,17 +123,23 @@ const EditProfile = () => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
 
         {/* Photo de profil */}
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
-        <div className="flex items-center space-x-4">
-          <img 
-            src={userData.public.photo} 
-            alt="Avatar" 
-            className="w-12 h-12 rounded-full cursor-pointer" 
-            onClick={() => document.getElementById('photoInput').click()} 
-          />
+        <div className="mb-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2 text-center">
+        Photo de Profil
+        </label>
+        <div className="flex flex-col items-center space-y-2">
+          <label htmlFor="photo-upload" className="cursor-pointer relative group flex flex-col items-center">
+            <img
+              src={userData.public.photo}
+              alt="Avatar"
+              className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+            />
+            <span className="text-sm text-blue-600 mt-2 group-hover:underline">
+              Modifier profil
+            </span>
+          </label>
           <input
-            id="photoInput"
+            id="photo-upload"
             type="file"
             accept="image/*"
             name="public.photo"
