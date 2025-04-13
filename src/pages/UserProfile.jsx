@@ -99,7 +99,7 @@ const UserProfile = () => {
   return (
     <>
       <Nav name="PROFIL" />
-      <div className="profil">
+      <div className="profil mt-20">
         <div className="flex flex-col h-screen">
           <div className="flex flex-col grow items-center justify-center">
             <div className="flex flex-row h-[80%] w-[50%] rounded-lg">

@@ -28,61 +28,61 @@ router.post("/verifyToken", (req, res) => {
 
 // -- Inscription utilisateur (sauvegarde dans Verif) --
 router.post("/register", async (req, res) => {
-    const errors = {}
-    const { email, password, prenom, nom, pseudonyme, confirmPassword } = req.body;
-    console.log("Registering user with email:", email);
-  
-    try {
-        const existingUser = await User.findOne({ email });
-        
-        if (existingUser) {
-            errors.email = "Email déjà utilisé";
-        }
+  const errors = {};
+  const { email, password, prenom, nom, pseudonyme, confirmPassword } = req.body;
+  console.log("Registering user with email:", email);
 
-        if (password != confirmPassword){
-            errors.confirmPassword = "Le mot de passe n'est pas le même";
-        }
-
-        if (Object.keys(errors).length > 0) {
-            return res.status(400).json({ errors });
-        }
-
-        try {
-
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const user = new User({
-                prenom: prenom,
-                nom: nom, 
-                pseudonyme: pseudonyme,
-                email: email,
-                password: hashedPassword,
-                level: "user", 
-                userId: uuidv4(),
-            });
-            user.generateVerificationToken();
-            await user.save();
-
-            const verificationUrl = `http://localhost:5000/api/auth/verify?token=${user.verificationToken}`;
-
-            // -- Envoi du mail --
-            const info = await Transporter.sendMail({
-                from: 'CYHouse', 
-                to: email,                                         
-                subject: "Confirmation inscription",                                     
-                text: `Click this link to verify your email: ${verificationUrl}`,                                  
-
-            });
-        
-            res.status(201).json({ message: "Inscription en attente de vérification" });
-
-        } catch (err) {
-            console.error('Error sending email:', err);
-        }
-      
-      } catch (error) {
-        console.error("Erreur lors de l'inscription :", error);
-        res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
+  try {
+      const existingUser = await User.findOne({ email }) || await Verif.findOne({ email });
+      if (existingUser) {
+          errors.email = "Email déjà utilisé";
       }
+
+      if (password !== confirmPassword) {
+          errors.confirmPassword = "Le mot de passe n'est pas le même";
+      }
+
+      if (Object.keys(errors).length > 0) {
+          return res.status(400).json({ errors });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new Verif({
+          prenom: prenom,
+          nom: nom,
+          pseudonyme: pseudonyme,
+          email: email,
+          password: hashedPassword,
+          level: "user",
+          userId: uuidv4(),
+      });
+
+      // Génère un token de vérification
+      user.generateVerificationToken?.(); // avec `?.` au cas où la méthode n'est pas définie dans Verif
+
+      await user.save();
+
+      const verificationUrl = `http://localhost:5000/api/auth/verify?token=${user.verificationToken}`;
+
+      // Envoi de l'email de vérification
+      try {
+          await Transporter.sendMail({
+              from: 'CYHouse',
+              to: email,
+              subject: "Confirmation inscription",
+              text: `Clique sur ce lien pour vérifier ton adresse email : ${verificationUrl}`,
+          });
+
+          res.status(201).json({ message: "Inscription en attente de vérification" });
+      } catch (err) {
+          console.error('Erreur lors de l’envoi du mail :', err);
+          res.status(500).json({ error: "Erreur lors de l’envoi de l’email" });
+      }
+
+  } catch (error) {
+      console.error("Erreur lors de l'inscription :", error);
+      res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
+  }
 });
 
 router.get("/users", authMiddleware, async (req, res) => {
@@ -330,45 +330,62 @@ router.put("/profile/update", authMiddleware, async (req, res) => {
 
 
 router.get("/pending-users", authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.user._id);
-        if (!user || user.level !== 'admin') {
-            return res.status(403).json({ error: "Accès non autorisé" });
-        }
-
-        const unverifiedUsers = await User.find({ isVerified: false });
-        res.json(unverifiedUsers);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des utilisateurs en attente:", error);
-        res.status(500).json({ error: "Erreur serveur" });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user || user.level !== 'admin') {
+      return res.status(403).json({ error: "Accès non autorisé" });
     }
+
+    const unverifiedUsers = await Verif.find().select('-password');
+    res.json(unverifiedUsers);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des utilisateurs en attente:", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
 });
+
 
 router.post("/verify-user", authMiddleware, async (req, res) => {
-    try {
-        const { userId, action } = req.body;
-        const admin = await User.findById(req.user._id);
-        
-        if (!admin || admin.level !== 'admin') {
-            return res.status(403).json({ error: "Accès non autorisé" });
-        }
+  try {
+    const { userId, action } = req.body;
+    console.log("Reçu :", { userId, action });
 
-        if (action === 'accept') {
-            const updatedUser = await User.updateOne(
-                { userId: userId },
-                { $set: { isVerified: true } }
-            );
-            res.json(updatedUser);
-            return;
-        }
-
-        await User.deleteOne({ userId: userId });
-    } catch (error) {
-        console.error("Erreur lors de la vérification:", error);
-        res.status(500).json({ error: "Erreur serveur" });
+    const admin = await User.findById(req.user._id);
+    if (!admin || admin.level !== 'admin') {
+      return res.status(403).json({ error: "Accès non autorisé" });
     }
-});
 
+    const pendingUser = await Verif.findOne({ userId });
+    console.log("Utilisateur en attente :", pendingUser);
+
+    if (!pendingUser) {
+      return res.status(404).json({ error: "Utilisateur à vérifier introuvable" });
+    }
+
+    if (action === 'accept') {
+      const newUser = new User({
+        email: pendingUser.email,
+        password: pendingUser.password,
+        nom: pendingUser.nom,
+        prenom: pendingUser.prenom,
+        pseudonyme: pendingUser.pseudonyme,
+        userId: pendingUser.userId,
+        level: pendingUser.level
+      });
+    
+      await newUser.save();
+      console.log("Nouvel utilisateur créé");
+    }
+
+    await Verif.deleteOne({ userId });
+    console.log("Utilisateur supprimé de Verif");
+
+    res.json({ success: true, action });
+  } catch (error) {
+    console.error("Erreur lors de la vérification:", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
 
 
 module.exports = router;

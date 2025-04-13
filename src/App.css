@@ -1,15 +1,19 @@
+/* CSS pour la page profil */
+
 .profil {
   z-index : 99;
   animation : smoothSpawn 0.7s;
 }
 
 
+/* CSS pour la page "à propos" */
 
 .about {
   z-index : 99;
   animation : smoothSpawn 0.7s;
 }
 
+/* CSS pour les formulaires d'inscription et de connexion */
 
 .form {
   background-color: #ffffff;
@@ -132,17 +136,7 @@
   color: #3c5497;
 }
 
- 
- .nav {
-     /* position : sticky; */
-     top : 0%;
-     display: flex;                
-     align-items: center;          
-     justify-content: space-between; 
-     padding: 2.5rem;              
-     background-color: #3c5497;
-     z-index : 999;
- }
+/* CSS pour la barre de navigation */
  
  .nav_title{
    width : 25%;
@@ -171,6 +165,72 @@
    transform : scale(1.2);
  }
 
+ .nav-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  transition: transform 0.5s ease;
+}
+
+.nav-hidden {
+  transform: translateY(-100%);
+}
+
+.nav-hidden .nav-toggle {
+  transform: translateY(100%);
+}
+
+.nav {
+  position: relative;
+  display: flex;                
+  align-items: center;          
+  justify-content: space-between; 
+  padding: 2.5rem;              
+  background-color: #3c5497;
+  z-index: 999;
+}
+
+.nav-toggle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 998;
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+
+.nav-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 25px;
+  background-color: #3c5497;
+  color: white;
+  border-radius: 0 0 10px 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.nav-arrow:hover {
+  background-color: #2a3d6e;
+  transform: scale(1.1);
+}
+
+.arrow-up, .arrow-down {
+  transition: transform 0.3s ease;
+}
+
+.arrow-up {
+  transform: rotate(0deg);
+}
+
+.arrow-down {
+  transform: rotate(180deg);
+}
+
+/* CSS pour les logos présent sur le site */
 
 .logo_start:hover {
     animation: spin 1s linear infinite;
@@ -224,6 +284,7 @@
     }
   }
   
+/* CSS pour la page de démarrage*/
 
   .start_menu {
     animation : smoothSpawn 0.7s;
@@ -305,6 +366,7 @@
     100% { opacity:0; }
   }
   
+/* CSS pour l'accueil */
 
   .home {
     display : flex;
@@ -328,6 +390,7 @@
     }
   }
 
+/* CSS pour les erreurs */
 
   .error-message {
     color: #e53e3e;
@@ -351,4 +414,3 @@
   .error-message {
     animation: shake 0.5s;
   }
-
