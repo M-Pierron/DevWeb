@@ -157,38 +157,52 @@ const EditProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Modifier le Profil</h2>
-
-        {/* Photo de profil */}
-        <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Photo de Profil</label>
-          <div className="flex items-center space-x-4">
-            <img src={userData.public.photo} alt="Avatar" className="w-12 h-12 rounded-full" />
-            <input
-              type="file"
-              accept="image/*"
-              name="public.photo"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setUserData({
-                      ...userData,
-                      public: {
-                        ...userData.public,
-                        photo: reader.result
-                      }
-                    });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+        Modifier le Profil
+      </h2>
+  
+      {/* Photo de profil */}
+      <div className="mb-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2 text-center">
+          Photo de Profil
+        </label>
+        <div className="flex flex-col items-center space-y-2">
+          <label htmlFor="photo-upload" className="cursor-pointer relative group flex flex-col items-center">
+            <img
+              src={userData.public.photo}
+              alt="Avatar"
+              className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
             />
-          </div>
+            <span className="text-sm text-blue-600 mt-2 group-hover:underline">
+              Modifier profil
+            </span>
+          </label>
+          <input
+            id="photo-upload"
+            type="file"
+            accept="image/*"
+            name="public.photo"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setUserData({
+                    ...userData,
+                    public: {
+                      ...userData.public,
+                      photo: reader.result
+                    }
+                  });
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="hidden"
+          />
         </div>
+      </div>
 
         {/* Pseudonyme */}
         <div className="mb-4">
@@ -198,7 +212,7 @@ const EditProfile = () => {
             name="public.pseudonyme"
             value={userData.public.pseudonyme}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -212,7 +226,7 @@ const EditProfile = () => {
             onChange={handleDateInput}
             placeholder="JJ/MM/AAAA"
             maxLength="10"
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -223,7 +237,7 @@ const EditProfile = () => {
             type="text"
             value={userData.public.age}
             readOnly
-            className="w-full p-2 bg-gray-100 border border-gray-300 rounded shadow-sm"
+            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -234,7 +248,7 @@ const EditProfile = () => {
             name="public.sexe"
             value={userData.public.sexe}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Sélectionnez</option>
             <option value="Homme">Homme</option>
@@ -250,7 +264,7 @@ const EditProfile = () => {
             type="email"
             value={userData.public.email}
             readOnly
-            className="w-full p-2 bg-gray-100 border border-gray-300 rounded shadow-sm"
+            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -266,7 +280,7 @@ const EditProfile = () => {
               name="private.nom"
               value={userData.private.nom}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -278,7 +292,7 @@ const EditProfile = () => {
               name="private.prenom"
               value={userData.private.prenom}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
