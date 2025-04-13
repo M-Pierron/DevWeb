@@ -7,9 +7,15 @@ const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 
-async function incrementUserPoints(User) {
-  User.points += 1;
-  await User.save();
+async function incrementUserPoints(userInstance) {
+  if (!userInstance) {
+    console.log("[incrementUserPoints] Aucun utilisateur fourni.");
+    return;
+  }
+
+  userInstance.points += 1;
+  await userInstance.save();
+  console.log(`[incrementUserPoints] Points de ${userInstance.pseudonyme} : ${userInstance.points}`);
 }
 
 router.get("/", async (req, res) => {
