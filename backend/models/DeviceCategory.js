@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// Schema qui réprésente une catégorie d'appareil
 const DeviceCategorySchema = new mongoose.Schema({
   id: {
     type: String,
@@ -15,7 +14,6 @@ const DeviceCategorySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  // Le chemin de l'icone de l'appareil
   imagePath: {
     type: String,  
     required: false,

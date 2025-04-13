@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     userId: { type: String, required: true, unique: true },
     level: { type: String, default: 'user' },
+    points: { type: Number, default: 0 },
     age: Number,
     sexe: String,
     dateNaissance: String,
@@ -20,13 +21,12 @@ const userSchema = new mongoose.Schema({
     devices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserDevice' }]
 });
 
-// Pre-save hook to calculate and set the age before saving
 userSchema.pre('save', function(next) {
     if (this.dateNaissance) {
         const birthDate = new Date(this.dateNaissance);
         const ageDifMs = Date.now() - birthDate.getTime();
         const ageDate = new Date(ageDifMs);
-        this.age = Math.abs(ageDate.getUTCFullYear() - 1970); // Calculate age
+        this.age = Math.abs(ageDate.getUTCFullYear() - 1970); 
     }
     next();
 });

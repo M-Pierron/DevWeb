@@ -1,15 +1,15 @@
 export const getWifiColor = (level) => {
     switch (level) {
       case 'STRONG':
-        return 'bg-green-500'; // Green for strong
+        return 'bg-green-500'; 
       case 'MODERATE':
-        return 'bg-yellow-400'; // Yellow for moderate
+        return 'bg-yellow-400'; 
       case 'WEAK':
-        return 'bg-red-500'; // Red for weak
+        return 'bg-red-500'; 
       case 'VERY_WEAK':
-        return 'bg-gray-300'; // Gray for very weak
+        return 'bg-gray-300'; 
       default:
-        return 'bg-gray-300'; // Default to gray
+        return 'bg-gray-300'; 
     }
   };
 
@@ -61,7 +61,6 @@ export const getTime = (date) => {
     return `${hours}:${minutes} ${ampm}`;
 };
 
-// Recuper le nom du mode à partir de son enum
 export const getMode = (mode) => {
     switch (mode) {
         case 'AUTOMATIC':
@@ -71,7 +70,7 @@ export const getMode = (mode) => {
         case 'SCHEDULE':
         return "Programmé";
         default:
-        return "ERREUR"; // Default error case
+        return "ERREUR"; 
     }
 };
   

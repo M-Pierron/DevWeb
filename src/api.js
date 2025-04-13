@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API = axios.create({ baseURL: "http://localhost:5000/api" });
 
-// Interceptor to add token to requests
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -11,7 +10,6 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Authentication
 export const auth = {
   register: (data) => API.post("/auth/register", data),
   login: (data) => API.post("/auth/login", data),
@@ -20,7 +18,6 @@ export const auth = {
   updateProfile: (data) => API.put("/auth/profile/update", data)
 };
 
-// Admin management
 export const admin = {
   getAllUsers: () => API.get("/auth/users"),
   updateUser: (userId, data) => API.put(`/auth/users/${userId}`, data),
@@ -31,7 +28,6 @@ export const admin = {
   getDashboard: () => API.get("/auth/admin-dashboard")
 };
 
-// Categories
 export const categories = {
   getAll: () => API.get("/categories"),
   edit: (data) => API.post("/categories/edit", data),
@@ -39,7 +35,6 @@ export const categories = {
   delete: (id) => API.delete(`/categories/${id}`)
 };
 
-// Objects
 export const objects = {
   getAll: () => API.get("/objects"),
   edit: (data) => API.post("/objects/edit", data),
@@ -48,7 +43,6 @@ export const objects = {
   filterByCategory: (categoryName) => API.get(`/objects/filter?category=${encodeURIComponent(categoryName)}`)
 };
 
-// Dashboard
 export const dashboard = {
   getUser: () => API.get("/auth/user-dashboard"),
   getAdmin: () => API.get("/auth/admin-dashboard")

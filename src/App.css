@@ -1,19 +1,15 @@
-/* CSS pour la page profil */
-
 .profil {
   z-index : 99;
   animation : smoothSpawn 0.7s;
 }
 
 
-/* CSS pour la page "à propos" */
 
 .about {
   z-index : 99;
   animation : smoothSpawn 0.7s;
 }
 
-/* CSS pour les formulaires d'inscription et de connexion */
 
 .form {
   background-color: #ffffff;
@@ -136,7 +132,6 @@
   color: #3c5497;
 }
 
-/* CSS pour la barre de navigation */
  
  .nav {
      /* position : sticky; */
@@ -176,7 +171,6 @@
    transform : scale(1.2);
  }
 
-/* CSS pour les logos présent sur le site */
 
 .logo_start:hover {
     animation: spin 1s linear infinite;
@@ -230,7 +224,6 @@
     }
   }
   
-/* CSS pour la page de démarrage*/
 
   .start_menu {
     animation : smoothSpawn 0.7s;
@@ -312,7 +305,6 @@
     100% { opacity:0; }
   }
   
-/* CSS pour l'accueil */
 
   .home {
     display : flex;
@@ -336,7 +328,6 @@
     }
   }
 
-/* CSS pour les erreurs */
 
   .error-message {
     color: #e53e3e;

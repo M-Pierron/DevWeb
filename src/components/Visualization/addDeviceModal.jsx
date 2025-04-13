@@ -5,7 +5,7 @@
 
   import { useDeviceContext } from "../../context/DeviceContext";
   
-  // Modale qui permet de rajouter un appareil pour l'utilisateur
+  //--  Modale qui permet de rajouter un appareil pour l'utilisateur --
   const addDeviceModal = () => {
     const {
       deviceCategories,
@@ -14,9 +14,8 @@
       isAddNewDeviceLoading
     } = useDeviceContext();
 
-    // La liste déroulante des types d'appareils
+    // -- La liste déroulante des types d'appareils --
     const [isDeviceTypesDropDownOpen, setIsDeviceTypesDropDownOpen] = useState(false)
-    // Le type d'appareil qui est selectionnée
     const [selectedDeviceType, setSelectedDeviceType] = useState(null)
 
     const [newDevice, setNewDevice] = useState({
@@ -28,10 +27,10 @@
       wifi: "NONE"
     });
 
-    // Event lorsque un saisie dans le formulaire est changée
+
     const onNewDeviceChange = (e) => {
       const { name, value } = e.target;
-      console.log(`[onNewDeviceChange] ${name}:`, value); // 📝 LOG
+      console.log(`[onNewDeviceChange] ${name}:`, value); 
       setNewDevice({ ...newDevice, [name]: value });
     }
 

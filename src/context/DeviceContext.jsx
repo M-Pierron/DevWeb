@@ -70,7 +70,7 @@ export const DeviceProvider = ({ children }) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          selectedDevice: selectedDevice,  // Send the selected devices
+          selectedDevice: selectedDevice, 
         }),
       });
 

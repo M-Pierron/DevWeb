@@ -2,9 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware"); // Middleware d'authentification
+const authMiddleware = require("../middleware/authMiddleware"); 
 
-// Récupérer tous les utilisateurs (si nécessaire)
 router.get("/", async (req, res) => {
     try {
         const users = await User.find();
@@ -15,7 +14,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-// Récupérer un utilisateur par ID
 router.get("/:id", async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

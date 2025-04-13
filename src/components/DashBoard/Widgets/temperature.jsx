@@ -3,10 +3,8 @@ import React, { useState, useEffect } from 'react'
 import Gauge from "../../gauge"
 
 const temperature = () => {
-  // State to track the value of the slider
   const [targetTemperatureValue, setTargetTemperatureValue] = useState(23);
 
-  // Handler for input changes
   const onTargetTemperatureSliderChange = (event) => {
     setTargetTemperatureValue(event.target.value);
   };

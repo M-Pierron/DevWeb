@@ -2,23 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 
 import AccordionItem from "../Accordion/accordionItem";
 
-// Component qui représente la fênetre de filtrage
-// devicesCategories : Tous les appareils disponible dans la BDD
-// isVisible: Si la fênetre est visible
-// toggleVisibility : Etat qui determine si la fênetre est visible ou non
 const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDevices}) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [selectedDevices, setSelectedDevices] = useState([]);
 
-    // Handle checkbox change
     const onCheckboxChange = async (deviceId, isChecked) => {
       setSelectedDevices((prevSelectedDevices) => {
-        // If checked, add the device name to the array
         if (isChecked) {
           return [...prevSelectedDevices, deviceId];
         } else {
-          // If unchecked, remove the device name from the array
           return prevSelectedDevices.filter((name) => name !== deviceId);
         }
       });
@@ -39,7 +32,7 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              selectedDevices: selectedDevices,  // Send the selected devices
+              selectedDevices: selectedDevices, 
             }),
           });
   
@@ -80,7 +73,6 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
               <AccordionItem 
                 key={category._id}
                 category={category.name}
-                // Les appareils lié à cette catégorie
                 items={category.devices.map((device) => (
                   <div key={device._id} className="cursor-pointer group">
                     <label 

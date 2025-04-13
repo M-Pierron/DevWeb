@@ -1,19 +1,15 @@
 const mongoose = require("mongoose");
 
-// Schema qui réprésente un appareil
 const DeviceSchema = new mongoose.Schema({
-    // Nom de l'appareil
     id: {
         type: String,
         required: true,
         unique: true
     },
-    // Description de l'appareil, dire ce que l'appareil fait
     name: {
         type: String,
         required: false,
     },
-    // La catégorie qui est lié à cette appareil
     categoryId: {
         type: String,
         ref: 'DeviceCategory',  
@@ -27,10 +23,7 @@ const DeviceSchema = new mongoose.Schema({
 });
 
 DeviceSchema.methods.getAttributesMap = function () {
-    // Recuperer les clées de "attributes"
     const attributeKeys = Array.from(this.attributes.keys());
-
-    // Créer un dictionaire, ou les clées sera celle de "attributeKeys"
     const attributesMap = new Map();
 
     attributeKeys.forEach((key) => {

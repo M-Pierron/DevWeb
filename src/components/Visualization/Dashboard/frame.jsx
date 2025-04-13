@@ -16,7 +16,7 @@ const frame = () => {
   } = useDeviceContext();
 
   return (
-    // Le cadre qui contient l'en-tête et le cadre pour les widgets
+    // -- Le cadre qui contient l'en-tête et le cadre pour les widgets --
     <div className='flex flex-col w-[70%] h-full'>
       
       {/* En-tête qui montre l'ID et la dernière interaction */}

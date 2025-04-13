@@ -1,7 +1,7 @@
 import React from 'react'
 import { getWifiColor, getMode } from '../../utils';
 
-// Component qui représente un appareil pour la liste d'appareils
+// -- Component qui représente un appareil pour la liste d'appareils --
 const deviceItem = ({userDevice, onClick, isSelected}) => {
   return (
     <div 

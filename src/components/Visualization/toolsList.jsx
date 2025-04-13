@@ -8,9 +8,6 @@ import AddDeviceModal from "./addDeviceModal"
 
 import { useDeviceContext } from "../../context/DeviceContext";
 
-// Component qui représente la fênetre qui contient les appareils de l'utilisateur
-// selectedDevice : L'appareil selectionnée
-// setSelectedDevice : Etat qui determine 
 const ToolsList = () => {
   const {
     userDevices,

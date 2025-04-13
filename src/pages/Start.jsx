@@ -10,10 +10,10 @@ function Start({ setIsAuthenticated }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supprimer le token du localStorage lorsque le composant est monté
+    // -- Supprime le token du localStorage lorsque le composant est monté --
     localStorage.removeItem("token");
     if (setIsAuthenticated) {
-      setIsAuthenticated(false); // Assurez-vous que l'état d'authentification est mis à jour
+      setIsAuthenticated(false); 
     }
   }, [setIsAuthenticated]);
 
