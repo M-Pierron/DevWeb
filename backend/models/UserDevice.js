@@ -50,7 +50,7 @@ const userDeviceSchema = new mongoose.Schema({
     },
     attributes: {
         type: Map,
-        of: String,
+        of: mongoose.Schema.Types.Mixed,
         required: true,
     }
 });

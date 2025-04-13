@@ -28,7 +28,12 @@ DeviceSchema.methods.getAttributesMap = function () {
 
     attributeKeys.forEach((key) => {
         const attribute = this.attributes.get(key);
-        attributesMap.set(key, attribute.defaultValue === null ? null : attribute.defaultValue);
+
+        // You can clone the attribute object if needed
+        attributesMap.set(key, {
+            ...attribute,
+            defaultValue: attribute.defaultValue === null ? null : attribute.defaultValue,
+        });
     });
 
     return attributesMap;
