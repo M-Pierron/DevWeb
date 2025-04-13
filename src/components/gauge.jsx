@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
 const gauge = ({defaultValue = 0, text}) => {
-    const [value, setValue] = useState(defaultValue); // Example value
-    const maxValue = 100; // Maximum value (you can set this to whatever range you need)
+    const [value, setValue] = useState(defaultValue); 
+    const maxValue = 100; 
     
-    // Calculate strokeDasharray based on the target value
-    const strokeValue = (value / maxValue) * 75; // Percentage of the maxValue  
+   
+    const strokeValue = (value / maxValue) * 75; 
 
   return (
     <div className="relative size-full">
@@ -34,7 +34,7 @@ const gauge = ({defaultValue = 0, text}) => {
           fill="none"
           className="stroke-current text-green-500 dark:text-green-500"
           strokeWidth="2"
-          strokeDasharray={`${strokeValue} 100`} // Dynamic strokeDasharray
+          strokeDasharray={`${strokeValue} 100`} 
           strokeLinecap="round"
         />
       </svg>
