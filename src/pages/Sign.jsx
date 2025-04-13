@@ -111,7 +111,7 @@ const SignIn = () => {
   return (
     <div>
       <Nav name={isLogin ? 'CONNEXION' : 'INSCRIPTION'} />
-      <div className="sign">
+      <div className="sign mt-40">
         <div className="form">
           <div className="icon-container">
             <User className="icon" />
