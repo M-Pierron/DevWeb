@@ -13,7 +13,7 @@ function Home() {
           <div className="flex flex-col relative bg-[url(src/assets/wallpaperHome.png)] bg-no-repeat bg-center bg-cover h-screen p-4">
             <div className="flex flex-col w-full h-full justify-center items-center">
               <div className="relative flex flex-col items-center">
-                <Logo className="logo_home" />
+                <Logo className="logo_home mt-40" />
                 <h1 className="font-bold text-white text-4xl md:text-5xl mt-4 text-center">CYHOUSE</h1>
                 <div className="arrows mt-16">
                   <ArrowDown className="text-white mx-80" size={80} />
