@@ -27,11 +27,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
-    // Vérifier que le niveau est bien défini (admin ou autre)
+    // -- Vérifie que le niveau est bien défini (admin ou autre) --
     const userWithLevel = {
       ...userData,
-      level: userData.level || 'user', // par défaut si level non fourni
-    };
+      level: userData.level || 'user', // -- par défaut si level non fourni --
+    }; 
 
     setUser(userWithLevel);
     setIsConnected(true);
