@@ -6,7 +6,6 @@ interface Object {
   _id: string;
   name: string;
   description: string;
-  status: 'actif' | 'inactif';
   category_id: string;
 }
 
@@ -24,12 +23,10 @@ const ObjectManagement = () => {
   const [formData, setFormData] = useState<{
     name: string;
     description: string;
-    status: 'actif' | 'inactif';
     category_id: string;
   }>({
     name: '',
     description: '',
-    status: 'actif', // OK ici
     category_id: ''
   });
 
@@ -65,7 +62,6 @@ const ObjectManagement = () => {
     setFormData({
       name: '',
       description: '',
-      status: 'actif',
       category_id: ''
     });
     setShowModal(true);
@@ -77,7 +73,6 @@ const ObjectManagement = () => {
     setFormData({
       name: object.name,
       description: object.description,
-      status: object.status,
       category_id: object.category_id
     });
     setShowModal(true);
@@ -147,9 +142,6 @@ const ObjectManagement = () => {
                 Catégorie
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Statut
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -167,13 +159,6 @@ const ObjectManagement = () => {
                   <div className="text-sm text-gray-500">
                     {categoryList.find(c => c._id === object.category_id)?.name}
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    object.status === 'actif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {object.status}
-                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
@@ -237,17 +222,6 @@ const ObjectManagement = () => {
                       {category.name}
                     </option>
                   ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Statut</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'actif' | 'inactif' })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                >
-                  <option value="actif">Actif</option>
-                  <option value="inactif">Inactif</option>
                 </select>
               </div>
               <div className="flex justify-end space-x-4 mt-6">
