@@ -12,7 +12,7 @@ const Transporter = require("../email/transporter");
 
 const JWT_SECRET = process.env.JWT_SECRET || "groupedevweb";
 
-// Vérification du token
+// -- Vérification du token --
 router.post("/verifyToken", (req, res) => {
   const token = req.header("Authorization")?.split(" ")[1];
   if (!token) return res.status(401).json({ valid: false, error: "Token manquant" });
@@ -26,7 +26,7 @@ router.post("/verifyToken", (req, res) => {
     }
 });
 
-// Inscription utilisateur (sauvegarde dans Verif)
+// -- Inscription utilisateur (sauvegarde dans Verif) --
 router.post("/register", async (req, res) => {
     const errors = {}
     const { email, password, prenom, nom, pseudonyme, confirmPassword } = req.body;
@@ -64,13 +64,13 @@ router.post("/register", async (req, res) => {
 
             const verificationUrl = `http://localhost:5000/api/auth/verify?token=${user.verificationToken}`;
 
-            // Send email using transporter
+            // -- Envoi du mail --
             const info = await Transporter.sendMail({
-                from: 'CYHouse', // sender address
+                from: 'CYHouse', 
                 to: email,                                         
                 subject: "Confirmation inscription",                                     
                 text: `Click this link to verify your email: ${verificationUrl}`,                                  
-                // html: '<b>Hello world?</b>'
+
             });
         
             res.status(201).json({ message: "Inscription en attente de vérification" });
@@ -85,7 +85,6 @@ router.post("/register", async (req, res) => {
       }
 });
 
-// Get all users (admin only)
 router.get("/users", authMiddleware, async (req, res) => {
   try {
     const requestingUser = await User.findById(req.user._id);
@@ -101,7 +100,6 @@ router.get("/users", authMiddleware, async (req, res) => {
   }
 });
 
-// Update user (admin only)
 router.put("/users/:userId", authMiddleware, async (req, res) => {
   try {
     const admin = await User.findById(req.user._id);
@@ -141,7 +139,6 @@ router.put("/users/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-// Delete user (admin only)
 router.delete("/users/:userId", authMiddleware, async (req, res) => {
   try {
     const admin = await User.findById(req.user._id);
@@ -161,7 +158,6 @@ router.delete("/users/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-// Create new user (admin only)
 router.post("/users", authMiddleware, async (req, res) => {
   try {
     const admin = await User.findById(req.user._id);
@@ -202,7 +198,6 @@ router.post("/users", authMiddleware, async (req, res) => {
   }
 });
 
-// Connexion utilisateur
 router.post("/login", async (req, res) => {
   try {
       const { email, password } = req.body;
@@ -214,7 +209,7 @@ router.post("/login", async (req, res) => {
 
       const user = await User.findOne({ email });
       if (!user) {
-          // Vérifier si l'utilisateur est en attente de vérification
+          // -- Vérifier si l'utilisateur est en attente de vérification --
           const pendingUser = await Verif.findOne({ email });
           if (pendingUser) {
               return res.status(401).json({ error: "Votre compte est en attente de vérification par un administrateur" });
@@ -260,7 +255,7 @@ router.get("/verify", async (req, res) => {
         }
       
         user.isVerified = true;
-        user.verificationToken = undefined; // Remove token after verification
+        user.verificationToken = undefined; // -- Enlève le token après la vérification --
         await user.save();
       
         res.send('Email successfully verified!');
@@ -271,7 +266,6 @@ router.get("/verify", async (req, res) => {
 
 });
 
-// Récupération du profil
 router.get("/profile", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
@@ -302,7 +296,6 @@ router.get("/profile", authMiddleware, async (req, res) => {
     }
 });
 
-// Mise à jour du profil
 router.put("/profile/update", authMiddleware, async (req, res) => {
   try {
       const { public: publicData, private: privateData } = req.body;
@@ -336,7 +329,6 @@ router.put("/profile/update", authMiddleware, async (req, res) => {
 });
 
 
-// Récupérer les utilisateurs en attente de vérification
 router.get("/pending-users", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
@@ -352,7 +344,6 @@ router.get("/pending-users", authMiddleware, async (req, res) => {
     }
 });
 
-// Vérifier un utilisateur
 router.post("/verify-user", authMiddleware, async (req, res) => {
     try {
         const { userId, action } = req.body;
