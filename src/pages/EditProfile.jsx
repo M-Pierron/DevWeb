@@ -157,7 +157,7 @@ const EditProfile = () => {
     <>
     <Nav name="PROFIL"/>
     <div className="profil mt-30 mb-10">
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
 
