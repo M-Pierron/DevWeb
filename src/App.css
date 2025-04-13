@@ -5,6 +5,7 @@
   animation : smoothSpawn 0.7s;
 }
 
+
 /* CSS pour la page "à propos" */
 
 .about {
@@ -198,13 +199,17 @@
     z-index : 1000;
   }
   
+ 
   .logo_home {
-    object-fit : cover;
-    top: 35%;
-    left : 42.5%;
-    position : absolute;
-    width : 15%;
-    z-index : 1000;
+    width: 240px;
+    height: auto;
+    max-width: 15vw;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo_home:hover {
+    animation: spin 1s linear infinite;
   }
 
   .logo_nav {
@@ -212,7 +217,7 @@
     left : 92%;
     top : 1%;
     position : fixed;
-    width : 7%;
+    width : 6%;
     z-index : 1000;
   }
   
@@ -310,26 +315,17 @@
 /* CSS pour l'accueil */
 
   .home {
+    display : flex;
     z-index : 99;
     animation : smoothSpawn 0.7s;
     background-color : rgba(0, 0, 0, 0.829);
   }
   
-  .sub_home {
-    z-index : 999;
-    position: absolute;
-    margin-top : 35%;
-    font-size : 1.5em;
+  .arrows {
+    display: flex;
+    justify-content: center;
     animation: blink 2s infinite;
-    color : white;
   }
-
-.arrows {
-  position : absolute;
-  bottom : 80%;
-  right : 82.5%;
-  animation: blink 2s infinite;
-}
 
   @keyframes smoothSpawn {
     from {
