@@ -4,8 +4,13 @@ const Category = require("../models/categoryModel");
 const DeviceCategory = require("../models/DeviceCategory");
 const Device = require("../models/Device");
 const router = express.Router();
-
+const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
+
+async function incrementUserPoints(user) {
+  user.points += 1;
+  await user.save();
+}
 
 router.get("/", async (req, res) => {
   try {
@@ -25,6 +30,7 @@ router.post("/edit", async (req, res) => {
     }
     const updatedDevice = await device.save();
     res.json(updatedDevice);
+    await incrementUserPoints(user);
 
   } catch (error) {
     console.log(error);
@@ -41,6 +47,7 @@ router.post("/create", async (req, res) => {
   try {
     const newObject = await device.save();
     res.status(201).json(newObject);
+    await incrementUserPoints(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -55,6 +62,7 @@ router.delete("/:id", async (req, res) => {
     
     await object.remove();
     res.json({ message: "Object deleted" });
+    await incrementUserPoints(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
