@@ -103,7 +103,14 @@
                               setIsDeviceTypesDropDownOpen(false);
                             }} 
                           >
-                            <a className="block p-2 border-transparent border-l-4 group-hover:border-blue-600 group-hover:bg-gray-100">{device.name}</a>
+                           <a
+                              className={`block p-2 border-transparent border-l-4
+                                group-hover:bg-gray-100 dark:group-hover:bg-gray-700 group-hover:border-indigo-600 dark:group-hover:border-indigo-400
+                                text-gray-900 dark:text-gray-100
+                                transition-colors duration-200`}
+                            >
+                              {device.name}
+                            </a>
                           </div>
                         ))}
                         headerStyle={"w-full h-10 flex flex-row bg-gray-300 text-black p-2"}
