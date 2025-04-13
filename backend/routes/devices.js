@@ -36,7 +36,6 @@ router.post("/edit", async (req, res) => {
     }
     const updatedDevice = await device.save();
     res.json(updatedDevice);
-    await incrementUserPoints(user);
 
   } catch (error) {
     console.log(error);
