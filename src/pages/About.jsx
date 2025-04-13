@@ -6,6 +6,7 @@ function About() {
   return (
     <>
     <Nav name ="À PROPOS"/>
+    <div className ="about">
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center">
@@ -72,6 +73,7 @@ function About() {
           <h2 className="text-2xl font-bold text-[#2c4187] mb-4">ET AMUSEZ VOUS A FAIRE TOURNER TOUT LES LOGOS CY-HOUSE PRESENT SUR LE SITE !</h2>
         </div>
       </div>
+    </div>
     </div>
     </>
   );

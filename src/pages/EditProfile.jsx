@@ -156,16 +156,17 @@ const EditProfile = () => {
   };
 
   return (
+    <>
+    <Nav name="PROFIL"/>
+    <div className="profil">
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-    <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        Modifier le Profil
-      </h2>
-  
-      {/* Photo de profil */}
-      <div className="mb-6">
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
+
+        {/* Photo de profil */}
+        <div className="mb-6">
         <label className="block text-gray-700 text-sm font-bold mb-2 text-center">
-          Photo de Profil
+        Photo de Profil
         </label>
         <div className="flex flex-col items-center space-y-2">
           <label htmlFor="photo-upload" className="cursor-pointer relative group flex flex-col items-center">
@@ -175,7 +176,7 @@ const EditProfile = () => {
               className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
             />
             <span className="text-sm text-blue-600 mt-2 group-hover:underline">
-              Modifier photo 
+              Modifier profil
             </span>
           </label>
           <input
@@ -314,6 +315,8 @@ const EditProfile = () => {
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 };
 
