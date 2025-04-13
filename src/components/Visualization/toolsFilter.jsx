@@ -7,10 +7,8 @@ const toolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
     const [isLoading, setIsLoading] = useState(false);
     const [selectedDevices, setSelectedDevices] = useState([]);
 
-    // Handle checkbox change
     const onCheckboxChange = async (deviceId, isChecked) => {
       setSelectedDevices((prevSelectedDevices) => {
-        // If checked, add the device name to the array
         if (isChecked) {
           return [...prevSelectedDevices, deviceId];
         } else {
