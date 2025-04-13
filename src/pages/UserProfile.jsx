@@ -28,15 +28,14 @@ const UserProfile = () => {
 
   useEffect(() => {
     console.log("🔥 useEffect de UserProfile appelé");
-    console.log("Current user from context:", user); // Debugging user from context
+    console.log("Current user from context:", user); 
     let isMounted = true;
 
-    // Récuper le token coté client
+    // -- Récupe le token coté client --
     const token = localStorage.getItem("token");
     console.log("🧾 Token dispo dans UserProfile:", token);
   
-    // Si le token n'existe pas, cela veut dire que l'utilisateur n'existe pas/son token a expiré
-    // Donc le faire deconnecter
+    // -- Si le token n'existe pas, cela veut dire que l'utilisateur n'existe pas/son token a expiré --
     if (!token) {
       logout();
       navigate("/");
@@ -58,7 +57,7 @@ const UserProfile = () => {
           logout();
           navigate("/");
         } else {
-          console.log("Profile data received:", data); // Debugging profile data
+          console.log("Profile data received:", data); 
           setUserData(data);
           setIsChecking(false);
         }
@@ -84,9 +83,8 @@ const UserProfile = () => {
     return <div>Vérification en cours...</div>;
   }
 
-  // Event lorsque l'utiliseur se déconnecte
   const handleLogout = () => {
-    // Supprimer le token
+    // -- Supprimer le token --
     console.log("Déconnexion, suppression du token");
     localStorage.removeItem("token");
     // 
@@ -105,7 +103,7 @@ const UserProfile = () => {
     const file = event.target.files[0];
     if (file) {
       console.log('Selected file:', file);
-      // You can handle the file upload or preview here
+     
     }
   };
 
@@ -113,7 +111,7 @@ const UserProfile = () => {
     profilePictureFileRef.current.click();
   };
 
-  // Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil
+  // -- Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil --
   const isAdmin = user?.level === 'admin' || userData.public.level === 'admin';
   console.log("Is admin?", isAdmin); // Debugging admin status
 
