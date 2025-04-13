@@ -32,10 +32,14 @@ router.post("/edit", async (req, res) => {
     const deviceId = req.body.id;
     const device = await Device.findOneAndUpdate({ id: deviceId }, req.body);
     if (!device) {
-      
     }
     const updatedDevice = await device.save();
     res.json(updatedDevice);
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+    await incrementUserPoints(user);
 
   } catch (error) {
     console.log(error);
@@ -52,6 +56,10 @@ router.post("/create", async (req, res) => {
   try {
     const newObject = await device.save();
     res.status(201).json(newObject);
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
     await incrementUserPoints(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -67,6 +75,10 @@ router.delete("/:id", async (req, res) => {
     
     await object.remove();
     res.json({ message: "Object deleted" });
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
     await incrementUserPoints(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
