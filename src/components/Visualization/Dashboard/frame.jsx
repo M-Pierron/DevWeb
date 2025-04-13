@@ -1,10 +1,12 @@
 import React from 'react';
 import Header from "./header";
-import Temperature from "../../DashBoard/Widgets/temperature";
 import Battery from "../../DashBoard/Widgets/battery";
 import Wifi from "../../DashBoard/Widgets/wifi";
 import Mode from "../../DashBoard/Widgets/mode";
 import Conso from '../../DashBoard/Widgets/conso';
+
+import Gauge from '../../Widgets/gauge'
+import Slider from '../../Widgets/slider'
 import { useDeviceContext } from "../../../context/DeviceContext";
 
 const Frame = () => {
@@ -21,12 +23,30 @@ const Frame = () => {
         h-full rounded-xl shadow-lg transition-colors duration-200'>
         <div className='flex flex-row size-full'>
           <div id="mainFrame" className='p-4 size-full'>
-          {Object.entries(selectedDevice.attributes).map(([key, innerObj]) => (
-            <div key={key}>
-              <strong>{key}:</strong>{" "}
-              {JSON.stringify(innerObj)}
-            </div>
-          ))}
+          {Object.entries(selectedDevice.attributes).map(([key, innerObj], index, array) => {
+            const isFirst = index === 0;
+            const isLast = index === array.length - 1;
+
+            return (
+              <div
+                key={key}
+                className={`flex flex-col
+                   bg-white dark:bg-gray-800 border border-gray-200 
+                  dark:border-gray-600
+                  ${isFirst ? 'rounded-t-2xl' : ''}
+                  ${isLast ? 'rounded-b-2xl' : ''}
+                  ${!isLast ? 'border-b-0' : ''}
+                `}
+              >
+                <div className='flex flex-row justify-center p-2 border-b bg-gray-200 dark:bg-gray-700  border-gray-200 dark:border-gray-600 '><strong>{innerObj.label}</strong></div>
+                <div className='p-2'>
+                {innerObj.type === "GAUGE" && <Gauge data={innerObj} />}
+                {innerObj.type === "SLIDER" && <Slider data={innerObj} />}
+                </div>
+
+              </div>
+            );
+          })}
           </div>
 
           <div id="sideFrame" className='flex flex-col pr-4 size-full'>
@@ -37,7 +57,7 @@ const Frame = () => {
                   transition-colors duration-200'>
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white">🔋 Batterie</h3>
                 </div>
-                <div className='bg-white dark:bg-gray-800 flex flex-col border border-gray-200 
+                <div className=' flex flex-col bg-white dark:bg-gray-800 border border-gray-200 
                   dark:border-gray-600 size-full p-4 justify-center rounded-b-xl
                   transition-colors duration-200'>
                   <Battery percentage={selectedDevice.battery}/>  
