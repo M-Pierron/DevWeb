@@ -36,25 +36,28 @@
 
     return (
         <Modal children={        
-          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl text-black max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-8 max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto">
             
             <form onSubmit={(e) => onAddDeviceSubmit(e, newDevice, selectedDeviceType)} className="flex flex-col gap-4">
               {/* Saisie pour le nom de l'appareil */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-1">Nom de l'objet</label>
-                <input id="name" name="name" value={newDevice.name} onChange={onNewDeviceChange} className="border p-2 rounded w-full text-black"/>
+                <input id="name" name="name" value={newDevice.name} onChange={onNewDeviceChange} 
+                className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"/>
               </div>
               
               {/* Saisie pour la description de l'appareil */}
               <div>
                 <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
-                <input id="description" name="description" value={newDevice.description} onChange={onNewDeviceChange} className="border p-2 rounded w-full text-black" />
+                <input id="description" name="description" value={newDevice.description} onChange={onNewDeviceChange} 
+                className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600" />
               </div>
               
               {/* Saisie pour le mode de l'appareil */}
               <div>
                 <label htmlFor="mode" className="block text-sm font-medium mb-1">Mode</label>
-                <select id="mode" name="mode" value={newDevice.mode} onChange={onNewDeviceChange} className="border p-2 rounded w-full text-black">
+                <select id="mode" name="mode" value={newDevice.mode} onChange={onNewDeviceChange} 
+                className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600">
                   <option value="AUTOMATIC">Automatique</option>
                   <option value="MANUAL">Manuel</option>
                   {/* <option value="SCHEDULE">Programmé</option> */}
@@ -64,9 +67,9 @@
               {/* Saisie pour selection de type d'appareil */}
               <div className="relative">
                 <label htmlFor="type" className="block text-sm font-medium mb-1">Type</label>
-                <div className="h-full bg-white flex border p-2 border-black rounded items-center" onClick={() => setIsDeviceTypesDropDownOpen((prev) => !prev)}>
+                <div className="h-full bg-white dark:bg-gray-700 flex border p-2 dark:border-gray-600 rounded items-center" onClick={() => setIsDeviceTypesDropDownOpen((prev) => !prev)}>
                     {/* Nom du type d'appareil */}
-                    <span className="appearance-none outline-none text-black w-full select-none">
+                    <span className="appearance-none outline-none w-full select-none">
                       {selectedDeviceType === null
                         ? "Selectioner un type d'appareil"
                         : selectedDeviceType.name}
@@ -85,9 +88,10 @@
                 
                 {/* Afficher la liste déroulante des types d'appareil */}
                 { isDeviceTypesDropDownOpen && 
-                  <div className="mt-2 absolute flex flex-col bg-white w-full border border-black rounded overflow-y-auto max-h-50">
+                  <div className="mt-2 p-2 absolute flex flex-col bg-white dark:bg-gray-700 w-full border border-black rounded overflow-y-auto max-h-50">
                     {deviceCategories && deviceCategories.length > 0 && deviceCategories.map((category) => (
                       // Afficher chaque catégorie d'appareil
+                      category.devices && category.devices.length > 0 && 
                       <AccordionItem 
                         key={category._id}
                         category={category.name}
@@ -110,14 +114,16 @@
               
               {/* Saisie pour la batterie */}
               <div>
-                <label htmlFor="batterie" className="block text-sm font-medium mb-1">Batterie (%)</label>
-                <input min="0" max="100" id="batterie" name="batterie" type="number" value={newDevice.battery} onChange={onNewDeviceChange} className="border p-2 rounded w-full text-black" required />
+                <label htmlFor="battery" className="block text-sm font-medium mb-1">Batterie (%)</label>
+                <input min="0" max="100" id="battery" name="battery" type="number" value={newDevice.battery} onChange={onNewDeviceChange} 
+                className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600" required />
               </div>
               
               {/* Saisie pour la WIFI */}
               <div>
                 <label htmlFor="wifi" className="block text-sm font-medium mb-1">Signal Connexion Wi-Fi</label>
-                <select id="wifi" name="wifi" value={newDevice.wifi} onChange={onNewDeviceChange} className="border p-2 rounded w-full text-black">
+                <select id="wifi" name="wifi" value={newDevice.wifi} onChange={onNewDeviceChange} 
+                className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600">
                   <option value="NONE">Aucun</option>
                   <option value="WEAK">Faible</option>
                   <option value="MODERATE">Moyen</option>

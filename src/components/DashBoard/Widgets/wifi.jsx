@@ -3,19 +3,21 @@ import { getWifiColor, getWifiStrength } from '../../../utils';
 
 const Wifi = ({ strength }) => {
   const bars = getWifiStrength(strength);
-  const heights = ['25%', '50%', '75%', '100%'];
+  const heights = ['h-[25%]', 'h-[50%]', 'h-[75%]', 'h-full'];
   const color = getWifiColor(strength);
 
   return (
     <div className='flex flex-col items-center justify-center size-full'>
-      <div className="flex justify-evenly items-end w-[50%] h-full">
+      <div className="flex justify-evenly items-end w-[50%] h-full gap-2">
         {bars.map((active, i) => (
           <div
             key={i}
-            className={`w-full h-[${heights[i]}] 
-            ${i !== bars.length - 1 ? 'mr-2' : ''} 
-            ${active ? color : 'bg-gray-300'} 
-            border-2 border-black`
+            className={`w-full ${heights[i]} 
+              ${active 
+                ? `${color} dark:opacity-90` 
+                : 'bg-gray-200 dark:bg-gray-700'} 
+              rounded-sm border border-gray-300 dark:border-gray-600
+              transition-colors duration-200`
             }
           />
         ))}
