@@ -22,181 +22,201 @@ const UserProfile = () => {
       prenom: ''
     }
   });
-
   const profilePictureFileRef = useRef(null);
-
+  
   const navigate = useNavigate();
 
   useEffect(() => {
-      console.log("🔥 useEffect de UserProfile appelé");
-      console.log("Current user from context:", user); // Debugging user from context
-      let isMounted = true;
+    console.log("🔥 useEffect de UserProfile appelé");
+    console.log("Current user from context:", user); // Debugging user from context
+    let isMounted = true;
 
-      // Récuper le token coté client
-      const token = localStorage.getItem("token");
-      console.log("🧾 Token dispo dans UserProfile:", token);
-    
-      // Si le token n'existe pas, cela veut dire que l'utilisateur n'existe pas/son token a expiré
-      // Donc le faire deconnecter
-      if (!token) {
-        logout();
-        navigate("/");
-        return;
-      }
-    
-      fetch("http://localhost:5000/api/auth/profile", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (!isMounted) return;
-          if (data.error) {
-            console.warn("Erreur côté API:", data.error);
-            logout();
-            navigate("/");
-          } else {
-            console.log("Profile data received:", data); // Debugging profile data
-            setUserData(data);
-            setIsChecking(false);
-          }
-        })
-        .catch((err) => {
-          if (isMounted) {
-            console.error("Erreur Fetch profil:", err);
-            logout();
-            navigate("/");
-          }
-        });
-    
-      return () => {
-        isMounted = false;
-      };
-    }, [navigate, logout, user]);
-
-    useEffect(() => {
-      console.log("🔁 userData mis à jour:", userData);
-    }, [userData]);
-
-    if (isChecking) {
-      return <div>Vérification en cours...</div>;
-    }
-
-    // Event lorsque l'utiliseur se déconnecte
-    const handleLogout = () => {
-      // Supprimer le token
-      console.log("Déconnexion, suppression du token");
-      localStorage.removeItem("token");
-      // 
+    // Récuper le token coté client
+    const token = localStorage.getItem("token");
+    console.log("🧾 Token dispo dans UserProfile:", token);
+  
+    // Si le token n'existe pas, cela veut dire que l'utilisateur n'existe pas/son token a expiré
+    // Donc le faire deconnecter
+    if (!token) {
       logout();
       navigate("/");
+      return;
+    }
+  
+    fetch("http://localhost:5000/api/auth/profile", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        if (data.error) {
+          console.warn("Erreur côté API:", data.error);
+          logout();
+          navigate("/");
+        } else {
+          console.log("Profile data received:", data); // Debugging profile data
+          setUserData(data);
+          setIsChecking(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error("Erreur Fetch profil:", err);
+          logout();
+          navigate("/");
+        }
+      });
+  
+    return () => {
+      isMounted = false;
     };
+  }, [navigate, logout, user]);
 
-    const handleAdminVerification = () => {
-      console.log("Tentative d'accès à la page de vérification");
-      console.log("User level from context:", user?.level);
-      console.log("User level from profile:", userData.public.level);
-      navigate("/Accueil/Verification");
-    };
+  useEffect(() => {
+    console.log("🔁 userData mis à jour:", userData);
+  }, [userData]);
 
-    const onProfilePictureFileChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        console.log('Selected file:', file);
-        // You can handle the file upload or preview here
-      }
-    };
+  if (isChecking) {
+    return <div>Vérification en cours...</div>;
+  }
 
-    const onChangeProfilePictureClick = () => {
-      profilePictureFileRef.current.click();
-    };
+  // Event lorsque l'utiliseur se déconnecte
+  const handleLogout = () => {
+    // Supprimer le token
+    console.log("Déconnexion, suppression du token");
+    localStorage.removeItem("token");
+    // 
+    logout();
+    navigate("/");
+  };
 
-    // Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil
-    const isAdmin = user?.level === 'admin' || userData.public.level === 'admin';
-    console.log("Is admin?", isAdmin); // Debugging admin status
+  const handleAdminVerification = () => {
+    console.log("Tentative d'accès à la page admin");
+    console.log("User level from context:", user?.level);
+    console.log("User level from profile:", userData.public.level);
+    navigate("/Accueil/Admin"); //
+  };
+
+  const onProfilePictureFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      // You can handle the file upload or preview here
+    }
+  };
+
+  const onChangeProfilePictureClick = () => {
+    profilePictureFileRef.current.click();
+  };
+
+  // Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil
+  const isAdmin = user?.level === 'admin' || userData.public.level === 'admin';
+  console.log("Is admin?", isAdmin); // Debugging admin status
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 overflow-y-auto">
-      <Nav />
-      <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-xl flex flex-col items-center">
-        {/* Photo de profil */}
-        <img
-          src={userData.public.photo || avatar1}
-          alt="Profil"
-          className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg"
-        />
-        {/* <input type="file" ref={profilePictureFileRef} onChange={onProfilePictureFileChange} className="hidden" />
-        <button
-          onClick={onChangeProfilePictureClick}
-          className="mt-4 text-sm bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-lg font-medium text-blue-700 shadow"
-        >
-          Changer la photo
-        </button> */}
+    <>
+    <Nav name="PROFIL" />
+    <div className="profil">
+    <div className="flex flex-col h-screen">
+      
+      <div className="flex flex-col grow items-center justify-center">
+        <div className="flex flex-row h-[80%] w-[50%] rounded-lg">
+          {/* Left side */}
+          <div className="w-[50%] h-full flex flex-col items-center mr-2">
+            {/* Profile picture frame */}
+            <div className="bg-white w-full h-[80%] flex flex-col p-4 border-2 border-[#3c5497] mb-2 rounded-lg">
+              <div className="h-[90%] border-2 border-[#3c5497] w-full mb-2">
+                <img 
+                  src="/src/assets/placeholderpfp.jpg" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-        {/* Niveau */}
-        <div className="text-center mt-6">
-          <span className="text-sm font-semibold text-gray-600">Niveau</span>
-          <p className="text-xl font-bold text-blue-600 mt-1">{userData.public.level || "N/A"}</p>
-        </div>
+              {/* Cacher cette input pour l'utiliser dans le div */}
+              <input type="file" ref={profilePictureFileRef} onChange={onProfilePictureFileChange} className="hidden"/>
+              <div onClick={onChangeProfilePictureClick} className="flex flex-row items-center justify-center text-black border-2 border-black w-full cursor-pointer bg-gray-300"> 
+                <span>Changer photo de profile</span>
+              </div>
+            </div>
 
-        {/* Informations utilisateur */}
-        <div className="w-full mt-8 flex flex-col gap-4 text-black">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Pseudonyme</label>
-            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.pseudonyme}</p>
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Âge</label>
-            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.age}</p>
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Date de naissance</label>
-            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.dateNaissance}</p>
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Sexe / Genre</label>
-            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.sexe}</p>
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1">Email</label>
-            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.email}</p>
-          </div>
-        </div>
+            {/* Level frame */}
+            <div className="bg-white size-full flex flex-col">
+              <div className="flex flex-row items-center justify-center bg-gray-400 text-black border-2 border-[#3c5497] border-b-0 rounded-t-lg">
+                <span className="font-bold">Niveau</span>
+              </div>
+              <div className="h-full border-2 border-[#3c5497] rounded-b-lg">
 
-        {/* Boutons */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10 w-full">
-          <button
-            onClick={() => navigate("/Accueil/Profil/Edit")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold shadow w-full"
-          >
-            Modifier le profil
-          </button>
-          <button
-            onClick={() => navigate("/Accueil")}
-            className="bg-yellow-400 hover:bg-yellow-500 text-white px-5 py-3 rounded-xl font-semibold shadow w-full"
-          >
-            Retour à l'accueil
-          </button>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-3 rounded-xl font-semibold shadow w-full"
-          >
-            Déconnexion
-          </button>
-          {isAdmin && (
-            <button
-              onClick={handleAdminVerification}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-semibold shadow w-full"
-            >
-              Vérification Admin
-            </button>
-          )}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right side */}
+          <div className="bg-white w-[50%] h-full flex flex-col p-4 border-2 border-[#3c5497] rounded-lg">
+            {/* Form frame */}
+            <div className="flex flex-col h-[80%] justify-between mb-4 text-black">
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
+                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.pseudonyme}</p>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
+                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.age}</p>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
+                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.dateNaissance}</p>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
+                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.sexe}</p>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.email}</p>
+              </div>
+            </div>
+
+            {/* Buttons frame */}
+            <div className="flex flex-row gap-4 h-[20%]">
+              <button
+                onClick={() => navigate("/Accueil/Profil/Edit")}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold font-size- py-2 px-4 rounded"
+              >
+                Modifier le profil
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Déconnexion
+              </button>
+
+              {isAdmin && (
+                <button
+                  onClick={handleAdminVerification}
+                  className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Admin Panel
+                </button>
+              )}
+            </div> 
+
+          </div>
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 };
 
