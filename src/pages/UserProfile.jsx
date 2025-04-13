@@ -109,106 +109,73 @@ const UserProfile = () => {
     }
   };
 
-  const onChangeProfilePictureClick = () => {
-    profilePictureFileRef.current.click();
-  };
-
   // Vérifier si l'utilisateur est admin soit depuis le contexte, soit depuis les données du profil
   const isAdmin = user?.level === 'admin' || userData.public.level === 'admin';
   console.log("Is admin?", isAdmin); // Debugging admin status
 
   return (
-    <div className="flex flex-col h-screen">
-      <Nav/>
-      <div className="flex flex-col grow items-center justify-center">
-        <div className="flex flex-row h-[80%] w-[50%] rounded-lg">
-          {/* Left side */}
-          <div className="w-[50%] h-full flex flex-col items-center mr-2">
-            {/* Profile picture frame */}
-            <div className="bg-white w-full h-[80%] flex flex-col p-4 border-2 border-[#3c5497] mb-2 rounded-lg">
-              <div className="h-[90%] border-2 border-[#3c5497] w-full mb-2">
-                <img 
-                  src="/src/assets/placeholderpfp.jpg" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 overflow-y-auto">
+      <Nav />
+      <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-xl flex flex-col items-center">
+        {/* Photo de profil */}
+        <img
+          src={userData.public.photo || avatar1}
+          alt="Profil"
+          className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg"
+        />
+        <input type="file" ref={profilePictureFileRef} onChange={onProfilePictureFileChange} className="hidden" />
+        {/* Niveau */}
+        <div className="text-center mt-6">
+          <span className="text-sm font-semibold text-gray-600">Niveau</span>
+          <p className="text-xl font-bold text-blue-600 mt-1">{userData.public.level || "N/A"}</p>
+        </div>
 
-              {/* Cacher cette input pour l'utiliser dans le div */}
-              <input type="file" ref={profilePictureFileRef} onChange={onProfilePictureFileChange} className="hidden"/>
-              <div onClick={onChangeProfilePictureClick} className="flex flex-row items-center justify-center text-black border-2 border-black w-full cursor-pointer bg-gray-300"> 
-                <span>Changer photo de profile</span>
-              </div>
-            </div>
-
-            {/* Level frame */}
-            <div className="bg-white size-full flex flex-col">
-              <div className="flex flex-row items-center justify-center bg-gray-400 text-black border-2 border-[#3c5497] border-b-0 rounded-t-lg">
-                <span className="font-bold">Niveau</span>
-              </div>
-              <div className="h-full border-2 border-[#3c5497] rounded-b-lg">
-
-              </div>
-            </div>
-
+        {/* Informations utilisateur */}
+        <div className="w-full mt-8 flex flex-col gap-4 text-black">
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Pseudonyme</label>
+            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.pseudonyme}</p>
           </div>
-
-          {/* Right side */}
-          <div className="bg-white w-[50%] h-full flex flex-col p-4 border-2 border-[#3c5497] rounded-lg">
-            {/* Form frame */}
-            <div className="flex flex-col h-[80%] justify-between mb-4 text-black">
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
-                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.pseudonyme}</p>
-              </div>
-              
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
-                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.age}</p>
-              </div>
-              
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
-                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.dateNaissance}</p>
-              </div>
-              
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
-                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.sexe}</p>
-              </div>
-              
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                <p className="p-2 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.email}</p>
-              </div>
-            </div>
-
-            {/* Buttons frame */}
-            <div className="flex flex-row gap-4 h-[20%]">
-              <button
-                onClick={() => navigate("/Accueil/Profil/Edit")}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold font-size- py-2 px-4 rounded"
-              >
-                Modifier le profil
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Déconnexion
-              </button>
-
-              {isAdmin && (
-                <button
-                  onClick={handleAdminVerification}
-                  className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Admin Panel
-                </button>
-              )}
-            </div> 
-
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Âge</label>
+            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.age}</p>
           </div>
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Date de naissance</label>
+            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.dateNaissance}</p>
+          </div>
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Sexe / Genre</label>
+            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.sexe}</p>
+          </div>
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Email</label>
+            <p className="p-3 bg-white rounded-xl border border-gray-300 shadow-sm">{userData.public.email}</p>
+          </div>
+        </div>
+
+        {/* Boutons */}
+        <div className="flex justify-center gap-4 mt-10 w-full">
+          <button
+            onClick={() => navigate("/Accueil/Profil/Edit")}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold shadow"
+          >
+            Modifier le profil
+          </button>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl font-semibold shadow"
+          >
+            Déconnexion
+          </button>
+          {isAdmin && (
+            <button
+              onClick={handleAdminVerification}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-semibold shadow"
+            >
+              Vérification Admin
+            </button>
+          )}
         </div>
       </div>
     </div>
