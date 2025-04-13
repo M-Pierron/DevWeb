@@ -7,7 +7,7 @@ function About() {
     <>
     <Nav name ="À PROPOS"/>
     <div className ="about mt-10">
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-[#2c4187] mb-4">À Propos de CY-House</h1>
@@ -15,7 +15,7 @@ function About() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-[#2c4187]">
+          <div className="bg-gray-200 p-6 rounded-lg shadow-md border-t-4 border-[#2c4187]">
             <div className="flex items-center justify-center w-12 h-12 bg-[#2c4187] rounded-full mb-4 mx-auto">
               <Home className="w-6 h-6 text-white" />
             </div>
@@ -23,7 +23,7 @@ function About() {
             <p className="text-gray-600 text-center">Contrôlez tous vos objets connectés depuis une seule interface intuitive et ergonomique.</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-[#2c4187]">
+          <div className="bg-gray-200 p-6 rounded-lg shadow-md border-t-4 border-[#2c4187]">
             <div className="flex items-center justify-center w-12 h-12 bg-[#2c4187] rounded-full mb-4 mx-auto">
               <Shield className="w-6 h-6 text-white" />
             </div>
@@ -31,7 +31,7 @@ function About() {
             <p className="text-gray-600 text-center">Vos données sont protégées avec les dernières technologies de cryptage et de sécurisation.</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-[#2c4187]">
+          <div className="bg-gray-200 p-6 rounded-lg shadow-md border-t-4 border-[#2c4187]">
             <div className="flex items-center justify-center w-12 h-12 bg-[#2c4187] rounded-full mb-4 mx-auto">
               <Zap className="w-6 h-6 text-white" />
             </div>
@@ -40,7 +40,7 @@ function About() {
           </div>
         </div>
 
-        <div className="mt-16 bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="mt-16 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
           <div className="p-8">
             <h2 className="text-2xl font-bold text-[#2c4187] mb-6">Notre Mission</h2>
             <p className="text-gray-600 mb-6">
