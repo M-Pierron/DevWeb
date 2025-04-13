@@ -281,7 +281,8 @@ router.get("/profile", authMiddleware, async (req, res) => {
                 dateNaissance: user.dateNaissance || '',
                 email: user.email,
                 photo: user.photo || '',
-                level: user.level 
+                level: user.level ,
+                points: user.points
             },
             private: {
                 nom: user.nom,

@@ -14,7 +14,7 @@ const UserProfile = () => {
       sexe: '',
       email: '',
       photo: '',
-      points: 0
+      points: 0 // <- On part sur un nombre
     },
     private: {
       nom: '',
@@ -23,6 +23,13 @@ const UserProfile = () => {
   });
   
   const navigate = useNavigate();
+
+  const getUserLevel = (points) => {
+    if (points >= 30) return "Expert";
+    if (points >= 20) return "Avancé";
+    if (points >= 10) return "Intermédiaire";
+    return "Débutant";
+  };
 
   useEffect(() => {
     console.log("🔥 useEffect de UserProfile appelé");
@@ -53,7 +60,7 @@ const UserProfile = () => {
           logout();
           navigate("/");
         } else {
-          console.log("Profile data received:", data); 
+          console.log("✅ Profile data received:", data); 
           setUserData(data);
           setIsChecking(false);
         }
@@ -73,6 +80,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     console.log("🔁 userData mis à jour:", userData);
+    console.log("📊 Points actuels:", userData.public.points);
   }, [userData]);
 
   if (isChecking) {
@@ -105,7 +113,6 @@ const UserProfile = () => {
             <div className="flex flex-row h-[80%] w-[50%] rounded-lg">
               {/* Left side */}
               <div className="w-[50%] h-full flex flex-col mr-2 space-y-2">
-                {/* Profile picture frame */}
                 <div className="bg-white flex-grow flex flex-col p-4 border-2 border-[#3c5497] rounded-lg">
                   <div className="flex-grow border-2 border-[#3c5497] mb-4">
                     <img 
@@ -115,17 +122,21 @@ const UserProfile = () => {
                     />
                   </div>
 
-                  {/* Points display */}
+                  {/* Level display */}
                   <div className="bg-white">
                     <div className="flex items-center justify-center bg-gray-400 text-black border-2 border-[#3c5497] border-b-0 rounded-t-lg py-2">
-                      <span className="font-bold">Points</span>
+                      <span className="font-bold">Niveau</span>
                     </div>
-                    <div className="border-2 border-[#3c5497] rounded-b-lg p-4 text-center text-2xl font-bold">
-                      {userData.public.points || 0}
+                    <div className="border-2 border-[#3c5497] rounded-b-lg p-4 text-center">
+                      <div className="text-2xl font-bold">
+                        {getUserLevel(Number(userData.public.points))}
+                      </div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        {Number(userData.public.points)} Points
+                      </div>
                     </div>
                   </div>
 
-                  {/* Buttons */}
                   <div className="flex flex-col space-y-2 mt-4">
                     <button
                       onClick={() => navigate("/Accueil/Profil/Edit")}

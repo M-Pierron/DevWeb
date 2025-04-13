@@ -1,3 +1,20 @@
+Procédure de démarrage du site web :
+
+  - ouvrir un terminal;
+  - se mettre dans le dossier du projet installer depuis GitHub;
+  - faire la commande "npm i";
+  - se déplacer dans le dossier "backend";
+  - faire la commande "npm i";
+  - faire la commande "node serveur.js";
+  - ouvrir un nouveau terminal dans le dossier de base du projet;
+  - faire la commande "npm run dev";
+  - cliquer sur le lien disponible dans le terminal et accéder au site sur un navigateur internet;
+
+
+
+
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
