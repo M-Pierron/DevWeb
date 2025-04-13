@@ -14,7 +14,6 @@ const MODE_ENUM = [
     'SCHEDULE'
 ]
 
-// Schema qui réprésente une l'appareil d'un utilisateur
 const userDeviceSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -36,7 +35,6 @@ const userDeviceSchema = new mongoose.Schema({
         min: 0,
         max: 100
     },
-    // Le status wifi de l'appareil
     wifi: { 
         type: String, 
         enum: WIFI_ENUM,
