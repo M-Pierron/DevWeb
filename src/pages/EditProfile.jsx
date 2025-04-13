@@ -29,7 +29,7 @@ const EditProfile = () => {
       return;
     }
 
-    // Charger les données du profil
+    // -- Charge les données du profil --
     fetch("http://localhost:5000/api/auth/profile", {
       method: "GET",
       headers: {
@@ -45,7 +45,6 @@ const EditProfile = () => {
         } else {
           let rawDate = data.public.dateNaissance;
 
-          // 🧼 Reformat ISO -> JJ/MM/AAAA si nécessaire
           if (rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
             const [year, month, day] = rawDate.split("-");
             rawDate = `${day}/${month}/${year}`;
@@ -97,7 +96,7 @@ const EditProfile = () => {
   };
 
   const handleDateInput = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Supprimer tout sauf chiffres
+    let value = e.target.value.replace(/\D/g, ''); 
 
     if (value.length >= 5) {
       value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4, 8);
@@ -105,7 +104,7 @@ const EditProfile = () => {
       value = value.slice(0, 2) + '/' + value.slice(2);
     }
 
-    value = value.slice(0, 10); // JJ/MM/AAAA
+    value = value.slice(0, 10); 
 
     const age = calculateAge(value);
 
@@ -122,7 +121,6 @@ const EditProfile = () => {
   const handleSave = async () => {
     const token = localStorage.getItem("token");
 
-    // ✅ Reconvertir date vers format ISO pour l’API
     const [day, month, year] = userData.public.dateNaissance.split('/');
     const dateFormattedForServer = `${year}-${month}-${day}`;
 
