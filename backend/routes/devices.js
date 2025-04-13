@@ -7,7 +7,6 @@ const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
 
-// Récuperer tous les appareils
 router.get("/", async (req, res) => {
   try {
     const devices = await Device.find();
@@ -32,7 +31,6 @@ router.post("/edit", async (req, res) => {
   }
 });
 
-// Créer un nouvelle appareil
 router.post("/create", async (req, res) => {
   const device = new Device({
     id: req.body.id,
@@ -40,7 +38,6 @@ router.post("/create", async (req, res) => {
     description: req.body.description,
     categoryId: req.body.categoryId
   });
-  // Make check if ID doesn't exist already
   try {
     const newObject = await device.save();
     res.status(201).json(newObject);
@@ -49,7 +46,6 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Delete an object
 router.delete("/:id", async (req, res) => {
   try {
     const object = await Device.findById(req.params.id);
@@ -64,7 +60,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Filter objects by category
 router.get("/filter", async (req, res) => {
   try {
     const categoryName = req.query.category;
