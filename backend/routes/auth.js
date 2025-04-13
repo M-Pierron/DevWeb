@@ -202,40 +202,6 @@ router.post("/users", authMiddleware, async (req, res) => {
   }
 });
 
-// Inscription utilisateur (sauvegarde dans Verif)
-router.post("/register", async (req, res) => {
-  const { email, password, prenom, nom, pseudonyme, dateNaissance } = req.body;
-  console.log("Registering user with email:", email);
-
-  try {
-    const existingUser = await User.findOne({ email });
-    const existingVerif = await Verif.findOne({ email });
-    
-    if (existingUser || existingVerif) {
-      return res.status(400).json({ error: "Email déjà utilisé" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newVerif = new Verif({
-      prenom,
-      nom,
-      pseudonyme, 
-      email,
-      password: hashedPassword,
-      level: "user", 
-      userId: uuidv4(),
-      dateNaissance
-    });
-
-    await newVerif.save();
-    console.log("User registered for verification:", newVerif);
-    res.status(201).json({ message: "Inscription en attente de vérification" });
-  } catch (error) {
-    console.error("Erreur lors de l'inscription :", error);
-    res.status(500).json({ error: "Erreur serveur lors de l'inscription" });
-  }
-});
-
 // Connexion utilisateur
 router.post("/login", async (req, res) => {
   try {
@@ -336,6 +302,40 @@ router.get("/profile", authMiddleware, async (req, res) => {
     }
 });
 
+// Mise à jour du profil
+router.put("/profile/update", authMiddleware, async (req, res) => {
+  try {
+      const { public: publicData, private: privateData } = req.body;
+
+      const updatedUser = await User.findByIdAndUpdate(
+          req.user._id,
+          {
+              $set: {
+                  pseudonyme: publicData.pseudonyme,
+                  age: publicData.age,
+                  sexe: publicData.sexe,
+                  dateNaissance: publicData.dateNaissance,
+                  email: publicData.email,
+                  photo: publicData.photo,
+                  nom: privateData.nom,
+                  prenom: privateData.prenom
+              }
+          },
+          { new: true }
+      );
+
+      if (!updatedUser) {
+          return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+
+      res.json({ success: true, message: "Profil mis à jour avec succès" });
+  } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil:", error);
+      res.status(500).json({ error: "Erreur serveur lors de la mise à jour du profil" });
+  }
+});
+
+
 // Récupérer les utilisateurs en attente de vérification
 router.get("/pending-users", authMiddleware, async (req, res) => {
     try {
@@ -383,118 +383,6 @@ router.post("/verify-user", authMiddleware, async (req, res) => {
     }
 });
 
-// Mise à jour du profil
-router.put("/profile/update", authMiddleware, async (req, res) => {
-  try {
-      const { public: publicData, private: privateData } = req.body;
 
-      const updatedUser = await User.findByIdAndUpdate(
-          req.user._id,
-          {
-              $set: {
-                  pseudonyme: publicData.pseudonyme,
-                  age: publicData.age,
-                  sexe: publicData.sexe,
-                  dateNaissance: publicData.dateNaissance,
-                  email: publicData.email,
-                  photo: publicData.photo,
-                  nom: privateData.nom,
-                  prenom: privateData.prenom
-              }
-          },
-          { new: true }
-      );
-
-      if (!updatedUser) {
-          return res.status(404).json({ error: "Utilisateur non trouvé" });
-      }
-
-      res.json({ success: true, message: "Profil mis à jour avec succès" });
-  } catch (error) {
-      console.error("Erreur lors de la mise à jour du profil:", error);
-      res.status(500).json({ error: "Erreur serveur lors de la mise à jour du profil" });
-  }
-});
-
-
-// Récupérer les utilisateurs en attente de vérification
-router.get("/pending-users", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user || user.level !== 'admin') {
-      return res.status(403).json({ error: "Accès non autorisé" });
-    }
-
-    const pendingUsers = await Verif.find().select('-password');
-    res.json(pendingUsers);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des utilisateurs en attente:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
-});
-
-// Vérifier un utilisateur
-router.post("/verify-user", authMiddleware, async (req, res) => {
-  try {
-    const { userId, action } = req.body;
-    const admin = await User.findById(req.user._id);
-    
-    if (!admin || admin.level !== 'admin') {
-      return res.status(403).json({ error: "Accès non autorisé" });
-    }
-
-    const pendingUser = await Verif.findOne({ userId });
-    if (!pendingUser) {
-      return res.status(404).json({ error: "Utilisateur en attente non trouvé" });
-    }
-
-    if (action === 'accept') {
-      const newUser = new User({
-        ...pendingUser.toObject(),
-        _id: undefined
-      });
-      await newUser.save();
-    }
-
-    await Verif.deleteOne({ userId });
-    res.json({ message: action === 'accept' ? "Utilisateur accepté" : "Utilisateur refusé" });
-  } catch (error) {
-    console.error("Erreur lors de la vérification:", error);
-    res.status(500).json({ error: "Erreur serveur" });
-  }
-});
-
-// Mise à jour du profil
-router.put("/profile/update", authMiddleware, async (req, res) => {
-  try {
-    const { public: publicData, private: privateData } = req.body;
-    
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        $set: {
-          pseudonyme: publicData.pseudonyme,
-          age: publicData.age,
-          sexe: publicData.sexe,
-          dateNaissance: publicData.dateNaissance,
-          email: publicData.email,
-          photo: publicData.photo,
-          nom: privateData.nom,
-          prenom: privateData.prenom
-        }
-      },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ error: "Utilisateur non trouvé" });
-    }
-
-    res.json({ success: true, message: "Profil mis à jour avec succès" });
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour du profil:", error);
-    res.status(500).json({ error: "Erreur serveur lors de la mise à jour du profil" });
-  }
-});
 
 module.exports = router;
