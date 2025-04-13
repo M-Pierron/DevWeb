@@ -118,6 +118,7 @@ const EditProfile = () => {
   return (
     <>
     <Nav name="PROFIL"/>
+    <div className="profil">
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
@@ -280,7 +281,8 @@ const EditProfile = () => {
           </button>
         </div>
       </div>
-    </div>4
+    </div>
+    </div>
     </>
   );
 };
