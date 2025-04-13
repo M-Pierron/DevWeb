@@ -175,7 +175,7 @@ const EditProfile = () => {
               className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
             />
             <span className="text-sm text-blue-600 mt-2 group-hover:underline">
-              Modifier profil
+              Modifier photo 
             </span>
           </label>
           <input
