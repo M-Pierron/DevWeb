@@ -11,6 +11,10 @@ const DeviceCategorySchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  description : {
+    type: String,
+    required: false,
+  },
   // Le chemin de l'icone de l'appareil
   imagePath: {
     type: String,  

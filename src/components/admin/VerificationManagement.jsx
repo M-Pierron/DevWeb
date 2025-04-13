@@ -51,7 +51,7 @@ const VerificationManagement = () => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <UserCheck className="w-6 h-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-800">Vérification des Utilisateurs</h2>
+          <h2 className="text-2xl font-bold">Vérification des Utilisateurs</h2>
         </div>
         {pendingUsers.length > 0 && (
           <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
@@ -77,34 +77,16 @@ const VerificationManagement = () => {
               <div className="space-y-4 mb-4">
                 <div>
                   <p className="text-sm text-gray-500">Nom complet</p>
-                  <p className="font-medium">{user.prenom} {user.nom}</p>
+                  <p className="font-medium text-black">{user.prenom} {user.nom}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Pseudonyme</p>
-                  <p className="font-medium">{user.pseudonyme}</p>
+                  <p className="font-medium text-black">{user.pseudonyme}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{user.email}</p>
+                  <p className="font-medium text-black">{user.email}</p>
                 </div>
-                {user.age && (
-                  <div>
-                    <p className="text-sm text-gray-500">Age</p>
-                    <p className="font-medium">{user.age} ans</p>
-                  </div>
-                )}
-                {user.sexe && (
-                  <div>
-                    <p className="text-sm text-gray-500">Sexe</p>
-                    <p className="font-medium">{user.sexe}</p>
-                  </div>
-                )}
-                {user.dateNaissance && (
-                  <div>
-                    <p className="text-sm text-gray-500">Date de naissance</p>
-                    <p className="font-medium">{user.dateNaissance}</p>
-                  </div>
-                )}
               </div>
               
               <div className="flex gap-4">

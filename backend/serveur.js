@@ -12,9 +12,9 @@ app.use(cors({
 }));
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
-const deviceRoutes = require("./routes/devices"); // Ajout de la route pour les appareils
-const categoriesRouter = require('./routes/categories');
-const objectsRouter = require('./routes/objects');
+const deviceRoutes = require("./routes/userDevices"); // Ajout de la route pour les appareils
+const categoriesRouter = require('./routes/deviceCategories');
+const objectsRouter = require('./routes/devices');
 const authMiddleware = require("./middleware/authMiddleware"); // 🔍 Ajoute bien ton middleware
 
 app.use(express.json());

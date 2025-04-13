@@ -15,7 +15,6 @@ import About from './pages/About';
 import Visualization from './pages/Visualization';
 import UserProfile from './pages/UserProfile';
 import EditProfile from './pages/EditProfile';
-import GestionDashboard from './pages/gestionDashboard';
 import AdminPanel from "./pages/AdminPanel";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { DeviceProvider, useDeviceContext } from "./context/DeviceContext" 
@@ -110,7 +109,6 @@ function AppRoutes() {
           }
         />
         <Route path="/Accueil/Profil" element={<ProtectedRoute element={<UserProfile />} />} />
-        <Route path="/Accueil/Gestion" element={<ProtectedRoute element={<GestionDashboard />} />} />
         <Route path="/Accueil/Profil/Edit" element={<ProtectedRoute element={<EditProfile />} />} />
         <Route path="/Accueil/Admin" element={<AdminPanel />} />
         <Route path="*" element={<Navigate to="/" replace />} />

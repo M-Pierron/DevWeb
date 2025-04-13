@@ -34,16 +34,16 @@ export const admin = {
 // Categories
 export const categories = {
   getAll: () => API.get("/categories"),
-  create: (data) => API.post("/categories", data),
-  update: (id, data) => API.put(`/categories/${id}`, data),
+  edit: (data) => API.post("/categories/edit", data),
+  create: (data) => API.post("/categories/create", data),
   delete: (id) => API.delete(`/categories/${id}`)
 };
 
 // Objects
 export const objects = {
   getAll: () => API.get("/objects"),
-  create: (data) => API.post("/objects", data),
-  update: (id, data) => API.put(`/objects/${id}`, data),
+  edit: (data) => API.post("/objects/edit", data),
+  create: (data) => API.post("/objects/create", data),
   delete: (id) => API.delete(`/objects/${id}`),
   filterByCategory: (categoryName) => API.get(`/objects/filter?category=${encodeURIComponent(categoryName)}`)
 };

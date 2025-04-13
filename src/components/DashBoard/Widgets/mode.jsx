@@ -7,7 +7,7 @@ import Timer from "../../timer"
 const options = [
     'AUTOMATIC',
     'MANUAL',
-    'SCHEDULE'
+    // 'SCHEDULE'
 ]
 
 const mode = ({mode}) => {

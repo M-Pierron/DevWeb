@@ -47,6 +47,15 @@ userSchema.methods.removeDevice = async function(_id) {
     return updatedUser;
 };
 
+userSchema.methods.isAdmin = async function(_id) {
+    const admin = await this.findById(_id);
+    if (!admin || admin.level !== 'admin') {
+        return false;
+    }
+    return true;
+};
+
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

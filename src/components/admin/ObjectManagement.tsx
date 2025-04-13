@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { objects, categories } from '../../api';
+import AccordionItem from '../Accordion/accordionItem';
 
 interface Object {
   _id: string;
+  id: string;
   name: string;
   description: string;
-  category_id: string;
+  categoryId: string;
 }
 
 interface Category {
   _id: string;
+  id: string;
   name: string;
 }
 
@@ -21,13 +24,15 @@ const ObjectManagement = () => {
   const [editingObject, setEditingObject] = useState<Object | null>(null);
   const [error, setError] = useState<string>('');
   const [formData, setFormData] = useState<{
+    id: string;
     name: string;
     description: string;
-    category_id: string;
+    categoryId: string;
   }>({
+    id: '',
     name: '',
     description: '',
-    category_id: ''
+    categoryId: ''
   });
 
   useEffect(() => {
@@ -60,32 +65,35 @@ const ObjectManagement = () => {
   const handleAddObject = () => {
     setEditingObject(null);
     setFormData({
+      id: '',
       name: '',
       description: '',
-      category_id: ''
+      categoryId: ''
     });
     setShowModal(true);
     setError('');
   };
 
-  const handleEditObject = (object: Object) => {
-    setEditingObject(object);
-    setFormData({
-      name: object.name,
-      description: object.description,
-      category_id: object.category_id
-    });
-    setShowModal(true);
-    setError('');
+  const handleEditObject = async (object: Object) => {
+      setEditingObject(object);
+      setFormData({
+        id: object.id,
+        name: object.name,
+        description: object.description,
+        categoryId: object.categoryId
+      });
+      console.log(formData);
+      setShowModal(true);
+      setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (editingObject) {
-        await objects.update(editingObject._id, formData);
+        const response = await objects.edit(formData);
       } else {
-        await objects.create(formData);
+        const response = await objects.create(formData);
       }
       fetchObjects();
       setShowModal(false);
@@ -128,102 +136,158 @@ const ObjectManagement = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nom
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Catégorie
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {objectList.map((object) => (
-              <tr key={object._id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{object.name}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-500">{object.description}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">
-                    {categoryList.find(c => c._id === object.category_id)?.name}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => handleEditObject(object)}
-                    className="text-blue-600 hover:text-blue-900 mr-4 transition-colors"
-                    title="Modifier"
-                  >
-                    <Edit2 className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteObject(object._id)}
-                    className="text-red-600 hover:text-red-900 transition-colors"
-                    title="Supprimer"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="overflow-x-auto bg-white	dark:bg-gray-800 rounded-lg shadow">
+        <div className="min-w-full flex flex-col divide-y divide-gray-200">
+          <div className="hidden md:flex bg-gray-50 	dark:bg-gray-700 dark:text-gray-300 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <div className="flex-1">ID</div>
+            <div className="flex-1">Nom</div>
+            <div className="flex-1">Description</div>
+            <div className="flex-1">Catégorie</div>
+            <div className="w-32">Actions</div>
+          </div>
+          {objectList.map((object) => (
+            <div key={object._id} className="flex flex-col md:flex-row px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm">
+              {/* ID de l'appareil */}
+              <div className="flex-1 mb-2 md:mb-0">
+                <div className="font-medium text-gray-900 dark:text-gray-300">{object.id}</div>
+              </div>
+              {/* Nom de l'appareil */}
+              <div className="flex-1 mb-2 md:mb-0">
+                <div className="font-medium text-gray-900 dark:text-gray-300">{object.name}</div>
+              </div>
+              {/* Description de l'appareil */}
+              <div className="flex-1 mb-2 md:mb-0">
+                <div className="text-gray-500 dark:text-gray-300">{object.description}</div>
+              </div>
+              {/* La catégorie de l'appareil */}
+              <div className="flex-1 mb-2 md:mb-0">
+                <div className="text-gray-500 dark:text-gray-300">
+                  {categoryList.find(c => c.id === object.categoryId)?.name}
+                </div>
+              </div>
+              {/* Actions sur l'appareil */}
+              <div className="w-32 flex items-start space-x-4">
+                <button
+                  onClick={() => handleEditObject(object)}
+                  className="text-blue-600 hover:text-blue-900 transition-colors"
+                  title="Modifier"
+                >
+                  <Edit2 className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleDeleteObject(object._id)}
+                  className="text-red-600 hover:text-red-900 transition-colors"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full m-4">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-8 max-w-md w-full m-4">
             <h3 className="text-lg font-bold mb-4">
               {editingObject ? 'Modifier un objet' : 'Ajouter un objet'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Cadre pour le saisie de l'ID */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Nom</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">ID</label>
+                <input
+                  type="text"
+                  value={formData.id}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="mt-1 dark:bg-gray-700 dark:text-white text-black p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              {/* Cadre pour le saisie du nom */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">Nom</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 dark:bg-gray-700 dark:text-white text-black p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
               </div>
+              {/* Cadre pour le saisie de la description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 dark:bg-gray-700 dark:text-white text-black p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   rows={3}
                 />
               </div>
+              {/* Cadre pour la saisie de la catégorie */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Catégorie</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">Catégorie</label>
                 <select
-                  value={formData.category_id}
-                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  value={formData.categoryId}
+                  onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                  className="mt-1 dark:bg-gray-700 dark:text-white text-black p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 >
                   <option value="">Sélectionner une catégorie</option>
                   {categoryList.map((category) => (
-                    <option key={category._id} value={category._id}>
+                    <option key={category._id} value={category.id}>
                       {category.name}
                     </option>
                   ))}
                 </select>
               </div>
+
+              <div>
+  <label className="block text-sm font-medium text-gray-700 dark:text-white">Attributs</label>
+
+  <div className="flex flex-row justify-between mt-1">
+    <div className="flex flex-col gap-1">
+      <input type="text" placeholder="ID" className="dark:bg-gray-700 px-2 py-1 rounded" />
+      <select className="dark:bg-gray-700 px-2 py-1 rounded">
+        <option value="GAUGE">GAUGE</option>
+        <option value="SLIDER">SLIDER</option>
+        <option value="BUTTON">BUTTON</option>
+      </select>
+    </div>
+    <button className="dark:bg-gray-700 px-3 py-1 rounded self-end">+</button>
+  </div>
+
+  <div className="h-[128px] bg-gray-400 mt-2 overflow-y-auto p-2 rounded space-y-2">
+    {/* Example of GAUGE or SLIDER */}
+    <div className="bg-white dark:bg-gray-800 rounded p-2 shadow">
+      <div className="font-semibold text-sm">temperatureCible</div>
+      <div className="flex flex-col gap-2 mt-2">
+        <input type="text" placeholder="Label" className="dark:bg-gray-700 px-2 py-1 rounded" />
+        <div className="flex items-center gap-2">
+          <span>Min:</span>
+          <input type="number" className="w-20 dark:bg-gray-700 px-2 py-1 rounded" />
+          <span>Max:</span>
+          <input type="number" className="w-20 dark:bg-gray-700 px-2 py-1 rounded" />
+        </div>
+      </div>
+    </div>
+
+    {/* Example of BUTTON */}
+    <div className="bg-white dark:bg-gray-800 rounded p-2 shadow">
+      <div className="font-semibold text-sm">startButton</div>
+      <div className="flex flex-col gap-2 mt-2">
+        <input type="text" placeholder="Label" className="dark:bg-gray-700 px-2 py-1 rounded" />
+        {/* No min/max for button */}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+              {/* Cadre pour les buttons */}
               <div className="flex justify-end space-x-4 mt-6">
                 <button
                   type="button"

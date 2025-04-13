@@ -4,6 +4,7 @@ import { categories } from '../../api';
 
 interface Category {
   _id: string;
+  id: string;
   name: string;
   description: string;
 }
@@ -13,6 +14,7 @@ const CategoryManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
     description: ''
   });
@@ -43,6 +45,7 @@ const CategoryManagement = () => {
   const handleEditCategory = (category: Category) => {
     setEditingCategory(category);
     setFormData({
+      id: category.id,
       name: category.name,
       description: category.description
     });
@@ -54,9 +57,9 @@ const CategoryManagement = () => {
     e.preventDefault();
     try {
       if (editingCategory) {
-        await categories.update(editingCategory._id, formData);
+        const response = await categories.edit(formData);
       } else {
-        await categories.create(formData);
+        const response = await categories.create(formData);
       }
       fetchCategories();
       setShowModal(false);
@@ -99,14 +102,14 @@ const CategoryManagement = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-wrap gap-4">
         {categoryList.map((category) => (
           <div
             key={category._id}
-            className="bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow"
+            className="flex-1 min-w-full md:min-w-[48%] lg:min-w-[31%] bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-300">{category.name}</h3>
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleEditCategory(category)}
@@ -129,32 +132,50 @@ const CategoryManagement = () => {
         ))}
       </div>
 
+
+      {/* Montrer le modal pour ajouter/modifier une catégorie */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full m-4">
+          {/*  */}
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-8 max-w-md w-full m-4">
             <h3 className="text-lg font-bold mb-4">
               {editingCategory ? 'Modifier une catégorie' : 'Ajouter une catégorie'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Cadre pour le saisi de l'ID */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Nom</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">ID <span className='text-red-600'>*</span></label>
+                <input
+                  type="text"
+                  value={formData.id}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="mt-1 p-2 dark:bg-gray-700 dark:text-white text-black block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              {/* Cadre pour le saisie du nom */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">Nom</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 p-2 dark:bg-gray-700 dark:text-white text-black block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
               </div>
+              {/* Cadre pour le saisie de la description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 p-2 dark:bg-gray-700 dark:text-white text-black block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   rows={3}
                 />
               </div>
+
+              {/* Cadre pour les buttons */}
               <div className="flex justify-end space-x-4 mt-6">
                 <button
                   type="button"
@@ -170,6 +191,8 @@ const CategoryManagement = () => {
                   {editingCategory ? 'Mettre à jour' : 'Ajouter'}
                 </button>
               </div>
+
+
             </form>
           </div>
         </div>

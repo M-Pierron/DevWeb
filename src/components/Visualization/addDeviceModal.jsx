@@ -58,7 +58,7 @@
                 <select id="mode" name="mode" value={newDevice.mode} onChange={onNewDeviceChange} className="border p-2 rounded w-full text-black">
                   <option value="AUTOMATIC">Automatique</option>
                   <option value="MANUAL">Manuel</option>
-                  <option value="SCHEDULE">Programmé</option>
+                  {/* <option value="SCHEDULE">Programmé</option> */}
                 </select>
               </div>
               

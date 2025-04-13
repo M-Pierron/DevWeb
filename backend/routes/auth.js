@@ -344,8 +344,8 @@ router.get("/pending-users", authMiddleware, async (req, res) => {
             return res.status(403).json({ error: "Accès non autorisé" });
         }
 
-        const pendingUsers = await Verif.find().select('-password');
-        res.json(pendingUsers);
+        const unverifiedUsers = await User.find({ isVerified: false });
+        res.json(unverifiedUsers);
     } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs en attente:", error);
         res.status(500).json({ error: "Erreur serveur" });
@@ -362,21 +362,16 @@ router.post("/verify-user", authMiddleware, async (req, res) => {
             return res.status(403).json({ error: "Accès non autorisé" });
         }
 
-        const pendingUser = await Verif.findOne({ userId });
-        if (!pendingUser) {
-            return res.status(404).json({ error: "Utilisateur en attente non trouvé" });
-        }
-
         if (action === 'accept') {
-            const newUser = new User({
-                ...pendingUser.toObject(),
-                _id: undefined
-            });
-            await newUser.save();
+            const updatedUser = await User.updateOne(
+                { userId: userId },
+                { $set: { isVerified: true } }
+            );
+            res.json(updatedUser);
+            return;
         }
 
-        await Verif.deleteOne({ userId });
-        res.json({ message: action === 'accept' ? "Utilisateur accepté" : "Utilisateur refusé" });
+        await User.deleteOne({ userId: userId });
     } catch (error) {
         console.error("Erreur lors de la vérification:", error);
         res.status(500).json({ error: "Erreur serveur" });
