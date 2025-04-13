@@ -6,9 +6,9 @@ const User = require("../models/User");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 
-async function incrementUserPoints(user) {
-  user.points += 1;
-  await user.save();
+async function incrementUserPoints(User) {
+  User.points += 1;
+  await User.save();
 }
 
 router.get("/deviceCategories", async(req, res) => {

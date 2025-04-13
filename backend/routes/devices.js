@@ -7,9 +7,9 @@ const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 
-async function incrementUserPoints(user) {
-  user.points += 1;
-  await user.save();
+async function incrementUserPoints(User) {
+  User.points += 1;
+  await User.save();
 }
 
 router.get("/", async (req, res) => {

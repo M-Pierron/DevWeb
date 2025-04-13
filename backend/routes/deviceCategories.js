@@ -4,9 +4,9 @@ const Category = require("../models/categoryModel");
 const router = express.Router();
 const User = require("../models/User");
 
-async function incrementUserPoints(user) {
-  user.points += 1;
-  await user.save();
+async function incrementUserPoints(User) {
+  User.points += 1;
+  await User.save();
 }
 
 router.get("/", async (req, res) => {
