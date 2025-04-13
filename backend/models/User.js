@@ -3,6 +3,11 @@ const crypto = require('crypto');
 
 const UserDevice = require('./UserDevice');
 
+async function incrementUserPoints(user) {
+    user.points += 1;
+    await user.save();
+}
+
 const userSchema = new mongoose.Schema({
     prenom: String,
     nom: String,

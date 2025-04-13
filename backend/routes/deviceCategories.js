@@ -2,6 +2,18 @@ const express = require("express");
 const DeviceCategory = require("../models/DeviceCategory");
 const Category = require("../models/categoryModel");
 const router = express.Router();
+const User = require("../models/User");
+
+async function incrementUserPoints(userInstance) {
+  if (!userInstance) {
+    console.log("[incrementUserPoints] Aucun utilisateur fourni.");
+    return;
+  }
+
+  userInstance.points += 1;
+  await userInstance.save();
+  console.log(`[incrementUserPoints] Points de ${userInstance.pseudonyme} : ${userInstance.points}`);
+}
 
 router.get("/", async (req, res) => {
   try {
@@ -35,7 +47,7 @@ router.post("/edit", async (req, res) => {
     }
     const updatedCategory = await deviceCategory.save();
     res.json(updatedCategory);
-
+    await incrementUserPoints(user);
   } catch (error) {
     console.log(error);
   }
@@ -50,6 +62,7 @@ router.post("/create", async (req, res) => {
   try {
     const newDeviceCategory = await deviceCategory.save();
     res.status(201).json(newDeviceCategory);
+    await incrementUserPoints(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -6,6 +6,17 @@ const User = require("../models/User");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 
+async function incrementUserPoints(userInstance) {
+  if (!userInstance) {
+    console.log("[incrementUserPoints] Aucun utilisateur fourni.");
+    return;
+  }
+
+  userInstance.points += 1;
+  await userInstance.save();
+  console.log(`[incrementUserPoints] Points de ${userInstance.pseudonyme} : ${userInstance.points}`);
+}
+
 router.get("/deviceCategories", async(req, res) => {
   const categories = await DeviceCategory.find({});
   
@@ -47,7 +58,7 @@ router.post("/deleteSelectedDevice", async(req, res) => {
       console.log("[/devices/deleteSelectedDevice] Appareils de l'utilisateur:", devices);
       res.json(devices);
     }
-
+    await incrementUserPoints(user);
   } catch (error) {
     console.error("[/devices/deleteSelectedDevice] Erreur:", error);
   }
@@ -91,7 +102,7 @@ router.get("/getConnectedUserDevices", async(req, res) => {
 
         console.log("[/devices/getConnectedUserDevices] Appareils de l'utilisateur:", devices);
         res.json(devices);
-
+        await incrementUserPoints(user);
     } catch (error) {
         console.error("[/devices/getConnectedUserDevices] Erreur lors de la récupération des appareils de l'utilisateur:", error);
     }
@@ -134,7 +145,7 @@ router.post("/newObject", async (req, res) => {
 
     const userDevices = await user.getDevices();
     res.json(userDevices);
-
+    await incrementUserPoints(user);
   } catch (err) {
     console.log(err)
   }
