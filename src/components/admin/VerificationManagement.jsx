@@ -27,7 +27,7 @@ const VerificationManagement = () => {
   const handleVerification = async (userId, action) => {
     try {
       setLoading(true);
-      await API.post('/verify-user', { userId, action });
+      await admin.verifyUser({ userId, action });
       await fetchPendingUsers();
       setError(null);
     } catch (err) {

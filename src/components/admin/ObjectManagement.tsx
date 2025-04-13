@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { objects, categories } from '../../api';
 import AccordionItem from '../Accordion/accordionItem';
+import DeviceAttributeManager from "./DeviceAttributeManager"
 
 interface Object {
   _id: string;
@@ -75,6 +76,7 @@ const ObjectManagement = () => {
   };
 
   const handleEditObject = async (object: Object) => {
+      console.log(object);
       setEditingObject(object);
       setFormData({
         id: object.id,
@@ -82,7 +84,6 @@ const ObjectManagement = () => {
         description: object.description,
         categoryId: object.categoryId
       });
-      console.log(formData);
       setShowModal(true);
       setError('');
   };
@@ -245,47 +246,10 @@ const ObjectManagement = () => {
                 </select>
               </div>
 
-              <div>
-  <label className="block text-sm font-medium text-gray-700 dark:text-white">Attributs</label>
-
-  <div className="flex flex-row justify-between mt-1">
-    <div className="flex flex-col gap-1">
-      <input type="text" placeholder="ID" className="dark:bg-gray-700 px-2 py-1 rounded" />
-      <select className="dark:bg-gray-700 px-2 py-1 rounded">
-        <option value="GAUGE">GAUGE</option>
-        <option value="SLIDER">SLIDER</option>
-        <option value="BUTTON">BUTTON</option>
-      </select>
-    </div>
-    <button className="dark:bg-gray-700 px-3 py-1 rounded self-end">+</button>
-  </div>
-
-  <div className="h-[128px] bg-gray-400 mt-2 overflow-y-auto p-2 rounded space-y-2">
-    {/* Example of GAUGE or SLIDER */}
-    <div className="bg-white dark:bg-gray-800 rounded p-2 shadow">
-      <div className="font-semibold text-sm">temperatureCible</div>
-      <div className="flex flex-col gap-2 mt-2">
-        <input type="text" placeholder="Label" className="dark:bg-gray-700 px-2 py-1 rounded" />
-        <div className="flex items-center gap-2">
-          <span>Min:</span>
-          <input type="number" className="w-20 dark:bg-gray-700 px-2 py-1 rounded" />
-          <span>Max:</span>
-          <input type="number" className="w-20 dark:bg-gray-700 px-2 py-1 rounded" />
-        </div>
-      </div>
-    </div>
-
-    {/* Example of BUTTON */}
-    <div className="bg-white dark:bg-gray-800 rounded p-2 shadow">
-      <div className="font-semibold text-sm">startButton</div>
-      <div className="flex flex-col gap-2 mt-2">
-        <input type="text" placeholder="Label" className="dark:bg-gray-700 px-2 py-1 rounded" />
-        {/* No min/max for button */}
-      </div>
-    </div>
-  </div>
-</div>
-
+              <DeviceAttributeManager 
+                object={editingObject}
+                isOpen={showModal}
+              />
 
               {/* Cadre pour les buttons */}
               <div className="flex justify-end space-x-4 mt-6">

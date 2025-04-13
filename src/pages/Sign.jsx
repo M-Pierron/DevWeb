@@ -17,7 +17,11 @@ const SignIn = () => {
     password: '',
     confirmPassword:''
   });
-  const [formErrors, setFormErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
 
   const navigate = useNavigate();
   const { login, register } = useAuth(); 
@@ -25,7 +29,7 @@ const SignIn = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(`[handleChange] ${name}:`, value); 
-    if (name == "prenom" || name == "nom") {
+    if (name === "prenom" || name === "nom") {
       if (/[^a-zA-Z]/.test(value)) return;
     }
     setFormData({ ...formData, [name]: value });
@@ -70,7 +74,6 @@ const SignIn = () => {
           console.log("[handleSubmit] Login via contexte avec:", data);
           login(data);
       
-        
           localStorage.setItem("token", data.token);
           console.log("🔑 Token enregistré localement:", localStorage.getItem("token"));
       
@@ -79,7 +82,7 @@ const SignIn = () => {
           navigate("/Accueil/Profil");
       
         } else {
-          alert("Inscription réussie ! Attendez la vérifiquation d'un admin.");
+          alert("Inscription réussie ! Attendez la vérification d'un admin.");
       
           setIsLogin(true);
           
@@ -94,7 +97,7 @@ const SignIn = () => {
         }
       }
       else if (!response.ok && data){
-        setFormErrors(data.errors);
+        setFormErrors(data.errors || {});
       }
       
     } catch (error) {
@@ -104,7 +107,6 @@ const SignIn = () => {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div>
@@ -172,7 +174,7 @@ const SignIn = () => {
                   required
                 />
               </div>
-              {formErrors.email && !isLogin &&
+              {formErrors.email && !isLogin && 
               <div className='flex flex-row size-full text-red-500'>
                 <CircleAlert className='mr-1'/>
                 <span>{formErrors.email}</span>
@@ -211,6 +213,7 @@ const SignIn = () => {
                     name="confirmPassword"
                     placeholder="Confirmer le mot de passe"
                     className="input-field"
+                    value={formData.confirmPassword}
                     onChange={handleChange}
                     required
                   />
@@ -221,7 +224,6 @@ const SignIn = () => {
                   <span>{formErrors.confirmPassword}</span>
                 </div>}
               </div>
-
             )}
 
             <button type="submit" className="submit-button flex flex-row justify-center">
