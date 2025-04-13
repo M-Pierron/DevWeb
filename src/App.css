@@ -1,3 +1,10 @@
+/* CSS pour la page profil */
+
+.profil {
+  z-index : 99;
+  animation : smoothSpawn 0.7s;
+}
+
 /* CSS pour la page "à propos" */
 
 .about {
