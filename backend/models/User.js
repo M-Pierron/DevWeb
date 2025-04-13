@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     userId: { type: String, required: true, unique: true },
     level: { type: String, default: 'user' },
+    points: { type: Number, default: 0 },
     age: Number,
     sexe: String,
     dateNaissance: String,
