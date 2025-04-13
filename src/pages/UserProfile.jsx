@@ -25,9 +25,9 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   const getUserLevel = (points) => {
-    if (points >= 30) return "Expert";
-    if (points >= 20) return "Avancé";
-    if (points >= 10) return "Intermédiaire";
+    if (points >= 100) return "Expert";
+    if (points >= 60) return "Avancé";
+    if (points >= 30) return "Intermédiaire";
     return "Débutant";
   };
 
