@@ -23,7 +23,7 @@ const AdminPanel = () => {
     <>
     <Nav name="ADMIN PANEL"/>
     <div className="profil">
-    <div className="flex flex-col h-full bg-gray-100 dark:bg-gray-800">
+    <div className="flex flex-col h-full bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
