@@ -29,10 +29,16 @@ DeviceSchema.methods.getAttributesMap = function () {
     attributeKeys.forEach((key) => {
         const attribute = this.attributes.get(key);
 
-        // You can clone the attribute object if needed
+        let value;
+        if (attribute.type === 'GAUGE' || attribute.type === "SLIDER") {
+            value = attribute.min;
+        } else {
+            value = attribute.defaultValue === null ? null : attribute.defaultValue;
+        }
+
         attributesMap.set(key, {
             ...attribute,
-            defaultValue: attribute.defaultValue === null ? null : attribute.defaultValue,
+            value,
         });
     });
 
