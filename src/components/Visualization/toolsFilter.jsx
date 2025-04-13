@@ -75,7 +75,8 @@ const ToolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
       </div>
       
       <div className="flex flex-col size-full">
-        {devicesCategories && devicesCategories.length > 0 && devicesCategories.map((category) => (
+      {devicesCategories && devicesCategories.length > 0 && devicesCategories.map((category) => (
+        category.devices && category.devices.length > 0 && (
           <AccordionItem 
             key={category._id}
             category={category.name}
@@ -100,13 +101,15 @@ const ToolsFilter = ({devicesCategories, isVisible, toggleVisibility, setUserDev
                 </label>
               </div>
             ))}
-            headerStyle={"w-full h-10 flex flex-row bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-2 transition-colors duration-200"}
-            headerOpenStyle={"rounded-t-sm"}
-            headerClosedStyle={"rounded-sm"}
-            blockStyle={"border-3 rounded-b-sm border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"}
+            headerStyle="w-full h-10 flex flex-row bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white p-2 transition-colors duration-200"
+            headerOpenStyle="rounded-t-sm"
+            headerClosedStyle="rounded-sm"
+            blockStyle="border-3 rounded-b-sm border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors duration-200"
             headerImage={category.imagePath}
           />
-        ))}
+        )
+      ))}
+
       </div>
     </div>
   );
