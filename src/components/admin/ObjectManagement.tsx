@@ -3,6 +3,7 @@ import { Plus, Edit2, Trash2, Loader2 } from 'lucide-react';
 import { objects, categories } from '../../api';
 import DeviceAttributeManager from './DeviceAttributeManager';
 
+
 const ObjectManagement = () => {
   const [objectList, setObjects] = useState([]);
   const [categoryList, setCategories] = useState([]);
