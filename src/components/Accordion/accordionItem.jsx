@@ -7,7 +7,7 @@ const accordionItem = ({category, items, headerStyle, headerOpenStyle, headerClo
     const [accordionOpen, setAccordionOpen] = useState(false);
 
     const openAccordion = (e) => {
-        e.preventDefault(); // ???????????? sans ça, ca active l'envoi du formulaire
+        e.preventDefault(); // -- sans ça, ca active l'envoi du formulaire --
         setAccordionOpen(!accordionOpen)
     };
 
