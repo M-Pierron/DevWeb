@@ -9,6 +9,7 @@
 /* CSS pour la page "à propos" */
 
 .about {
+  background-color : #181818;
   z-index : 99;
   animation : smoothSpawn 0.7s;
 }
