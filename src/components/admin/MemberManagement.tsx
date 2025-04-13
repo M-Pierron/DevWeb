@@ -290,14 +290,14 @@ const MemberManagement = () => {
             {filteredUsers.map((user) => (
               <tr key={user._id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{user.pseudonyme}</div>
-                  <div className="text-sm text-gray-500">{user.prenom} {user.nom}</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-400">{user.pseudonyme}</div>
+                  <div className="text-sm text-gray-500 dark:text-white">{user.prenom} {user.nom}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{user.email}</div>
+                  <div className="text-sm text-gray-500 dark:text-white">{user.email}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{user.age !== null ? String(user.age) : '-'}</div>
+                  <div className="text-sm text-gray-500 dark:text-white">{user.age !== null ? String(user.age) : '-'}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -307,10 +307,10 @@ const MemberManagement = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button onClick={() => handleEditUser(user)} className="text-blue-600 hover:text-blue-900 mr-4">
+                  <button onClick={() => handleEditUser(user)} className="text-blue-600 hover:text-blue-900 mr-4 cursor-pointer">
                     <Edit2 className="w-5 h-5" />
                   </button>
-                  <button onClick={() => handleDeleteUser(user._id)} className="text-red-600 hover:text-red-900">
+                  <button onClick={() => handleDeleteUser(user._id)} className="text-red-600 hover:text-red-900 cursor-pointer">
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </td>

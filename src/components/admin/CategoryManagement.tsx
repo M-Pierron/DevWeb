@@ -113,14 +113,14 @@ const CategoryManagement = () => {
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleEditCategory(category)}
-                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                  className="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
                   title="Modifier"
                 >
                   <Edit2 className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleDeleteCategory(category._id)}
-                  className="text-red-600 hover:text-red-800 transition-colors"
+                  className="text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                   title="Supprimer"
                 >
                   <Trash2 className="w-5 h-5" />

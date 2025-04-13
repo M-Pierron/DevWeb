@@ -137,13 +137,13 @@ const ObjectManagement = () => {
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Object Management</h1>
+        <h1 className="text-2xl font-bold">Gestion des Appareils</h1>
         <button
           onClick={handleAddObject}
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-5 h-5 mr-2" />
-          Add Object
+          Ajouter Appareil
         </button>
       </div>
 
@@ -151,15 +151,15 @@ const ObjectManagement = () => {
         <div className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <div className="grid grid-cols-5 gap-4 px-6 py-3 bg-gray-50 dark:bg-gray-700 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
             <div>ID</div>
-            <div>Name</div>
+            <div>Nom</div>
             <div>Description</div>
-            <div>Category</div>
+            <div>Catégorie</div>
             <div className="text-right">Actions</div>
           </div>
           
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {objectList.map((object) => (
-              <div key={object._id} className="grid grid-cols-5 gap-4 px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-750">
+              <div key={object._id} className="grid grid-cols-5 gap-4 px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <div className="truncate">{object.id}</div>
                 <div className="truncate">{object.name}</div>
                 <div className="truncate">{object.description}</div>
@@ -169,14 +169,14 @@ const ObjectManagement = () => {
                 <div className="flex justify-end space-x-2">
                   <button
                     onClick={() => handleEditObject(object)}
-                    className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
+                    className="p-1 text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
                     title="Edit"
                   >
                     <Edit2 className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => handleDeleteObject(object._id)}
-                    className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                    className="p-1 text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                     title="Delete"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -187,7 +187,7 @@ const ObjectManagement = () => {
             
             {objectList.length === 0 && (
               <div className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                No objects found. Click "Add Object" to create one.
+                Pas d'appareils trouvée, cliquer sur "Ajouter Appareil" pour en ajouter un
               </div>
             )}
           </div>
@@ -198,7 +198,7 @@ const ObjectManagement = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-900 rounded-lg p-8 max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-6">
-              {editingObject ? 'Edit Object' : 'Add New Object'}
+              {editingObject ? 'Modifier Appareil' : 'Ajouter Appareil'}
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
