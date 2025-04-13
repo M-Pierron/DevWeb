@@ -20,12 +20,11 @@ const SignIn = () => {
   const [formErrors, setFormErrors] = useState({});
 
   const navigate = useNavigate();
-  const { login, register } = useAuth(); // 💡 du contexte
+  const { login, register } = useAuth(); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(`[handleChange] ${name}:`, value); // 📝 LOG
-    // Refuser les nombres pour le champs du prenom et le nom
+    console.log(`[handleChange] ${name}:`, value); 
     if (name == "prenom" || name == "nom") {
       if (/[^a-zA-Z]/.test(value)) return;
     }
@@ -39,23 +38,18 @@ const SignIn = () => {
     console.log("isLogin ?", isLogin);
     console.log("formData:", formData);
   
-    // Si l'utilisateur est sur le formulaire de connexion
-    // Appeler l'url pour le faire connecter
-    // Sinon l'url pour le faire inscrire
     const url = isLogin
       ? "http://localhost:5000/api/auth/login"
       : "http://localhost:5000/api/auth/register";
   
     try {
       console.log(`[handleSubmit] Envoi requête vers: ${url}`);
-      // Faire appeler l'url
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          // Ajouter les informations supplémentaire si l'utilisateur est en mode inscription
           ...(isLogin ? {} : { 
             prenom: formData.prenom,
             nom: formData.nom,
@@ -71,27 +65,24 @@ const SignIn = () => {
   
       if (response.ok && data) {
         console.log("[handleSubmit] Succès côté serveur");
-        // Faire connecter l'utilisateur
+        
         if (isLogin) {
           console.log("[handleSubmit] Login via contexte avec:", data);
           login(data);
       
-          // Enregistrer le token dans localStorage
+        
           localStorage.setItem("token", data.token);
           console.log("🔑 Token enregistré localement:", localStorage.getItem("token"));
       
-          // Navigation vers le profil après connexion
+          // -- Navigation vers le profil après connexion --
           console.log("[handleSubmit] Navigation vers /Profil");
           navigate("/Accueil/Profil");
-        // Faire inscrire l'utilisateur
+      
         } else {
-          // ✅ ALERTE INSCRIPTION RÉUSSIE
           alert("Inscription réussie ! Attendez la vérifiquation d'un admin.");
       
-          // Puisque l'utilisateur s'est inscrit, le faire connecter ensuite
           setIsLogin(true);
           
-          // Optionnel : reset le formulaire
           setFormData({
             prenom: '',
             nom: '',
