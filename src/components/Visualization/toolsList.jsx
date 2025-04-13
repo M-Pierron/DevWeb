@@ -7,14 +7,14 @@ import { useDeviceContext } from "../../context/DeviceContext";
 
 const ToolsList = () => {
   const {
-    userDevices,
     setUserDevices,
     selectedDevice,
     setSelectedDevice,
     isUserDevicesLoading,
     deviceCategories,
     isToolsFilterLoading,
-    setIsAddNewDeviceVisible
+    setIsAddNewDeviceVisible,
+    filteredDevices,
   } = useDeviceContext();
 
   const [isToolsFilterVisible, setToolsFilterVisibility] = useState(false);
@@ -57,9 +57,9 @@ const ToolsList = () => {
             <div className="flex items-center justify-center h-full">
               <Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-spin" />
             </div>
-          ) : userDevices && userDevices.length > 0 ? (
+          ) : filteredDevices && filteredDevices.length > 0 ? (
             <div className="h-full overflow-y-auto px-2 py-3 space-y-2">
-              {userDevices.map((userDevice) => (
+              {filteredDevices.map((userDevice) => (
                 <DeviceItem
                   key={userDevice._id}
                   userDevice={userDevice}

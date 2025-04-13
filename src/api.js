@@ -32,14 +32,14 @@ export const categories = {
   getAll: () => API.get("/categories"),
   edit: (data) => API.post("/categories/edit", data),
   create: (data) => API.post("/categories/create", data),
-  delete: (id) => API.delete(`/categories/${id}`)
+  delete: (id) => API.delete(`/categories/delete?id=${id}`)
 };
 
 export const objects = {
   getAll: () => API.get("/objects"),
   edit: (data) => API.post("/objects/edit", data),
   create: (data) => API.post("/objects/create", data),
-  delete: (id) => API.delete(`/objects/${id}`),
+  delete: (id) => API.delete(`/objects/delete?id=${id}`),
   filterByCategory: (categoryName) => API.get(`/objects/filter?category=${encodeURIComponent(categoryName)}`)
 };
 

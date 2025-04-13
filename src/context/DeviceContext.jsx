@@ -5,6 +5,8 @@ const DeviceContext = createContext(null);
 export const useDeviceContext = () => useContext(DeviceContext);
 
 export const DeviceProvider = ({ children }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [userDevices, setUserDevices] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isUserDevicesLoading, setUserDevicesLoading] = useState(false);
@@ -17,6 +19,10 @@ export const DeviceProvider = ({ children }) => {
   
   const [isAddNewDeviceVisible, setIsAddNewDeviceVisible] = useState(false);
   const [isAddNewDeviceLoading, setIsAddNewDeviceLoading] = useState(false);
+
+  const filteredDevices = userDevices.filter(userDevice =>
+    userDevice && userDevice.name && userDevice.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const fetchUserDevices = async () => {
     setUserDevicesLoading(true);
@@ -154,7 +160,10 @@ export const DeviceProvider = ({ children }) => {
         fetchUserDevices,
         deleteSelectedDevice,
         onAddDeviceSubmit,
-        isAddNewDeviceLoading
+        isAddNewDeviceLoading,
+        searchTerm,
+        setSearchTerm,
+        filteredDevices,
       }}
     >
       {children}

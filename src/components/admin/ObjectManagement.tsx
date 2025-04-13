@@ -26,11 +26,13 @@ const ObjectManagement = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
+  // Interdire des caractères pour l'ID
   const handleIdChange = (e) => {
     const sanitizedValue = e.target.value.replace(/[^a-zA-Z_]/g, '');
     setFormData(prev => ({ ...prev, id: sanitizedValue }));
   };
 
+  // Récuperer les appareils
   const fetchObjects = async () => {
     try {
       const response = await objects.getAll();
@@ -42,6 +44,7 @@ const ObjectManagement = () => {
     }
   };
 
+  // Récuprer les catégories d'appareils
   const fetchCategories = async () => {
     try {
       const response = await categories.getAll();
@@ -53,6 +56,7 @@ const ObjectManagement = () => {
     }
   };
 
+  // Event pour l'ajout d'un appareil
   const handleAddObject = () => {
     setEditingObject(null);
     setFormData({
@@ -66,6 +70,7 @@ const ObjectManagement = () => {
     setError('');
   };
 
+  // Event pour le modifiage d'un appareil
   const handleEditObject = (object) => {
     setEditingObject(object);
     setFormData({
@@ -79,6 +84,7 @@ const ObjectManagement = () => {
     setError('');
   };
 
+  // Event pour la validation d'un nouveau/modification d'un appareil
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
@@ -90,9 +96,9 @@ const ObjectManagement = () => {
       };
 
       if (editingObject) {
-        await objects.edit(objectData);
+        const response = await objects.edit(objectData);
       } else {
-        await objects.create(objectData);
+        const response = await objects.create(objectData);
       }
       
       await fetchObjects();
@@ -106,9 +112,11 @@ const ObjectManagement = () => {
     }
   };
 
+  // Event pour la suppression d'un appareil
   const handleDeleteObject = async (objectId) => {
     if (window.confirm('Are you sure you want to delete this object?')) {
       try {
+        console.log(objectId);
         await objects.delete(objectId);
         await fetchObjects();
         setError('');
@@ -136,6 +144,7 @@ const ObjectManagement = () => {
         </div>
       )}
 
+      {/* Cadre qui continet le titre et le button pour ajouter un appareil */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Gestion des Appareils</h1>
         <button
@@ -147,8 +156,10 @@ const ObjectManagement = () => {
         </button>
       </div>
 
+      {/* Cadre qui contient le tableau */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <div className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          {/* En-tête du tableau */}
           <div className="grid grid-cols-5 gap-4 px-6 py-3 bg-gray-50 dark:bg-gray-700 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
             <div>ID</div>
             <div>Nom</div>
@@ -156,7 +167,7 @@ const ObjectManagement = () => {
             <div>Catégorie</div>
             <div className="text-right">Actions</div>
           </div>
-          
+          {/* Cadre qui contient les élément du tableau */}
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {objectList.map((object) => (
               <div key={object._id} className="grid grid-cols-5 gap-4 px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -175,7 +186,7 @@ const ObjectManagement = () => {
                     <Edit2 className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => handleDeleteObject(object._id)}
+                    onClick={() => handleDeleteObject(object.id)}
                     className="p-1 text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                     title="Delete"
                   >
@@ -202,8 +213,9 @@ const ObjectManagement = () => {
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+            <div className="flex flex-col md:flex-row gap-6">
+              {!editingObject && (
+                <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">ID</label>
                   <input
                     type="text"
@@ -213,18 +225,32 @@ const ObjectManagement = () => {
                     required
                   />
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
+              )}
+
+              {editingObject && (
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1">ID</label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
-                    required
+                    value={formData.id}
+                    className="w-full px-3 py-2 rounded border bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-black cursor-not-allowed dark:border-gray-600"
+                    disabled
                   />
                 </div>
+              )}
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Nom</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
               </div>
+            </div>
+
 
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
@@ -237,14 +263,14 @@ const ObjectManagement = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1">Catégorie</label>
                 <select
                   value={formData.categoryId}
                   onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                   className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
                   required
                 >
-                  <option value="">Select a category</option>
+                  <option value="">Sélectionner une catégorie</option>
                   {categoryList.map((category) => (
                     <option key={category._id} value={category.id}>
                       {category.name}
@@ -264,10 +290,10 @@ const ObjectManagement = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-700 text-white transition-colors"
                   disabled={isSaving}
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
@@ -275,7 +301,7 @@ const ObjectManagement = () => {
                   disabled={isSaving}
                 >
                   {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  {isSaving ? 'Saving...' : (editingObject ? 'Update' : 'Add')}
+                  {isSaving ? 'Sauvegarde...' : (editingObject ? 'Modifier' : 'Ajouter')}
                 </button>
               </div>
             </form>

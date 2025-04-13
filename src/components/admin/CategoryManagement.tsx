@@ -119,7 +119,7 @@ const CategoryManagement = () => {
                   <Edit2 className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => handleDeleteCategory(category._id)}
+                  onClick={() => handleDeleteCategory(category.id)}
                   className="text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                   title="Supprimer"
                 >
@@ -143,16 +143,29 @@ const CategoryManagement = () => {
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Cadre pour le saisi de l'ID */}
-              <div>
+              {!editingCategory && <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-white">ID <span className='text-red-600'>*</span></label>
                 <input
                   type="text"
                   value={formData.id}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, id: e.target.value })}
                   className="mt-1 p-2 dark:bg-gray-700 dark:text-white text-black block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
-              </div>
+              </div>}
+              
+              {editingCategory && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white">ID</label>
+                  <input
+                    type="text"
+                    value={formData.id}
+                    className="mt-1 p-2 bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-black cursor-not-allowed block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    disabled
+                  />
+                </div>
+              )}  
+
               {/* Cadre pour le saisie du nom */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-white">Nom</label>
@@ -180,7 +193,7 @@ const CategoryManagement = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-700 text-white transition-colors"
                 >
                   Annuler
                 </button>

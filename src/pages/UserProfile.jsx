@@ -113,8 +113,10 @@ const UserProfile = () => {
             <div className="flex flex-row h-[80%] w-[50%] rounded-lg">
               {/* Left side */}
               <div className="w-[50%] h-full flex flex-col mr-2 space-y-2">
-                <div className="bg-white flex-grow flex flex-col p-4 border-2 border-[#3c5497] rounded-lg">
-                  <div className="flex-grow border-2 border-[#3c5497] mb-4">
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 
+                  dark:border-gray-600 flex-grow flex flex-col p-4 rounded-lg">
+                  <div className="flex-grow border border-gray-200 
+                  dark:border-gray-600 mb-4">
                     <img 
                       src={userData.public.photo || '/src/assets/placeholderpfp.jpg'} 
                       alt="Profile"
@@ -123,15 +125,16 @@ const UserProfile = () => {
                   </div>
 
                   {/* Level display */}
-                  <div className="bg-white">
-                    <div className="flex items-center justify-center bg-gray-400 text-black border-2 border-[#3c5497] border-b-0 rounded-t-lg py-2">
-                      <span className="font-bold">Niveau</span>
+                  <div className="">
+                    <div className="flex items-center justify-center bg-gray-200 dark:bg-gray-700 
+                  border border-gray-200 dark:border-gray-600  text-black border-b-0 rounded-t-lg py-2">
+                      <span className="font-bold ">Niveau</span>
                     </div>
-                    <div className="border-2 border-[#3c5497] rounded-b-lg p-4 text-center">
+                    <div className="border border-gray-200 dark:border-gray-600 rounded-b-lg p-4 text-center">
                       <div className="text-2xl font-bold">
                         {getUserLevel(Number(userData.public.points))}
                       </div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                         {Number(userData.public.points)} Points
                       </div>
                     </div>
@@ -165,31 +168,33 @@ const UserProfile = () => {
               </div>
 
               {/* Right side */}
-              <div className="bg-white w-[50%] h-full flex flex-col p-6 border-2 border-[#3c5497] rounded-lg">
-                <div className="flex flex-col h-full justify-between text-black space-y-4">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 
+                  dark:border-gray-600 w-[50%] h-full flex flex-col p-6 rounded-lg">
+                {/*  */}
+                <div className="flex flex-col h-full justify-between text-black dark:text-white">
                   <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
-                    <p className="p-3 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.pseudonyme}</p>
+                    <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Pseudonyme</label>
+                    <p className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600 ">{userData.public.pseudonyme}</p>
                   </div>
                   
                   <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
-                    <p className="p-3 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.age}</p>
+                    <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Âge</label>
+                    <p className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600">{userData.public.age}</p>
                   </div>
                   
                   <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
-                    <p className="p-3 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.dateNaissance}</p>
+                    <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Date de naissance</label>
+                    <p className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600">{userData.public.dateNaissance}</p>
                   </div>
                   
                   <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
-                    <p className="p-3 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.sexe}</p>
+                    <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Sexe / Genre</label>
+                    <p className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600">{userData.public.sexe}</p>
                   </div>
                   
                   <div>
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                    <p className="p-3 bg-gray-50 rounded border-2 border-[#3c5497]">{userData.public.email}</p>
+                    <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Email</label>
+                    <p className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600">{userData.public.email}</p>
                   </div>
                 </div>
               </div>

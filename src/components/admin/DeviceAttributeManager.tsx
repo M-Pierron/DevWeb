@@ -122,7 +122,7 @@ const DeviceAttributeManager = ({
             <button
               onClick={() => moveAttribute(index, 'up')}
               disabled={index === 0}
-              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 cursor-pointer"
               type="button"
             >
               <ArrowUp size={16} />
@@ -130,14 +130,14 @@ const DeviceAttributeManager = ({
             <button
               onClick={() => moveAttribute(index, 'down')}
               disabled={index === attributes.length - 1}
-              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 cursor-pointer"
               type="button"
             >
               <ArrowDown size={16} />
             </button>
             <button
               onClick={() => handleDeleteAttribute(index)}
-              className="p-1 rounded text-red-500 hover:bg-red-100 dark:hover:bg-red-900"
+              className="p-1 rounded text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
               type="button"
             >
               <Trash2 size={16} />
@@ -181,6 +181,7 @@ const DeviceAttributeManager = ({
               <label className="block text-sm mb-1">Unité</label>
               <input
                   type="text"
+                  value={attr.unit}
                   onChange={(e) => handleAttributeChange(attr.id, { unit: e.target.value })}
                   className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
                 />
@@ -229,7 +230,7 @@ const DeviceAttributeManager = ({
           onClick={handleAddAttribute}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors self-end"
         >
-          Add
+          Ajouter
         </button>
       </div>
 

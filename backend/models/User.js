@@ -3,11 +3,6 @@ const crypto = require('crypto');
 
 const UserDevice = require('./UserDevice');
 
-async function incrementUserPoints(user) {
-    user.points += 1;
-    await user.save();
-}
-
 const userSchema = new mongoose.Schema({
     prenom: String,
     nom: String,
@@ -58,6 +53,19 @@ userSchema.methods.isAdmin = async function(_id) {
         return false;
     }
     return true;
+};
+
+userSchema.methods.incrementUserPoints = async function () {
+    this.points += 1;
+    await this.save();
+    console.log(`[User.incrementPoints] ${this.pseudonyme} a maintenant ${this.points} points`);
+}
+
+userSchema.statics.incrementPointsById = async function (userId) {
+    const user = await this.findById(userId).select('-password');
+    if (!user) throw new Error("Utilisateur non trouvé");
+    await user.incrementPoints();
+    return user;
 };
 
 
