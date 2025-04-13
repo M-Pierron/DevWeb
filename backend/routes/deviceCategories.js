@@ -1,6 +1,5 @@
 const express = require("express");
 const DeviceCategory = require("../models/DeviceCategory");
-const Category = require("../models/categoryModel");
 const router = express.Router();
 const User = require("../models/User");
 
@@ -24,14 +23,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/delete", async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
+    const deviceCategory = await DeviceCategory.findOneAndDelete({ id: req.query.id });
+    if (!deviceCategory) {
       return res.status(404).json({ message: "Category not found" });
     }
-    
-    await category.remove();
     res.json({ message: "Category deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -41,28 +38,48 @@ router.delete("/:id", async (req, res) => {
 router.post("/edit", async (req, res) => {
   try {
     const deviceCategoryId = req.body.id;
+    
     const deviceCategory = await DeviceCategory.findOneAndUpdate({ id: deviceCategoryId }, req.body);
     if (!deviceCategory) {
       
     }
-    const updatedCategory = await deviceCategory.save();
-    res.json(updatedCategory);
+    res.json(deviceCategory);
+
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
     await incrementUserPoints(user);
+    
   } catch (error) {
     console.log(error);
   }
 });
 
 router.post("/create", async (req, res) => {
-  const deviceCategory = new DeviceCategory({
-    id: req.body.id,
-    name: req.body.name,
-    description: req.body.description,
-  });
+
   try {
+    // Check if a device with the same ID already exists
+    const existingDeviceCategory = await DeviceCategory.findOne({ id: req.body.id });
+    if (existingDeviceCategory) {
+      return res.status(409).json({ error: "Un catégorie avec cet ID existe déjà." });
+    }
+
+    const deviceCategory = new DeviceCategory({
+      id: req.body.id,
+      name: req.body.name,
+      description: req.body.description,
+    });
+
     const newDeviceCategory = await deviceCategory.save();
     res.status(201).json(newDeviceCategory);
+    
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
     await incrementUserPoints(user);
+    
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

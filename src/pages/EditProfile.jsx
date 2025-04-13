@@ -158,22 +158,22 @@ const EditProfile = () => {
     <Nav name="PROFIL"/>
     <div className="profil mt-30 mb-10">
     <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 underline">MODIFIER VOTRE PROFIL</h2>
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 
+                  dark:border-gray-600 p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">MODIFIER VOTRE PROFIL</h2>
 
         {/* Photo de profil */}
         <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2 text-center">
+        <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white text-center">
         Photo de Profil
         </label>
         <div className="flex flex-col items-center space-y-2">
           <label htmlFor="photo-upload" className="cursor-pointer relative group flex flex-col items-center">
             <img
               src={userData.public.photo}
-              alt="Avatar"
               className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
             />
-            <span className="text-sm text-blue-600 mt-2 group-hover:underline">
+            <span className="text-sm font-bold text-blue-600 mt-2 group-hover:underline">
               Modifier profil
             </span>
           </label>
@@ -205,19 +205,19 @@ const EditProfile = () => {
 
         {/* Pseudonyme */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Pseudonyme</label>
+          <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Pseudonyme</label>
           <input
             type="text"
             name="public.pseudonyme"
             value={userData.public.pseudonyme}
             onChange={handleInputChange}
-            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
           />
         </div>
 
         {/* Date de naissance */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Date de naissance</label>
+          <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Date de naissance</label>
           <input
             type="text"
             name="public.dateNaissance"
@@ -225,29 +225,29 @@ const EditProfile = () => {
             onChange={handleDateInput}
             placeholder="JJ/MM/AAAA"
             maxLength="10"
-            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
           />
         </div>
 
         {/* Âge (lecture seule) */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Âge</label>
+          <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Âge</label>
           <input
             type="text"
             value={userData.public.age}
             readOnly
-            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
           />
         </div>
 
         {/* Sexe */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Sexe / Genre</label>
+          <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Sexe / Genre</label>
           <select
             name="public.sexe"
             value={userData.public.sexe}
             onChange={handleInputChange}
-            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
           >
             <option value="">Sélectionnez</option>
             <option value="Homme">Homme</option>
@@ -258,40 +258,40 @@ const EditProfile = () => {
 
         {/* Email (readonly) */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Email (non modifiable)</label>
+          <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Email (non modifiable)</label>
           <input
             type="email"
             value={userData.public.email}
             readOnly
-            className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
           />
         </div>
 
         {/* Informations Privées */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">Informations Privées</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-400">Informations Privées</h3>
 
           {/* Nom */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nom</label>
+            <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Nom</label>
             <input
               type="text"
               name="private.nom"
               value={userData.private.nom}
               onChange={handleInputChange}
-              className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
 
           {/* Prénom */}
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Prénom</label>
+            <label className="block text-sm font-bold mb-1 text-gray-900 dark:text-white">Prénom</label>
             <input
               type="text"
               name="private.prenom"
               value={userData.private.prenom}
               onChange={handleInputChange}
-              className="w-full p-3 text-gray-800 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
         </div>
